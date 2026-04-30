@@ -147,7 +147,9 @@ A high-performance, full-stack real-time mobility solution designed for campus s
 ## 10 Reference Websites
 
 ### jasminegunarto.com
-- **Cinematic Preloader** — ม่านปิดหน้าเว็บ นับ % วิ่งขึ้น แล้ว slide/fade ออกเพื่อส่งไม้ต่อ Hero
+- **Cinematic Preloader** — - Visual Structure: หน้าจอโหลดดิ้งไม่ใช่แค่สัญลักษณ์หมุนๆ ธรรมดา แต่ทำหน้าที่เป็นเหมือน "ม่าน" ที่ปิดบังการเตรียมความพร้อมของรูปภาพและฟอนต์ด้านหลัง มักจะมาพร้อมกับตัวเลขเปอร์เซ็นต์ที่วิ่งขึ้น หรือ Typography ที่เรียบหรู
+- Motion Dynamics: เมื่อโหลดข้อมูลเสร็จสิ้น หน้าโหลดดิ้งจะไม่หายไปแบบกระตุก แต่จะใช้การสไลด์ออก (เช่น เลื่อนขึ้นด้านบน หรือแยกออกเป็นสองฝั่ง) หรือเฟดหายไปอย่างนุ่มนวล เพื่อส่งไม้ต่อให้ Animation ของหน้า Hero เริ่มทำงานต่อได้อย่างลื่นไหล
+- Seamless Pre-loader to Hero Reveal
 - **Magnetic Hover Effect** — ปุ่มดูดเมาส์เข้าหาตัวเอง
 
 ### studionamma.com
@@ -157,7 +159,7 @@ A high-performance, full-stack real-time mobility solution designed for campus s
 - **Scroll Progress Line** — Vertical timeline ที่ความสูงเส้นผันแปรตาม scroll position (GSAP ScrollTrigger)
 
 ### nareshkhatri.site
-- **Custom Cursor** — dot เล็กตรงกลาง + outer ring โปร่งใส ที่ follow ด้วย spring physics (delay เล็กน้อย)
+- **Custom Cursor** — The cursor utilizes spring physics or easing. While the central dot tracks the exact mouse coordinates instantly, the outer ring follows with a slight mathematical delay, creating a buttery, fluid trailing effect.
 
 ### new.studio
 - **Glassmorphism Navbar** — `rgba(255,255,255,0.05)` + `backdrop-blur` ให้ความรู้สึกกระจกฝ้าเวลา scroll
