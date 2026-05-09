@@ -1,12 +1,13 @@
+import { useLenis } from "./hooks/useLenis"
 
-import './index.css'
+export default function App() {
+  useLenis()
 
-function App() {
   return (
-    <div className="">
-      <h1 className='text-text-primary'>Narunat</h1>
+    <div className="bg-bg min-h-screen">
+      <h1 className="font-heading text-text-primary p-8">
+        Portfolio — Setup ✓
+      </h1>
     </div>
   )
 }
-
-export default App
