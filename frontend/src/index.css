@@ -10,71 +10,60 @@
   --color-surface:          #161A1D;
   --color-border:           #2A2D30;
   --color-brand:            #A4161A;
+  --color-accent:           #A4161A;
   --color-brand-light:      #E5383B;
   --color-text-primary:     #F5F3F4;
   --color-text-secondary:   #F5F3F4;
+  --color-text-disabled:    #3D4147;
 
   /* Fonts */
   --font-heading: 'Space Mono', monospace;
   --font-body:    'IBM Plex Mono', monospace;
 }
 
-/* ──────────────────────────────────────────────────
-   CSS Custom Properties  (referenced by JS / non-Tailwind CSS)
-─────────────────────────────────────────────────── */
-:root {
-  /* Animation tokens — tune these as you experiment */
-  --cursor-ring-duration:      0.15s;
-  --cursor-ring-size:          32px;
-  --cursor-ring-opacity:       0.3;
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 
-  --text-reveal-stagger-chars: 0.03s;
-  --text-reveal-y-offset:      30px;
-  --text-reveal-duration:      0.8s;
+  html {
+    background-color: var(--color-bg);
+    color: var(--color-text-primary);
+    font-family: var(--font-body);
+    cursor: none;
+    scroll-behavior: smooth;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-  --preloader-exit-duration:   1.8s;
+  ::-webkit-scrollbar {
+    display: none;
+  }
 
-  --navbar-threshold:          50px;
-  --navbar-transition:         0.4s;
+  body {
+    overflow-x: hidden;
+  }
 
-  --magnetic-strength:         0.3;
-  --magnetic-snap-duration:    0.8s;
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    line-height: 1.2;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .word {
+    overflow: hidden;
+    display: inline-flex;
+  }
+
+  .char { display: inline-block; }
 }
-
-/* ──────────────────────────────────────────────────
-   Base Reset
-─────────────────────────────────────────────────── */
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html { scroll-behavior: smooth; }
-
-body {
-  background-color: var(--color-bg);
-  color: var(--color-text-primary);
-  font-family: var(--font-body);
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-heading);
-  line-height: 1.2;
-}
-
-a { color: inherit; text-decoration: none; }
-
-.word {
-  overflow: hidden;
-  display: inline-flex;
-}
-/* Splitting.js — chars get inline-block so they can be translated */
-.char { display: inline-block; }
-
 /* Custom scrollbar */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: var(--color-bg); }
