@@ -12,9 +12,9 @@ export default function Navbar() {
       className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-8 py-6"
     >
       {/* Logo */}
-      <div id="navbar-logo" className="font-heading text-text-primary text-lg tracking-wider">
+      <a href="#" id="navbar-logo" className="font-heading text-text-primary text-lg tracking-wider">
         NS
-      </div>
+      </a>
 
       {/* Nav Links */}
       <nav className="flex items-center gap-8">

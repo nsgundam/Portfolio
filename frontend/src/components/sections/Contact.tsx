@@ -1,7 +1,7 @@
 const LINKS = [
   { label: "Email",   value: "snarunat.99@gmail.com",          href: "mailto:snarunat.99@gmail.com" },
   { label: "GitHub",  value: "github.com/nsgundam",            href: "https://github.com/nsgundam" },
-  { label: "LinkedIn", value: "https://www.linkedin.com/in/narunat-sutthibut-05676a3a7/",           href: "#" }, // TODO: เพิ่ม URL
+  { label: "LinkedIn", value: "linkedin.com/in/narunat-sutthibut",           href: "https://www.linkedin.com/in/narunat-sutthibut/" },
 ]
 
 export default function Contact() {
@@ -31,9 +31,7 @@ export default function Contact() {
           transition: "color 0.3s",
         }}
       >
-        snarunat.99
-        <br />
-        @gmail.com
+        snarunat.99@gmail.com
       </a>
 
       {/* Links */}

@@ -39,7 +39,7 @@ export default function About() {
         <div className="flex flex-col gap-4">
           {[
             { label: "Based in",  value: "Thailand"            },
-            { label: "Focus",     value: "Fullstack / Frontend" },
+            { label: "Focus",     value: "Software Engineer / Full-Stack / AI" },
             { label: "Available", value: "Internship 2026"      },
           ].map(({ label, value }) => (
             <div key={label} className="flex justify-between border-b border-border pb-4">
