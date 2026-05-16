@@ -33,9 +33,9 @@ export default function Projects() {
         className="font-heading text-text-primary leading-tight mb-16"
         style={{ fontSize: "clamp(32px, 4vw, 64px)" }}
       >
-        Selected
+        Showcase
         <br />
-        <span className="text-text-secondary">Work</span>
+        <span className="text-text-secondary">Of Projects</span>
       </h2>
 
       <div className="flex flex-col gap-8">
@@ -43,7 +43,7 @@ export default function Projects() {
           <article
             key={project.number}
             className="group border border-border bg-surface p-8
-                       hover:border-brand"
+                       hover:border-brand rounded-2xl"
             style={{ transition: "border-color 0.3s" }}
           >
             <div className="flex items-start justify-between mb-6">

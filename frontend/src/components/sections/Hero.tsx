@@ -27,6 +27,15 @@ export default function Hero() {
         Aiming high, building what matters.
       </p>
 
+      <div className="flex mt-8 items-center justify-center gap-4">
+        <a href="#contact" className="bg-brand font-body text-text-primary border border-text-primary px-4 py-2 text-sm tracking-widest uppercase hover:text-brand hover:bg-text-primary">
+          Contact me
+        </a>
+        <a href="#projects" className="font-body text-text-primary border border-text-primary px-4 py-2 text-sm tracking-widest uppercase hover:text-brand">
+          View Projects
+        </a>
+      </div>
+
       {/* Scroll hint */}
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
         <span className="font-body text-text-disabled text-xs tracking-widest uppercase">
