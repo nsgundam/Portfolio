@@ -5,18 +5,22 @@ import About from "./components/sections/About"
 import Projects from "./components/sections/Projects"
 import Skills from "./components/sections/Skills"
 import Contact from "./components/sections/Contact"
-import AmbientBackground from "./components/AmbientBackground.tsx"
+import CustomCursor from "./components/cursor/CustomCurer.tsx"
+import Preloader from "./components/preloader/Preloader"
+import { useState, useCallback } from "react"
 
 export default function App() {
   useLenis()
+  const [preloaderDone, setPreloaderDone] = useState(false)
+  const handlePreloaderComplete = useCallback(() => setPreloaderDone(true), [])
 
   return (
     <>
-      <AmbientBackground />
-      {/*<Preloader />*/}
-      <Navbar />
+      <CustomCursor />
+      <Preloader onComplete={handlePreloaderComplete} />
+      <Navbar preloaderDone={preloaderDone} />
       <main>
-        <Hero />
+        <Hero preloaderDone={preloaderDone} />
         <About />
         <Projects />
         <Skills />

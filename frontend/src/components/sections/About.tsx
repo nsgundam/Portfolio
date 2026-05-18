@@ -1,14 +1,22 @@
+import { useScrollReveal } from "../../hooks/useScrollReveal"
+
 export default function About() {
+  const sectionRef  = useScrollReveal<HTMLElement>()
+  const headingRef  = useScrollReveal<HTMLHeadingElement>()
+  const bioRef      = useScrollReveal<HTMLDivElement>()
+  const infoRef     = useScrollReveal<HTMLDivElement>()
+
   return (
-    <section id="about" className="px-8 py-32 max-w-5xl mx-auto">
+    <section id="about" ref={sectionRef} className="px-8 py-32 max-w-5xl mx-auto">
 
       {/* Section label */}
-      <p className="font-body text-brand text-xs tracking-[0.3em] uppercase mb-4">
+      <p aria-hidden="true" className="font-body text-brand text-xs tracking-[0.3em] uppercase mb-4">
         01 / About
       </p>
 
       {/* Heading */}
       <h2
+        ref={headingRef}
         className="font-heading text-text-primary leading-tight mb-16"
         style={{ fontSize: "clamp(32px, 4vw, 64px)" }}
       >
@@ -22,7 +30,9 @@ export default function About() {
 
         {/* Bio */}
         <div>
-          <p className="font-body text-text-secondary text-sm leading-relaxed">
+          <p 
+          ref={bioRef}
+          className="font-body text-text-secondary text-sm leading-relaxed">
             I am a developer driven by curiosity and a problem-solving mindset.
             In a fast-evolving tech landscape, I define myself as an{" "}
             <span className="text-text-primary">Agile Technical Explorer</span>
@@ -36,7 +46,9 @@ export default function About() {
         </div>
 
         {/* Quick info */}
-        <div className="flex flex-col gap-4">
+        <div 
+        ref={infoRef}
+        className="flex flex-col gap-4">
           {[
             { label: "Based in",  value: "Thailand"            },
             { label: "Focus",     value: "Software Engineer / Full-Stack / AI" },

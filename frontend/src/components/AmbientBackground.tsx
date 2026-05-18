@@ -23,7 +23,7 @@ const AmbientBackground: React.FC = () => {
       */}
       <div className="absolute inset-0 opacity-40 pointer-events-none">
         <div 
-          className="w-full h-[20vh] bg-gradient-to-b from-transparent via-[#A4161A]/15 to-transparent"
+          className="w-full h-[20vh] bg-linear-to-b from-transparent via-[#A4161A]/15 to-transparent"
           style={{
             animation: 'scan 5s linear infinite',
           }}

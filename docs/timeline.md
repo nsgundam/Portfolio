@@ -1,0 +1,132 @@
+# Timeline & Progress Tracker
+> อัปเดตไฟล์นี้ทุกครั้งหลังทำงานเสร็จในแต่ละ step
+
+---
+
+## 🔴 Current Status
+
+```
+Sprint:   Sprint 3 — Animation Layer
+Step:     กำลังเริ่ม (ยังไม่ได้ทำ animation ใดๆ)
+Blocker:  ไม่มี
+```
+
+---
+
+## ✅ Completed
+
+### Phase 1 — Discovery & Planning
+- [x] กำหนด Project Goal (สาย, target company, deadline)
+- [x] กำหนด Personal Identity (tagline, tone, จุดแข็ง)
+- [x] Collect reference websites (6 เว็บ)
+- [x] กำหนด Tech Stack
+- [x] สร้าง Effect List พร้อม priority (8 effects)
+- [x] ตัดสินใจ Dark mode only → ตัด Dark/Light toggle ออก
+
+### Phase 2 — Content Strategy
+- [x] Hero section content (name, tagline)
+- [x] About copy
+- [x] Projects (Exploding Kittens + TramTracking) พร้อม impact statement
+- [x] Skills inventory ครบทุก category
+- [x] Contact links (LinkedIn ยังค้างอยู่)
+
+### Phase 3 — Design
+- [x] Color palette (Dark mode only)
+- [x] Typography (Space Mono + IBM Plex Mono)
+- [x] Spacing system (Tailwind default)
+- [x] Glassmorphism spec
+- [x] Animation principles (easing, duration, stagger)
+- [x] CSS Variables พร้อมใช้
+- [ ] Wireframe Figma — **ข้ามไป** (ตัดสินใจทำ Playground แทน)
+
+### Playground (ก่อน Sprint 4)
+- [x] 01 Custom Cursor — tune spring physics แล้ว
+- [x] 02 Text Reveal — tune stagger แล้ว
+- [x] 03 Preloader — tune exit style แล้ว
+- [x] 04 Navbar — tune threshold + glass opacity แล้ว
+- [x] 05 Magnetic Hover — tune strength + snap แล้ว
+
+### Sprint 1 — Setup & Foundation
+- [x] Vite + React + TypeScript
+- [x] Tailwind v4 + `@theme` tokens
+- [x] GSAP + ScrollTrigger registered
+- [x] Lenis smooth scroll (`"lenis"` package)
+- [x] ลบ `@studio-freight/lenis` ออก
+- [x] ESLint flat config
+- [x] Folder structure ครบ
+- [x] Dev server รันได้, cursor hidden, font โหลดได้
+
+### Sprint 2 — Static Layout
+- [x] Preloader (static — overlay + counter)
+- [x] Navbar (fixed top, logo + nav links)
+- [x] Hero (name, tagline, gradient bg, scroll hint)
+- [x] About (bio + quick info grid)
+- [x] Projects (2 cards — Exploding Kittens + TramTracking)
+- [x] Skills (5 categories)
+- [x] Contact (email CTA + links)
+- [x] App.tsx เชื่อม sections ครบ
+
+---
+
+## 🔄 In Progress
+
+### Sprint 3 — Animation Layer
+
+| # | Animation | Status | หมายเหตุ |
+|---|---|---|---|
+| 01 | Custom Cursor + Spring Physics | ⬜ TODO | |
+| 02 | Preloader Sequence (0→100 + exit) | ⬜ TODO | |
+| 03 | Navbar Glassmorphism + Logo Tuck | ⬜ TODO | รอ preloaderDone |
+| 04 | Hero Text Reveal | ⬜ TODO | รอ preloaderDone |
+| 05 | Section Scroll Reveals | ⬜ TODO | |
+| 06 | Rolling Text (Menu hover) | ⬜ TODO | |
+| 07 | Blur Reveal Transition | ⬜ TODO | |
+| 08 | Magnetic Hover (CTA) | ⬜ TODO | |
+| 09 | Scroll Progress Line | ⬜ TODO | |
+
+> **Agent:** เมื่อทำ animation ใดเสร็จ ให้เปลี่ยน `⬜ TODO` → `✅ DONE` และเพิ่ม note ถ้ามี
+
+---
+
+## 📋 Upcoming
+
+### Sprint 4 — Polish & Responsive
+- [ ] Responsive (mobile 375px, tablet 768px)
+- [ ] Disable cursor บน touch device
+- [ ] `prefers-reduced-motion` support
+- [ ] Image optimization (WebP)
+- [ ] Lighthouse audit (target > 90)
+- [ ] Meta tags + OG image
+- [ ] LinkedIn URL (ยังไม่ได้ใส่ — **must before launch**)
+
+### Sprint 5 — Deployment
+- [ ] Build production (`npm run build`)
+- [ ] Deploy to Vercel
+- [ ] Custom domain (optional)
+- [ ] Vercel Analytics
+- [ ] Final QA ทุก browser
+
+---
+
+## ⚠️ Open Issues / Blockers
+
+| Issue | Priority | Status |
+|---|---|---|
+| LinkedIn URL ยังไม่มี | 🔴 High | ยังไม่ได้ใส่ |
+| Playground values ยังไม่ได้ใส่ใน design-system.md | 🟡 Medium | ต้องทำก่อน Sprint 3 |
+
+---
+
+## 📝 Agent Update Log
+
+> Agent ที่มาทำงาน ให้ append บันทึกที่นี่ทุกครั้ง
+
+```
+Format:
+[DATE] [AGENT/SESSION] — ทำอะไร + ผลลัพธ์
+```
+
+| Date | Session | งานที่ทำ |
+|---|---|---|
+| Apr 2026 | Planning Session | Phase 1-3 + Playground + Sprint 1-2 เสร็จสมบูรณ์ |
+| — | — | (Agent ถัดไปเพิ่มที่นี่) |
