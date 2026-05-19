@@ -1,3 +1,5 @@
+import { useScrollReveal } from "../../hooks/useScrollReveal"
+
 const LINKS = [
   { label: "Email",   value: "snarunat.99@gmail.com",          href: "mailto:snarunat.99@gmail.com" },
   { label: "GitHub",  value: "github.com/nsgundam",            href: "https://github.com/nsgundam" },
@@ -5,14 +7,18 @@ const LINKS = [
 ]
 
 export default function Contact() {
+  const sectionRef = useScrollReveal<HTMLElement>()
+  const headingRef = useScrollReveal<HTMLHeadingElement>()
+
   return (
-    <section id="contact" className="px-8 py-32 max-w-5xl mx-auto">
+    <section id="contact" ref={sectionRef} className="px-8 py-32 max-w-5xl mx-auto">
 
       <p className="font-body text-brand text-xs tracking-[0.3em] uppercase mb-4">
         04 / Contact
       </p>
 
       <h2
+        ref={headingRef}
         className="font-heading text-text-primary leading-tight mb-16"
         style={{ fontSize: "clamp(32px, 4vw, 64px)" }}
       >
@@ -31,7 +37,7 @@ export default function Contact() {
           transition: "color 0.3s",
         }}
       >
-        snarunat.99@gmail.com
+        [EMAIL_ADDRESS]
       </a>
 
       {/* Links */}

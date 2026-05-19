@@ -9,17 +9,28 @@ export function useScrollReveal<T extends HTMLElement>() {
     const el = ref.current
     if (!el) return
 
-    gsap.from(el, {
-      opacity: 0,
-      y: 60,
-      duration: 0.8,
-      ease: "power4.out",
-      scrollTrigger: {
-        trigger: el,
-        start: "top 85%",
-        once: true,
-      },
-    })
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        el,
+        {
+          opacity: 0,
+          y: 60,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power4.out",
+          scrollTrigger: {
+            trigger: el,
+            start: "top 85%",   // เริ่ม animate เมื่อ element เข้ามา 85% ของ viewport
+            once: true,         // animate แค่ครั้งเดียว
+          },
+        }
+      )
+    }, el)
+
+    return () => ctx.revert() // Cleanup to fix React StrictMode issues
   }, [])
 
   return ref

@@ -7,7 +7,7 @@
 
 ```
 Sprint:   Sprint 3 — Animation Layer
-Step:     กำลังเริ่ม (ยังไม่ได้ทำ animation ใดๆ)
+Step:     กำลังทำ Step 07 Blur Reveal Transition
 Blocker:  ไม่มี
 ```
 
@@ -74,12 +74,12 @@ Blocker:  ไม่มี
 
 | # | Animation | Status | หมายเหตุ |
 |---|---|---|---|
-| 01 | Custom Cursor + Spring Physics | ⬜ TODO | |
-| 02 | Preloader Sequence (0→100 + exit) | ⬜ TODO | |
-| 03 | Navbar Glassmorphism + Logo Tuck | ⬜ TODO | รอ preloaderDone |
-| 04 | Hero Text Reveal | ⬜ TODO | รอ preloaderDone |
-| 05 | Section Scroll Reveals | ⬜ TODO | |
-| 06 | Rolling Text (Menu hover) | ⬜ TODO | |
+| 01 | Custom Cursor + Spring Physics | ✅ DONE | |
+| 02 | Preloader Sequence (0→100 + exit) | ✅ DONE | |
+| 03 | Navbar Glassmorphism + Logo Tuck | ✅ DONE | รอ preloaderDone |
+| 04 | Hero Text Reveal | ✅ DONE | รอ preloaderDone |
+| 05 | Section Scroll Reveals | ✅ DONE | |
+| 06 | Rolling Text (Menu hover) | ✅ DONE | |
 | 07 | Blur Reveal Transition | ⬜ TODO | |
 | 08 | Magnetic Hover (CTA) | ⬜ TODO | |
 | 09 | Scroll Progress Line | ⬜ TODO | |
@@ -113,7 +113,7 @@ Blocker:  ไม่มี
 | Issue | Priority | Status |
 |---|---|---|
 | LinkedIn URL ยังไม่มี | 🔴 High | ยังไม่ได้ใส่ |
-| Playground values ยังไม่ได้ใส่ใน design-system.md | 🟡 Medium | ต้องทำก่อน Sprint 3 |
+| Playground values ยังไม่ได้ใส่ใน design-system.md | 🟡 Medium | ✅ DONE (ใส่ใน design-system.md แล้ว) |
 
 ---
 
@@ -129,4 +129,4 @@ Format:
 | Date | Session | งานที่ทำ |
 |---|---|---|
 | Apr 2026 | Planning Session | Phase 1-3 + Playground + Sprint 1-2 เสร็จสมบูรณ์ |
-| — | — | (Agent ถัดไปเพิ่มที่นี่) |
+| May 2026 | AI Agent | ตรวจสอบและอัปเดตสถานะ Step 01-04 (เสร็จแล้ว), เพิ่ม Playground values ใน design-system.md, ทำ Step 05 (Section Scroll Reveals) ใน Projects/Skills/Contact, และทำ Step 06 (Rolling Text) ใน Navbar |

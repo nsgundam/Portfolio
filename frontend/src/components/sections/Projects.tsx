@@ -1,3 +1,5 @@
+import { useScrollReveal } from "../../hooks/useScrollReveal"
+
 const PROJECTS = [
   {
     number: "01",
@@ -22,14 +24,18 @@ const PROJECTS = [
 ]
 
 export default function Projects() {
+  const sectionRef = useScrollReveal<HTMLElement>()
+  const headingRef = useScrollReveal<HTMLHeadingElement>()
+
   return (
-    <section id="projects" className="px-8 py-32 max-w-5xl mx-auto">
+    <section id="projects" ref={sectionRef} className="px-8 py-32 max-w-5xl mx-auto">
 
       <p className="font-body text-brand text-xs tracking-[0.3em] uppercase mb-4">
         02 / Projects
       </p>
 
       <h2
+        ref={headingRef}
         className="font-heading text-text-primary leading-tight mb-16"
         style={{ fontSize: "clamp(32px, 4vw, 64px)" }}
       >

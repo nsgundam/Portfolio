@@ -2,7 +2,7 @@ import React from 'react';
 
 const AmbientBackground: React.FC = () => {
   return (
-    <div className="fixed inset-0 z-2 bg-bg-primary overflow-hidden">
+    <div className="fixed inset-0 -z-10 bg-bg-primary overflow-hidden pointer-events-none">
       
       {/* Layer 1: Base Grid (ตารางแนว Tech) 
           ใช้ CSS linear-gradient สร้างเส้นตารางทั้งแนวตั้งและแนวนอน

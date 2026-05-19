@@ -88,11 +88,13 @@ function NavLink({ label, href }: { label: string; href: string }) {
   return (
     <a
       href={href}
-      className="font-body text-text-secondary text-sm tracking-widest uppercase
-                 hover:text-text-primary overflow-hidden relative"
-      style={{ transition: "color 0.3s" }}
+      className="group font-body text-text-secondary text-sm tracking-widest uppercase relative overflow-hidden block"
+      style={{ height: "1.2em" }}
     >
-      {label}
+      <div className="flex flex-col transition-transform duration-300 ease-in-out group-hover:-translate-y-1/2">
+        <span className="h-[1.2em] flex items-center">{label}</span>
+        <span className="h-[1.2em] flex items-center text-brand">{label}</span>
+      </div>
     </a>
   )
 }

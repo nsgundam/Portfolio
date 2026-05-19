@@ -8,6 +8,7 @@ import Contact from "./components/sections/Contact"
 import CustomCursor from "./components/cursor/CustomCurer.tsx"
 import Preloader from "./components/preloader/Preloader"
 import { useState, useCallback } from "react"
+import ScrollProgress from "./components/ui/ScollProgress"
 
 export default function App() {
   useLenis()
@@ -17,6 +18,7 @@ export default function App() {
   return (
     <>
       <CustomCursor />
+      <ScrollProgress />
       <Preloader onComplete={handlePreloaderComplete} />
       <Navbar preloaderDone={preloaderDone} />
       <main>
