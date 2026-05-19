@@ -19,8 +19,8 @@ export default function Preloader({ onComplete }: PreloaderProps) {
     // 1. นับ 0 → 100
     tl.to(countObj.current, {
       val: 100,
-      duration: 2.0,          // ← ปรับจาก Playground
-      ease: "power2.in",      // ← เริ่มช้า เร็วขึ้นตอนท้าย
+      duration: 2.5,          // ← ปรับจาก Playground
+      ease: "power2.out",      // ← เริ่มช้า เร็วขึ้นตอนท้าย
       snap: { val: 1 },
       onUpdate: () => {
         counter.textContent = String(Math.round(countObj.current.val))
@@ -35,9 +35,11 @@ export default function Preloader({ onComplete }: PreloaderProps) {
       yPercent: -100,         // ← เปลี่ยนได้: -100 = slide ขึ้น
       duration: 1.8,          // ← ปรับจาก Playground
       ease: "power4.out",
+      onStart: () => {
+        onComplete()          // บอก App ว่า preloader กำลัง exit ให้ Hero เริ่มเล่นได้เลย
+      },
       onComplete: () => {
         overlay.style.display = "none"
-        onComplete()          // บอก App ว่า preloader จบแล้ว
       },
     })
 

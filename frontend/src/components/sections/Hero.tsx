@@ -13,56 +13,71 @@ export default function Hero({ preloaderDone }: HeroProps) {
   const taglineRef = useRef<HTMLParagraphElement>(null)
   const scrollRef  = useRef<HTMLDivElement>(null)
 
+  // Setup and hide elements initially to avoid FOUC
   useEffect(() => {
-    if (!preloaderDone) return
-
-    // Split text เป็น chars
     Splitting({ target: nameRef.current!, by: "chars" })
     Splitting({ target: taglineRef.current!, by: "words" })
 
-    const tl = gsap.timeline()
-
-    // Label fade in
-    tl.from(labelRef.current, {
-      opacity: 0,
-      y: 20,
-      duration: 0.6,
-      ease: "power4.out",
-    })
-
-    // Name — char stagger
-    tl.from(
+    gsap.set([
+      labelRef.current,
       nameRef.current!.querySelectorAll(".char"),
-      {
-        opacity: 0,
-        y: 40,           // ← ปรับจาก Playground
-        duration: 0.8,   // ← ปรับจาก Playground
-        ease: "power4.out",
-        stagger: 0.03,   // ← ปรับจาก Playground
-      },
-      "-=0.3"
-    )
-
-    // Tagline — word stagger
-    tl.from(
       taglineRef.current!.querySelectorAll(".word"),
-      {
-        opacity: 0,
-        y: 20,
+      scrollRef.current
+    ], { opacity: 0 })
+  }, [])
+
+  useEffect(() => {
+    if (!preloaderDone) return
+
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline()
+
+      // Label fade in
+      tl.to(labelRef.current, {
+        opacity: 1,
+        y: 0,
+        startAt: { y: 20 },
         duration: 0.6,
         ease: "power4.out",
-        stagger: 0.08,   // ← ปรับจาก Playground
-      },
-      "-=0.4"
-    )
+      })
 
-    // Scroll hint
-    tl.from(scrollRef.current, {
-      opacity: 0,
-      duration: 0.6,
-      ease: "power4.out",
-    }, "-=0.2")
+      // Name — char stagger (Tuning from design system)
+      tl.to(
+        nameRef.current!.querySelectorAll(".char"),
+        {
+          opacity: 1,
+          filter: "blur(0px)",
+          startAt: { filter: "blur(10px)" },
+          duration: 1.2,
+          ease: "power2.out",
+          stagger: { each: 0.03, from: "edges" },
+        },
+        "-=0.3"
+      )
 
+      // Tagline — word stagger (Tuning from design system)
+      tl.to(
+        taglineRef.current!.querySelectorAll(".word"),
+        {
+          opacity: 1,
+          y: "0%",
+          startAt: { y: "100%" },
+          duration: 3.5,
+          ease: "power4.out",
+          stagger: 0,
+        },
+        "-=0.4"
+      )
+
+      // Scroll hint
+      tl.to(scrollRef.current, {
+        opacity: 1,
+        duration: 0.6,
+        ease: "power4.out",
+      }, "-=2.5") // Bring it in earlier since tagline is 3.5s long
+    })
+
+    return () => ctx.revert()
   }, [preloaderDone])
 
   return (
@@ -83,9 +98,7 @@ export default function Hero({ preloaderDone }: HeroProps) {
         aria-hidden="true"
         className="font-heading text-text-primary mb-6 leading-none tracking-tight"
         style={{ fontSize: "clamp(48px, 8vw, 120px)" }}
-      >
-        Narunat<br />Sutthibut
-      </h1>
+      >Narunat Sutthibut</h1>
 
       <p ref={taglineRef} aria-hidden="true" className="font-body text-text-secondary max-w-md text-sm leading-relaxed">
         Aiming high, building what matters.
