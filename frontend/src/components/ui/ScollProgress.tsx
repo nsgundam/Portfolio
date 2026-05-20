@@ -7,7 +7,7 @@ export default function ScrollProgress() {
 
   useEffect(() => {
     gsap.to(lineRef.current, {
-      scaleY: 1,
+      scaleX: 1,
       ease: "none",
       scrollTrigger: {
         trigger: document.body,
@@ -20,15 +20,15 @@ export default function ScrollProgress() {
 
   return (
     <div
-      className="fixed left-0 top-0 z-30 w-[2px] bg-border"
-      style={{ height: "100vh" }}
+      className="fixed left-0 bottom-0 z-30 h-[2px] bg-border"
+      style={{ width: "100vw" }}
     >
       <div
         ref={lineRef}
-        className="w-full bg-accent origin-top"
+        className="h-full bg-accent origin-left"
         style={{
-          height: "100%",
-          transform: "scaleY(0)",            // เริ่มจาก 0 แล้วโตตาม scroll
+          width: "100%",
+          transform: "scaleX(0)",            // เริ่มจาก 0 แล้วโตตาม scroll
         }}
       />
     </div>

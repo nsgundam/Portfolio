@@ -4,6 +4,12 @@ import { gsap, ScrollTrigger } from "../lib/gsap"
 
 export function useLenis() {
   useEffect(() => {
+    // ป้องกัน Browser จำตำแหน่ง Scroll และบังคับกลับไปบนสุดทุกครั้งที่ Refresh
+    if ("scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual"
+    }
+    window.scrollTo(0, 0)
+
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
