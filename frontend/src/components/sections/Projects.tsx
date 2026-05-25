@@ -1,4 +1,8 @@
-import { useScrollReveal } from "../../hooks/useScrollReveal"
+import { useScrollReveal } from "../../hooks/useScrollReveal";
+
+interface ProjectsProps {
+  preloaderDone: boolean;
+}
 
 const PROJECTS = [
   {
@@ -21,15 +25,18 @@ const PROJECTS = [
     link: "https://github.com/nsgundam/TramTrackingSystem",
     type: "GitHub",
   },
-]
+];
 
-export default function Projects() {
-  const sectionRef = useScrollReveal<HTMLElement>()
-  const headingRef = useScrollReveal<HTMLHeadingElement>()
+export default function Projects({ preloaderDone }: ProjectsProps) {
+  const sectionRef = useScrollReveal<HTMLElement>(preloaderDone);
+  const headingRef = useScrollReveal<HTMLHeadingElement>(preloaderDone);
 
   return (
-    <section id="projects" ref={sectionRef} className="px-8 py-32 max-w-5xl mx-auto">
-
+    <section
+      id="projects"
+      ref={sectionRef}
+      className="px-8 py-32 max-w-5xl mx-auto"
+    >
       <p className="font-body text-brand text-xs tracking-[0.3em] uppercase mb-4">
         02 / Projects
       </p>
@@ -92,7 +99,6 @@ export default function Projects() {
           </article>
         ))}
       </div>
-
     </section>
-  )
+  );
 }

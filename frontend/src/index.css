@@ -5,68 +5,84 @@
    These become utility classes: bg-brand, text-brand, etc.
 ─────────────────────────────────────────────────── */
 @theme {
-  /* Colors */
-  --color-bg:               #0B090A;
-  --color-surface:          #161A1D;
-  --color-border:           #2A2D30;
-  --color-brand:            #A4161A;
-  --color-accent:           #A4161A;
-  --color-brand-light:      #E5383B;
-  --color-text-primary:     #F5F3F4;
-  --color-text-secondary:   #F5F3F4;
-  --color-text-disabled:    #3D4147;
+    /* Colors */
+    --color-bg: #0b090a;
+    --color-surface: #161a1d;
+    --color-border: #2a2d30;
+    --color-brand: #a4161a;
+    --color-accent: #a4161a;
+    --color-brand-light: #e5383b;
+    --color-text-primary: #f5f3f4;
+    --color-text-secondary: #6b7280;
+    --color-text-disabled: #3d4147;
 
-  /* Fonts */
-  --font-heading: 'Space Mono', monospace;
-  --font-body:    'IBM Plex Mono', monospace;
+    /* NOTE: --color-brand and --color-accent are intentionally identical (#A4161A).
+     Brand = structural use (borders, labels). Accent = decorative use (cursor, highlights).
+     They may diverge in future iterations. */
+
+    /* Fonts */
+    --font-heading: "Space Mono", monospace;
+    --font-body: "IBM Plex Mono", monospace;
 }
 
 @layer base {
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    cursor: none;
-  }
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        cursor: none;
+    }
 
-  html {
-    background-color: var(--color-bg);
-    color: var(--color-text-primary);
-    font-family: var(--font-body);
-    cursor: url( auto);
-    scroll-behavior: smooth;
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
+    html {
+        background-color: var(--color-bg);
+        color: var(--color-text-primary);
+        font-family: var(--font-body);
 
-  ::-webkit-scrollbar {
-    display: none;
-  }
+        scroll-behavior: smooth;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
 
-  body {
-    overflow-x: hidden;
-  }
+    body {
+        overflow-x: hidden;
+    }
 
-  h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-heading);
-    line-height: 1.2;
-  }
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-family: var(--font-heading);
+        line-height: 1.2;
+    }
 
-  a {
-    color: inherit;
-    text-decoration: none;
-  }
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
 
-  .word {
-    overflow: hidden;
-    display: inline-flex;
-  }
+    .word {
+        overflow: hidden;
+        display: inline-flex;
+    }
 
-  .char { display: inline-block; }
+    .char {
+        display: inline-block;
+    }
 }
 /* Custom scrollbar */
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: var(--color-bg); }
-::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: var(--color-brand); }
+::-webkit-scrollbar {
+    width: 4px;
+}
+::-webkit-scrollbar-track {
+    background: var(--color-bg);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-brand);
+}

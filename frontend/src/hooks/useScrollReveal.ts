@@ -1,13 +1,18 @@
 // src/hooks/useScrollReveal.ts
-import { useEffect, useRef } from "react"
-import { gsap } from "../lib/gsap"
+import { useEffect, useRef } from "react";
+import { gsap } from "../lib/gsap";
 
-export function useScrollReveal<T extends HTMLElement>() {
-  const ref = useRef<T>(null)
+// enabled defaults to true so sections that don't need gating still work.
+// Pass preloaderDone from App to respect the "all ScrollTriggers wait for
+// preloaderDone" rule documented in Agent.md.
+export function useScrollReveal<T extends HTMLElement>(
+  enabled: boolean = true,
+) {
+  const ref = useRef<T>(null);
 
   useEffect(() => {
-    const el = ref.current
-    if (!el) return
+    const el = ref.current;
+    if (!el || !enabled) return;
 
     const ctx = gsap.context(() => {
       gsap.fromTo(
@@ -23,15 +28,15 @@ export function useScrollReveal<T extends HTMLElement>() {
           ease: "power4.out",
           scrollTrigger: {
             trigger: el,
-            start: "top 85%",   // เริ่ม animate เมื่อ element เข้ามา 85% ของ viewport
-            once: true,         // animate แค่ครั้งเดียว
+            start: "top 85%",
+            once: true,
           },
-        }
-      )
-    }, el)
+        },
+      );
+    }, el);
 
-    return () => ctx.revert() // Cleanup to fix React StrictMode issues
-  }, [])
+    return () => ctx.revert();
+  }, [enabled]); // re-runs when preloaderDone flips true
 
-  return ref
+  return ref;
 }

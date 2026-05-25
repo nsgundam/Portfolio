@@ -112,7 +112,7 @@ Blocker:  ไม่มี
 
 | Issue | Priority | Status |
 |---|---|---|
-| LinkedIn URL ยังไม่มี | 🔴 High | ยังไม่ได้ใส่ |
+| LinkedIn URL ยังไม่มี | 🔴 High | ✅ DONE — อยู่ใน Contact.tsx แล้ว |
 | Playground values ยังไม่ได้ใส่ใน design-system.md | 🟡 Medium | ✅ DONE (ใส่ใน design-system.md แล้ว) |
 
 ---
@@ -131,3 +131,4 @@ Format:
 | Apr 2026 | Planning Session | Phase 1-3 + Playground + Sprint 1-2 เสร็จสมบูรณ์ |
 | May 2026 | AI Agent | ตรวจสอบและอัปเดตสถานะ Step 01-04 (เสร็จแล้ว), เพิ่ม Playground values ใน design-system.md, ทำ Step 05 (Section Scroll Reveals) ใน Projects/Skills/Contact, และทำ Step 06 (Rolling Text) ใน Navbar |
 | May 2026 | AI Agent | แก้ไขบั๊ก Scroll Reveal + AmbientBackground, ปรับปรุง Hero Text Reveal ให้ต่อเนื่องจาก Preload, อัปเดต Navbar เป็น Liquid Glass Effect, ทำ Step 09 (Scroll Progress Line) แนวนอนล่างจอ และตั้งค่าบังคับ Scroll บนสุดเมื่อ Refresh |
+| May 2026 | AI Agent | Codebase audit + full fix pass (14 issues): แก้ไข aria-hidden ใน Hero, ตั้ง text-secondary สี #6B7280, แก้ CSS dead code, ปรับ Preloader ease เป็น power2.in, เพิ่ม preloaderDone guard ใน useScrollReveal (ส่งต่อทุก section), ออกแบบ Navbar ใหม่ (values + interpolable transitions), redesign CustomCursor ด้วย gsap.quickTo + back.out leave, เปลี่ยนชื่อไฟล์ที่พิมพ์ผิด, ย้าย AmbientBackground เข้า App.tsx, แก้ Contact placeholder email, ปิด LinkedIn open issue |

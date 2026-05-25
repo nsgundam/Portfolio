@@ -1,9 +1,20 @@
-import { useScrollReveal } from "../../hooks/useScrollReveal"
+import { useScrollReveal } from "../../hooks/useScrollReveal";
+
+interface SkillsProps {
+  preloaderDone: boolean;
+}
 
 const SKILL_GROUPS = [
   {
     category: "Frontend",
-    skills: ["React", "Next.js", "TypeScript", "Tailwind CSS", "GSAP", "Framer Motion"],
+    skills: [
+      "React",
+      "Next.js",
+      "TypeScript",
+      "Tailwind CSS",
+      "GSAP",
+      "Framer Motion",
+    ],
   },
   {
     category: "Backend",
@@ -21,15 +32,18 @@ const SKILL_GROUPS = [
     category: "Process",
     skills: ["Agile / Scrum", "Sprint Planning", "Git", "Postman"],
   },
-]
+];
 
-export default function Skills() {
-  const sectionRef = useScrollReveal<HTMLElement>()
-  const headingRef = useScrollReveal<HTMLHeadingElement>()
+export default function Skills({ preloaderDone }: SkillsProps) {
+  const sectionRef = useScrollReveal<HTMLElement>(preloaderDone);
+  const headingRef = useScrollReveal<HTMLHeadingElement>(preloaderDone);
 
   return (
-    <section id="skills" ref={sectionRef} className="px-8 py-32 max-w-5xl mx-auto">
-
+    <section
+      id="skills"
+      ref={sectionRef}
+      className="px-8 py-32 max-w-5xl mx-auto"
+    >
       <p className="font-body text-brand text-xs tracking-[0.3em] uppercase mb-4">
         03 / Skills
       </p>
@@ -59,7 +73,10 @@ export default function Skills() {
             {/* Skills */}
             <div className="col-span-2 flex flex-wrap gap-x-6 gap-y-2">
               {group.skills.map((skill) => (
-                <span key={skill} className="font-body text-text-primary text-sm">
+                <span
+                  key={skill}
+                  className="font-body text-text-primary text-sm"
+                >
                   {skill}
                 </span>
               ))}
@@ -67,7 +84,6 @@ export default function Skills() {
           </div>
         ))}
       </div>
-
     </section>
-  )
+  );
 }
