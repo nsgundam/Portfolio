@@ -68,6 +68,26 @@
 
 ---
 
+## DEC-009 — Custom Cursor: Suck-In Collapse แทน Button Wrapping
+**วันที่:** May 2026  
+**การตัดสินใจ:** เปลี่ยน hover behavior ของ cursor จาก ring ขยายคลุม button (morph to button bounds) ไปเป็น ring หดหายตรงจุด (collapse in place) ด้วย `power4.in`
+**เหตุผล:** Ring ที่ขยายคลุม button บังเนื้อหาและ label ทำให้ดูรกและไม่ clean — เอฟเฟกต์ "ปุ่มดูด ring เข้าไป" ตรงกับ Sophisticated tone มากกว่า และ ring หายไปทันทีเมื่อ hover ทำให้ button content อ่านได้ชัดขึ้น  
+**ผลกระทบ:**
+- `onEnter`: ใช้ `scaleX/Y → 0` + `power4.in` (0.35s) แทน morphing width/height/borderRadius ให้คลุม button
+- `onLeave`: ring emerge จาก cursor position (scale 0 → 1, `back.out(2.2)`, 0.55s) แทน restore shape
+- ขณะ hover มีแค่ dot cursor มองเห็น — ring ถูก "กลืน" เข้าไปใน button
+- `isHovering` คง `true` ตลอด emerge animation เพื่อป้องกัน `renderStretch` fight กับ scale tween
+
+---
+
+## DEC-010 — gsap.quickTo ต้อง re-create หลัง overwrite:true
+**วันที่:** May 2026  
+**การตัดสินใจ:** ประกาศ `ringXTo` / `ringYTo` ด้วย `let` แทน `const` และ re-create ใหม่ทุกครั้งใน `onLeave`
+**เหตุผล:** `overwrite:true` ใน `onEnter` kills backing tween ของ `gsap.quickTo` — dead quickTo เรียก `resetTo()` บน killed tween แล้ว silent-fail (ring ค้างที่ button position ไม่ขยับ) สาเหตุ: `quickTo` stores tween ref; `restart()` บน killed tween ไม่ add กลับ render queue  
+**ผลกระทบ:** Pattern นี้ใช้กับทุก `gsap.quickTo` ที่อยู่ใน scope เดียวกับ tween ที่ใช้ `overwrite:true` — ต้อง re-create เสมอ ไม่ใช่แค่ call function เดิม
+
+---
+
 ## Template สำหรับ Decision ใหม่
 
 ```markdown

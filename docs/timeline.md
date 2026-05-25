@@ -74,7 +74,7 @@ Blocker:  ไม่มี
 
 | # | Animation | Status | หมายเหตุ |
 |---|---|---|---|
-| 01 | Custom Cursor + Spring Physics | ✅ DONE | |
+| 01 | Custom Cursor + Spring Physics | ✅ DONE | redesigned — suck-in collapse on hover, spring emerge on leave |
 | 02 | Preloader Sequence (0→100 + exit) | ✅ DONE | |
 | 03 | Navbar Glassmorphism + Logo Tuck | ✅ DONE | รอ preloaderDone |
 | 04 | Hero Text Reveal | ✅ DONE | รอ preloaderDone |
@@ -132,3 +132,6 @@ Format:
 | May 2026 | AI Agent | ตรวจสอบและอัปเดตสถานะ Step 01-04 (เสร็จแล้ว), เพิ่ม Playground values ใน design-system.md, ทำ Step 05 (Section Scroll Reveals) ใน Projects/Skills/Contact, และทำ Step 06 (Rolling Text) ใน Navbar |
 | May 2026 | AI Agent | แก้ไขบั๊ก Scroll Reveal + AmbientBackground, ปรับปรุง Hero Text Reveal ให้ต่อเนื่องจาก Preload, อัปเดต Navbar เป็น Liquid Glass Effect, ทำ Step 09 (Scroll Progress Line) แนวนอนล่างจอ และตั้งค่าบังคับ Scroll บนสุดเมื่อ Refresh |
 | May 2026 | AI Agent | Codebase audit + full fix pass (14 issues): แก้ไข aria-hidden ใน Hero, ตั้ง text-secondary สี #6B7280, แก้ CSS dead code, ปรับ Preloader ease เป็น power2.in, เพิ่ม preloaderDone guard ใน useScrollReveal (ส่งต่อทุก section), ออกแบบ Navbar ใหม่ (values + interpolable transitions), redesign CustomCursor ด้วย gsap.quickTo + back.out leave, เปลี่ยนชื่อไฟล์ที่พิมพ์ผิด, ย้าย AmbientBackground เข้า App.tsx, แก้ Contact placeholder email, ปิด LinkedIn open issue |
+| May 2026 | AI Agent | แก้บั๊ก Custom Cursor ring ค้างหลัง leave button: `overwrite:true` ใน onEnter kill backing tween ของ gsap.quickTo ทำให้ dead quickTo silent-fail — แก้โดยเปลี่ยน `const` → `let` และ re-create ringXTo/ringYTo ใหม่ใน onLeave |
+| May 2026 | AI Agent | Redesign Custom Cursor hover effect: เปลี่ยนจาก ring ขยายคลุม button (wrapping) → blackhole suck-in (ring หดหายเข้าปุ่ม ด้วย power3.in) + emerge spring-back ที่ cursor (back.out 2.2) เมื่อ leave — isHovering คง true ตลอด emerge เพื่อป้องกัน renderStretch fight กับ scale tween |
+| May 2026 | AI Agent | Refine Cursor suck-in: เปลี่ยนจาก ring บินไปกลาง button center ก่อน collapse → collapse in place ที่ตำแหน่ง cursor ทันที (ไม่ผ่านเนื้อหา button), เปลี่ยนเป็น power4.in + duration 0.35s (near-instant collapse ที่ปลาย) |

@@ -20,7 +20,7 @@ export default function ScrollProgress() {
 
   return (
     <div
-      className="fixed left-0 bottom-0 z-30 h-[2px] bg-border"
+      className="fixed left-0 bottom-0 z-30 h-0.5 bg-border"
       style={{ width: "100vw" }}
     >
       <div

@@ -75,7 +75,7 @@ export default function CustomCursor() {
     // Ring collapses to nothing at its current position (no travel across
     // the button). power4.in starts almost still then ends violently —
     // that acceleration IS the "suck" sensation without covering content.
-    const onEnter = (_e: MouseEvent) => {
+    const onEnter = () => {
       isHovering = true;
 
       gsap.to(ring, {
@@ -155,7 +155,7 @@ export default function CustomCursor() {
       {/* Dot — always visible, tracks exact mouse position instantly */}
       <div
         ref={dotRef}
-        className="pointer-events-none fixed top-0 left-0 z-[9999] -translate-x-1/2 -translate-y-1/2 size-1.5 rounded-full bg-white"
+        className="pointer-events-none fixed top-0 left-0 z-9999 -translate-x-1/2 -translate-y-1/2 size-1.5 rounded-full bg-white"
         style={{ mixBlendMode: "difference" }}
       />
 
@@ -163,7 +163,7 @@ export default function CustomCursor() {
           Collapses into buttons (scale 0) and springs back on leave. */}
       <div
         ref={ringRef}
-        className="pointer-events-none fixed top-0 left-0 z-[9998] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
+        className="pointer-events-none fixed top-0 left-0 z-9998 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
         style={{
           width: `${RING_SIZE}px`,
           height: `${RING_SIZE}px`,
