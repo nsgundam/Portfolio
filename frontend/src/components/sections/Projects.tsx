@@ -35,7 +35,7 @@ export default function Projects({ preloaderDone }: ProjectsProps) {
     <section
       id="projects"
       ref={sectionRef}
-      className="px-8 py-32 max-w-5xl mx-auto"
+      className="px-5 sm:px-8 py-20 md:py-32 max-w-5xl mx-auto"
     >
       <p className="font-body text-brand text-xs tracking-[0.3em] uppercase mb-4">
         02 / Projects
@@ -55,7 +55,7 @@ export default function Projects({ preloaderDone }: ProjectsProps) {
         {PROJECTS.map((project) => (
           <article
             key={project.number}
-            className="group border border-border bg-surface p-8
+            className="group border border-border bg-surface p-5 sm:p-8
                        hover:border-brand rounded-2xl"
             style={{ transition: "border-color 0.3s" }}
           >

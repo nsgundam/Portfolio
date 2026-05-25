@@ -30,7 +30,7 @@ export default function Contact({ preloaderDone }: ContactProps) {
     <section
       id="contact"
       ref={sectionRef}
-      className="px-8 py-32 max-w-5xl mx-auto"
+      className="px-5 sm:px-8 py-20 md:py-32 max-w-5xl mx-auto"
     >
       <p className="font-body text-brand text-xs tracking-[0.3em] uppercase mb-4">
         04 / Contact

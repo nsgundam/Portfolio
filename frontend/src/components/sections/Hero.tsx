@@ -90,7 +90,7 @@ export default function Hero({ preloaderDone }: HeroProps) {
   return (
     <section
       id="hero"
-      className="relative flex min-h-screen flex-col items-center justify-center px-8 text-center"
+      className="relative flex min-h-screen flex-col items-center justify-center px-5 sm:px-8 text-center"
     >
       <div className="pointer-events-none absolute inset-0 -z-10" />
 

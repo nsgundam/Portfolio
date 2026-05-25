@@ -30,7 +30,14 @@
         margin: 0;
         padding: 0;
         box-sizing: border-box;
-        cursor: none;
+    }
+
+    /* Hide native cursor only on precise-pointer (mouse/trackpad) devices.
+       Touch / coarse-pointer devices keep their native cursor. */
+    @media (pointer: fine) {
+        * {
+            cursor: none;
+        }
     }
 
     html {

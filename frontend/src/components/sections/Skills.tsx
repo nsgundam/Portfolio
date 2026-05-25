@@ -42,7 +42,7 @@ export default function Skills({ preloaderDone }: SkillsProps) {
     <section
       id="skills"
       ref={sectionRef}
-      className="px-8 py-32 max-w-5xl mx-auto"
+      className="px-5 sm:px-8 py-20 md:py-32 max-w-5xl mx-auto"
     >
       <p className="font-body text-brand text-xs tracking-[0.3em] uppercase mb-4">
         03 / Skills
@@ -62,8 +62,8 @@ export default function Skills({ preloaderDone }: SkillsProps) {
         {SKILL_GROUPS.map((group) => (
           <div
             key={group.category}
-            className="grid grid-cols-3 gap-8 border-t border-border py-8
-                       last:border-b"
+            className="grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-8 border-t border-border py-6 sm:py-8
+                         last:border-b"
           >
             {/* Category */}
             <span className="font-body text-text-disabled text-xs tracking-widest uppercase pt-1">
@@ -71,7 +71,7 @@ export default function Skills({ preloaderDone }: SkillsProps) {
             </span>
 
             {/* Skills */}
-            <div className="col-span-2 flex flex-wrap gap-x-6 gap-y-2">
+            <div className="sm:col-span-2 flex flex-wrap gap-x-6 gap-y-2">
               {group.skills.map((skill) => (
                 <span
                   key={skill}

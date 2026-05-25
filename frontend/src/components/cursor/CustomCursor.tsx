@@ -10,6 +10,11 @@ export default function CustomCursor() {
   const ringRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Bail out entirely on touch / coarse-pointer devices.
+    // The CSS @media (pointer: fine) rule already restores the native cursor;
+    // this guard stops GSAP from running and keeps the elements invisible.
+    if (!window.matchMedia("(pointer: fine)").matches) return;
+
     const dot = dotRef.current!;
     const ring = ringRef.current!;
     const mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
@@ -22,7 +27,8 @@ export default function CustomCursor() {
     let isHovering = false;
 
     // ── Initial placement ────────────────────────────────────────────────
-    gsap.set([dot, ring], { x: mouse.x, y: mouse.y });
+    // Reveal elements (they start at opacity:0 to stay invisible on touch devices)
+    gsap.set([dot, ring], { x: mouse.x, y: mouse.y, opacity: 1 });
 
     // ── quickTo: declared with `let` so onLeave can re-create them ───────
     // onEnter's overwrite:true kills their backing tweens; a dead quickTo
@@ -152,15 +158,14 @@ export default function CustomCursor() {
 
   return (
     <>
-      {/* Dot — always visible, tracks exact mouse position instantly */}
+      {/* Dot — opacity:0 initial; GSAP sets it to 1 on pointer:fine devices only */}
       <div
         ref={dotRef}
         className="pointer-events-none fixed top-0 left-0 z-9999 -translate-x-1/2 -translate-y-1/2 size-1.5 rounded-full bg-white"
-        style={{ mixBlendMode: "difference" }}
+        style={{ mixBlendMode: "difference", opacity: 0 }}
       />
 
-      {/* Ring — lags behind + stretches in direction of travel.
-          Collapses into buttons (scale 0) and springs back on leave. */}
+      {/* Ring — same opacity:0 guard. Collapses into buttons; springs back on leave. */}
       <div
         ref={ringRef}
         className="pointer-events-none fixed top-0 left-0 z-9998 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
@@ -168,6 +173,7 @@ export default function CustomCursor() {
           width: `${RING_SIZE}px`,
           height: `${RING_SIZE}px`,
           mixBlendMode: "difference",
+          opacity: 0,
         }}
       />
     </>

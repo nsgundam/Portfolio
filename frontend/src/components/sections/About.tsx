@@ -14,7 +14,7 @@ export default function About({ preloaderDone }: AboutProps) {
     <section
       id="about"
       ref={sectionRef}
-      className="px-8 py-32 max-w-5xl mx-auto"
+      className="px-5 sm:px-8 py-20 md:py-32 max-w-5xl mx-auto"
     >
       {/* Section label */}
       <p

@@ -6,8 +6,8 @@
 ## 🔴 Current Status
 
 ```
-Sprint:   Sprint 3 — Animation Layer
-Step:     กำลังทำ Step 07 Blur Reveal Transition
+Sprint:   Sprint 4 — Polish & Responsive
+Step:     กำลังทำ Step 03 prefers-reduced-motion
 Blocker:  ไม่มี
 ```
 
@@ -28,7 +28,7 @@ Blocker:  ไม่มี
 - [x] About copy
 - [x] Projects (Exploding Kittens + TramTracking) พร้อม impact statement
 - [x] Skills inventory ครบทุก category
-- [x] Contact links (LinkedIn ยังค้างอยู่)
+- [x] Contact links (LinkedIn URL complete)
 
 ### Phase 3 — Design
 - [x] Color palette (Dark mode only)
@@ -84,20 +84,32 @@ Blocker:  ไม่มี
 | 08 | Magnetic Hover (CTA) | ⬜ TODO | |
 | 09 | Scroll Progress Line | ✅ DONE | ย้ายไปแนวนอนขอบล่าง |
 
+### Sprint 4 — Polish & Responsive
+
+| # | Task | Status | หมายเหตุ |
+|---|---|---|---|
+| 01 | Responsive (Mobile/Tablet) | ✅ DONE | Hamburger menu + full-screen overlay |
+| 02 | Disable cursor on touch | ✅ DONE | ใช้ pointer:fine media query |
+| 03 | prefers-reduced-motion | ⬜ TODO | |
+| 04 | Image optimization | ⬜ TODO | |
+| 05 | Lighthouse audit | ⬜ TODO | |
+| 06 | Meta tags + OG image | ⬜ TODO | |
+| 07 | LinkedIn URL | ✅ DONE | |
+
 > **Agent:** เมื่อทำ animation ใดเสร็จ ให้เปลี่ยน `⬜ TODO` → `✅ DONE` และเพิ่ม note ถ้ามี
 
 ---
 
 ## 📋 Upcoming
 
-### Sprint 4 — Polish & Responsive
-- [ ] Responsive (mobile 375px, tablet 768px)
-- [ ] Disable cursor บน touch device
+### Sprint 4 — Polish & Responsive (Moved to In Progress)
+- [x] Responsive (mobile 375px, tablet 768px)
+- [x] Disable cursor บน touch device
 - [ ] `prefers-reduced-motion` support
 - [ ] Image optimization (WebP)
 - [ ] Lighthouse audit (target > 90)
 - [ ] Meta tags + OG image
-- [ ] LinkedIn URL (ยังไม่ได้ใส่ — **must before launch**)
+- [x] LinkedIn URL (complete)
 
 ### Sprint 5 — Deployment
 - [ ] Build production (`npm run build`)
@@ -135,3 +147,4 @@ Format:
 | May 2026 | AI Agent | แก้บั๊ก Custom Cursor ring ค้างหลัง leave button: `overwrite:true` ใน onEnter kill backing tween ของ gsap.quickTo ทำให้ dead quickTo silent-fail — แก้โดยเปลี่ยน `const` → `let` และ re-create ringXTo/ringYTo ใหม่ใน onLeave |
 | May 2026 | AI Agent | Redesign Custom Cursor hover effect: เปลี่ยนจาก ring ขยายคลุม button (wrapping) → blackhole suck-in (ring หดหายเข้าปุ่ม ด้วย power3.in) + emerge spring-back ที่ cursor (back.out 2.2) เมื่อ leave — isHovering คง true ตลอด emerge เพื่อป้องกัน renderStretch fight กับ scale tween |
 | May 2026 | AI Agent | Refine Cursor suck-in: เปลี่ยนจาก ring บินไปกลาง button center ก่อน collapse → collapse in place ที่ตำแหน่ง cursor ทันที (ไม่ผ่านเนื้อหา button), เปลี่ยนเป็น power4.in + duration 0.35s (near-instant collapse ที่ปลาย) |
+| May 2026 | AI Agent | Responsive update: Navbar hamburger menu + full-screen overlay, disabled Custom Cursor on touch devices via pointer:fine media query, and adjusted section layouts (padding/grids) for mobile/tablet. |
