@@ -2,55 +2,42 @@ import React from 'react';
 
 const AmbientBackground: React.FC = () => {
   return (
-    <div className="fixed inset-0 -z-10 bg-bg-primary overflow-hidden pointer-events-none">
+    // คอนเทนเนอร์หลัก ล็อกให้อยู่หลังสุดตลอดเวลา
+    <div className="fixed inset-0 z-[-1] bg-[#0B090A] overflow-hidden">
       
-      {/* Layer 1: Base Grid (ตารางแนว Tech) 
-          ใช้ CSS linear-gradient สร้างเส้นตารางทั้งแนวตั้งและแนวนอน
+      {/* Layer 1: Glowing Orbs 
+        วงกลมสีแดงเบลอจัดๆ ใช้ค่า blur สูงสุด และ opacity ต่ำๆ
       */}
+      {/* Orb 1: มุมซ้ายบน */}
       <div 
-        className="absolute inset-0 opacity-[0.15]"
-        style={{
-          backgroundImage: `
-            linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px)
-          `,
-          backgroundSize: '40px 40px' // ปรับขนาดความกว้าง-ยาวของช่องตาราง
-        }}
+        className="absolute top-[-10%] left-[-10%] w-[40vw] h-[40vw] rounded-full bg-[#A4161A] opacity-[0.15] blur-[120px] animate-pulse"
+        style={{ animationDuration: '3s' }} 
+      />
+      
+      {/* Orb 2: มุมขวาล่าง */}
+      <div 
+        className="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-[#A4161A] opacity-[0.4] blur-[150px]"
       />
 
-      {/* Layer 2: Animated Scanline (เส้นแสงกวาดจากบนลงล่าง) 
-          ใช้สีแดง #A4161A ของคุณมาทำเป็นแสงจางๆ
+      {/* Layer 2: SVG Noise Overlay 
+        ใช้ SVG feTurbulence สร้าง Noise แบบ Native เบาเครื่องกว่าใช้รูปภาพ
       */}
-      <div className="absolute inset-0 opacity-40 pointer-events-none">
-        <div 
-          className="w-full h-[20vh] bg-linear-to-b from-transparent via-[#A4161A]/15 to-transparent"
-          style={{
-            animation: 'scan 5s linear infinite',
-          }}
-        />
+      <div className="absolute inset-0 opacity-[0.04] mix-blend-overlay pointer-events-none">
+        <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+          <filter id="noiseFilter">
+            <feTurbulence 
+              type="fractalNoise" 
+              baseFrequency="0.8" 
+              numOctaves="3" 
+              stitchTiles="stitch" 
+            />
+          </filter>
+          <rect width="100%" height="100%" filter="url(#noiseFilter)" />
+        </svg>
       </div>
-
-      {/* Layer 3: Vignette Effect (ขอบจอมืด)
-          ช่วยบีบโฟกัสสายตาให้เข้ามาที่ตรงกลางหน้าจอ และทำให้แสง Scanline ดูเนียนขึ้นตอนแตะขอบจอ
-      */}
-      <div 
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: 'radial-gradient(circle, transparent 50%, #0B090A 150%)'
-        }}
-      />
-
-      {/* สร้าง CSS Keyframes แบบฝังใน Component 
-          (ถ้าใช้งานจริง แนะนำให้ย้าย @keyframes ไปไว้ที่ไฟล์ globals.css ครับ จะคลีนกว่า)
-      */}
-      <style dangerouslySetInnerHTML={{__html: `
-        @keyframes scan {
-          0% { transform: translateY(-100vh); }
-          100% { transform: translateY(100vh); }
-        }
-      `}} />
 
     </div>
   );
 };
+
 export default AmbientBackground;

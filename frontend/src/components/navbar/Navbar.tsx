@@ -15,11 +15,11 @@ const NAV_LINKS = [
 
 // ── Tune these values ──────────────────────────────
 const THRESHOLD    = 30
-const GLASS_OPACITY= 0.08
-const BLUR         = '20px'
+const GLASS_OPACITY= 0.01
+const BLUR         = '19px'
 const SATURATE     = '200%'
 const LOGO_SCALE   = 0.85
-const TRANSITION   = '1.5s' // CSS duration
+const TRANSITION   = '3s' // CSS duration
 // ──────────────────────────────────────────────────
 
 export default function Navbar({ preloaderDone }: NavbarProps) {

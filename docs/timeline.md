@@ -82,7 +82,7 @@ Blocker:  ไม่มี
 | 06 | Rolling Text (Menu hover) | ✅ DONE | |
 | 07 | Blur Reveal Transition | ⬜ TODO | |
 | 08 | Magnetic Hover (CTA) | ⬜ TODO | |
-| 09 | Scroll Progress Line | ⬜ TODO | |
+| 09 | Scroll Progress Line | ✅ DONE | ย้ายไปแนวนอนขอบล่าง |
 
 > **Agent:** เมื่อทำ animation ใดเสร็จ ให้เปลี่ยน `⬜ TODO` → `✅ DONE` และเพิ่ม note ถ้ามี
 
@@ -130,3 +130,4 @@ Format:
 |---|---|---|
 | Apr 2026 | Planning Session | Phase 1-3 + Playground + Sprint 1-2 เสร็จสมบูรณ์ |
 | May 2026 | AI Agent | ตรวจสอบและอัปเดตสถานะ Step 01-04 (เสร็จแล้ว), เพิ่ม Playground values ใน design-system.md, ทำ Step 05 (Section Scroll Reveals) ใน Projects/Skills/Contact, และทำ Step 06 (Rolling Text) ใน Navbar |
+| May 2026 | AI Agent | แก้ไขบั๊ก Scroll Reveal + AmbientBackground, ปรับปรุง Hero Text Reveal ให้ต่อเนื่องจาก Preload, อัปเดต Navbar เป็น Liquid Glass Effect, ทำ Step 09 (Scroll Progress Line) แนวนอนล่างจอ และตั้งค่าบังคับ Scroll บนสุดเมื่อ Refresh |
