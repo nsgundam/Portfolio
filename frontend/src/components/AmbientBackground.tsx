@@ -9,12 +9,15 @@ const AmbientBackground: React.FC = () => {
       */}
       {/* Orb 1: มุมซ้ายบน */}
       <div
-        className="absolute top-[-10%] left-[-10%] w-[40vw] h-[40vw] rounded-full bg-[#A4161A] opacity-[0.15] blur-[120px] animate-pulse"
-        style={{ animationDuration: "3s" }}
+        className="absolute top-[-10%] left-[-10%] w-[40vw] h-[40vw] rounded-full opacity-[0.15] blur-[120px] animate-pulse"
+        style={{ backgroundColor: "var(--color-brand)", animationDuration: "3s" }}
       />
 
       {/* Orb 2: มุมขวาล่าง */}
-      <div className="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-[#A4161A] opacity-[0.4] blur-[150px]" />
+      <div
+        className="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] rounded-full opacity-[0.4] blur-[150px]"
+        style={{ backgroundColor: "var(--color-brand)" }}
+      />
 
       {/* Layer 2: SVG Noise Overlay
         ใช้ SVG feTurbulence สร้าง Noise แบบ Native เบาเครื่องกว่าใช้รูปภาพ

@@ -14,6 +14,16 @@ export default function Preloader({ onComplete }: PreloaderProps) {
     const overlay = overlayRef.current!;
     const counter = counterRef.current!;
 
+    const prefersReduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    if (prefersReduced) {
+      gsap.set(overlay, { display: "none" });
+      onComplete();
+      return;
+    }
+
     const tl = gsap.timeline();
 
     // 1. นับ 0 → 100
@@ -51,6 +61,7 @@ export default function Preloader({ onComplete }: PreloaderProps) {
     >
       <span
         ref={counterRef}
+        aria-live="polite"
         className="font-heading text-text-primary select-none"
         style={{ fontSize: "clamp(80px, 20vw, 280px)" }}
       >

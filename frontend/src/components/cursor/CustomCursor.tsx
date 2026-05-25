@@ -15,6 +15,12 @@ export default function CustomCursor() {
     // this guard stops GSAP from running and keeps the elements invisible.
     if (!window.matchMedia("(pointer: fine)").matches) return;
 
+    // Respect prefers-reduced-motion: disable the stretch effect only.
+    // Dot tracking, ring following, and hover animations remain active.
+    const prefersReduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
     const dot = dotRef.current!;
     const ring = ringRef.current!;
     const mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
@@ -58,6 +64,7 @@ export default function CustomCursor() {
     // Gated by isHovering so it never fights the enter/leave scale tweens.
     const renderStretch = () => {
       if (isHovering) return;
+      if (prefersReduced) return;
       const rx = gsap.getProperty(ring, "x") as number;
       const ry = gsap.getProperty(ring, "y") as number;
       const dx = mouse.x - rx;

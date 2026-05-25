@@ -9,12 +9,19 @@ import About from "./components/sections/About";
 import Projects from "./components/sections/Projects";
 import Skills from "./components/sections/Skills";
 import Contact from "./components/sections/Contact";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
+import { ScrollTrigger } from "./lib/gsap";
 
 export default function App() {
   useLenis();
   const [preloaderDone, setPreloaderDone] = useState(false);
   const handlePreloaderComplete = useCallback(() => setPreloaderDone(true), []);
+
+  useEffect(() => {
+    if (preloaderDone) {
+      ScrollTrigger.refresh();
+    }
+  }, [preloaderDone]);
 
   return (
     <>

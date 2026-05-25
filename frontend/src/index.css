@@ -93,3 +93,23 @@
 ::-webkit-scrollbar-thumb:hover {
     background: var(--color-brand);
 }
+
+/* Project card — featured ambient glow on hover */
+article:hover .featured-glow {
+    opacity: 0.8 !important;
+}
+
+/* Terminal cursor blink */
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0; }
+}
+.terminal-cursor {
+    animation: blink 0.8s step-start infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .terminal-cursor {
+        animation: none;
+    }
+}

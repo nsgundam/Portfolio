@@ -138,7 +138,7 @@ export default function Navbar({ preloaderDone }: NavbarProps) {
         role="dialog"
         aria-modal="true"
         aria-label="Navigation menu"
-        className="fixed inset-0 z-39 flex flex-col items-center justify-center md:hidden"
+        className="fixed inset-0 z-[39] flex flex-col items-center justify-center md:hidden"
         style={{
           backgroundColor: "var(--color-bg)",
           opacity: menuOpen ? 1 : 0,

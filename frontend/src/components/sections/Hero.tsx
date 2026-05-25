@@ -32,6 +32,24 @@ export default function Hero({ preloaderDone }: HeroProps) {
   useEffect(() => {
     if (!preloaderDone) return;
 
+    const prefersReduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    if (prefersReduced) {
+      gsap.set(labelRef.current, { opacity: 1, y: 0 });
+      gsap.set(nameRef.current!.querySelectorAll(".char"), {
+        opacity: 1,
+        filter: "blur(0px)",
+      });
+      gsap.set(taglineRef.current!.querySelectorAll(".word"), {
+        opacity: 1,
+        y: "0%",
+      });
+      gsap.set(scrollRef.current, { opacity: 1 });
+      return;
+    }
+
     const ctx = gsap.context(() => {
       const tl = gsap.timeline();
 
@@ -90,7 +108,7 @@ export default function Hero({ preloaderDone }: HeroProps) {
   return (
     <section
       id="hero"
-      className="relative flex min-h-screen flex-col items-center justify-center px-5 sm:px-8 text-center"
+      className="sticky top-0 z-0 flex h-screen flex-col items-center justify-center overflow-hidden px-5 text-center sm:px-8"
     >
       <div className="pointer-events-none absolute inset-0 -z-10" />
 
@@ -121,6 +139,7 @@ export default function Hero({ preloaderDone }: HeroProps) {
 
       <div
         ref={scrollRef}
+        aria-hidden="true"
         className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
       >
         <span className="font-body text-text-disabled text-xs tracking-widest uppercase">
