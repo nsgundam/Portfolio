@@ -1,76 +1,155 @@
-import { useScrollReveal } from "../../hooks/useScrollReveal";
-import { BlurReveal } from "../ui/BlurReveal";
+import { useEffect, useRef } from "react";
+import { gsap } from "../../lib/gsap";
+import { prefersReducedMotion } from "../../lib/motion";
 
 interface AboutProps {
   preloaderDone: boolean;
 }
 
 export default function About({ preloaderDone }: AboutProps) {
-  const sectionRef = useScrollReveal<HTMLElement>(preloaderDone);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLElement>(null);
+  const labelRef = useRef<HTMLParagraphElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const bioRef = useRef<HTMLDivElement>(null);
+  const infoRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!preloaderDone) return;
+    const wrapper = wrapperRef.current;
+    const panel = panelRef.current;
+    if (!wrapper || !panel) return;
+
+    const isReducedMotion = prefersReducedMotion();
+    const isMobile = window.matchMedia("(max-width: 767px)").matches;
+    const revealTargets = [
+      labelRef.current,
+      headingRef.current,
+      bioRef.current,
+      infoRef.current,
+    ];
+
+    const runReveal = () => {
+      gsap.timeline()
+        .fromTo(
+          labelRef.current,
+          { opacity: 0, filter: "blur(8px)" },
+          { opacity: 1, filter: "blur(0px)", duration: 0.6, ease: "power4.out" },
+        )
+        .fromTo(
+          headingRef.current,
+          { opacity: 0, filter: "blur(12px)", y: 20 },
+          { opacity: 1, filter: "blur(0px)", y: 0, duration: 0.8, ease: "power4.out" },
+          "-=0.3",
+        )
+        .fromTo(
+          bioRef.current,
+          { opacity: 0, filter: "blur(8px)" },
+          { opacity: 1, filter: "blur(0px)", duration: 0.8, ease: "power4.out" },
+          "-=0.4",
+        )
+        .fromTo(
+          infoRef.current,
+          { opacity: 0, y: 20 },
+          { opacity: 1, y: 0, duration: 0.6, ease: "power4.out" },
+          "-=0.5",
+        );
+    };
+
+    if (isReducedMotion) {
+      gsap.set(panel, { y: 0 });
+      gsap.set(revealTargets, { opacity: 1, y: 0, filter: "blur(0px)" });
+      return;
+    }
+
+    gsap.set(panel, { y: window.innerHeight });
+    gsap.set(revealTargets, { opacity: 0 });
+
+    let revealPlayed = false;
+    const ctx = gsap.context(() => {
+      gsap.to(panel, {
+        y: 0,
+        ease: "none",
+        scrollTrigger: {
+          trigger: wrapper,
+          start: "top bottom",
+          end: "top top",
+          scrub: isMobile ? 0.5 : true,
+          onUpdate: (self) => {
+            if (!revealPlayed && self.progress >= 0.995) {
+              revealPlayed = true;
+              runReveal();
+            }
+          },
+        },
+      });
+    }, wrapper);
+
+    return () => ctx.revert();
+  }, [preloaderDone]);
 
   return (
-    <section
-      id="about"
-      ref={sectionRef}
-      className="px-5 sm:px-8 py-20 md:py-32 max-w-5xl mx-auto"
-    >
-      <p
-        aria-hidden="true"
-        className="font-body text-brand text-xs tracking-[0.3em] uppercase mb-4"
+    <div ref={wrapperRef} className="about-wrapper relative z-10 ">
+      <section
+        id="about"
+        ref={panelRef}
+        className="about-panel min-h-screen rounded-t-[24px] border-t border-white/10 px-5 py-20 shadow-[0_-20px_60px_rgba(0,0,0,0.5)] backdrop-blur-md sm:px-8 md:py-32"
+        style={{ backgroundColor: "rgba(22, 26, 29, 0.92)" }}
       >
-        01 / About
-      </p>
+        <div className="mx-auto max-w-5xl">
+          <p
+            ref={labelRef}
+            aria-hidden="true"
+            className="mb-4 font-body text-xs tracking-[0.3em] text-brand uppercase"
+          >
+            01 / About
+          </p>
 
-      <BlurReveal enabled={preloaderDone} className="mb-16">
-        <h2
-          className="font-heading text-text-primary leading-tight"
-          style={{ fontSize: "clamp(32px, 4vw, 64px)" }}
-        >
-          Agile Technical
-          <br />
-          <span className="text-text-secondary">Explorer</span>
-        </h2>
-      </BlurReveal>
+          <h2
+            ref={headingRef}
+            className="mb-16 font-heading leading-tight text-text-primary"
+            style={{ fontSize: "clamp(32px, 4vw, 64px)" }}
+          >
+            Agile Technical
+            <br />
+            <span className="text-text-secondary">Explorer</span>
+          </h2>
 
-      <div className="grid grid-cols-1 gap-16 md:grid-cols-2">
-        <BlurReveal enabled={preloaderDone} delay={0.1}>
-          <div>
-            <p className="font-body text-text-secondary text-sm leading-relaxed">
-              I am a developer driven by curiosity and a problem-solving mindset.
-              In a fast-evolving tech landscape, I define myself as an{" "}
-              <span className="text-text-primary">Agile Technical Explorer</span>
-              —always ready to leverage new tools to transform ideas into reality.
-            </p>
-            <p className="font-body text-text-secondary text-sm leading-relaxed mt-4">
-              My focus lies in the intersection of efficient architecture and
-              sophisticated visuals, ensuring every project is built with purpose
-              and impact.
-            </p>
+          <div className="grid grid-cols-1 gap-16 md:grid-cols-2">
+            <div ref={bioRef}>
+              <p className="font-body text-sm leading-relaxed text-text-secondary">
+                I am a developer driven by curiosity and a problem-solving mindset.
+                In a fast-evolving tech landscape, I define myself as an{" "}
+                <span className="text-text-primary">Agile Technical Explorer</span>
+                —always ready to leverage new tools to transform ideas into reality.
+              </p>
+              <p className="mt-4 font-body text-sm leading-relaxed text-text-secondary">
+                My focus lies in the intersection of efficient architecture and
+                sophisticated visuals, ensuring every project is built with purpose
+                and impact.
+              </p>
+            </div>
+
+            <div ref={infoRef} className="flex flex-col gap-4">
+              {[
+                { label: "Based in", value: "Thailand" },
+                { label: "Focus", value: "Software Engineer / Full-Stack / AI" },
+                { label: "Available", value: "Internship 2026" },
+              ].map(({ label, value }) => (
+                <div
+                  key={label}
+                  className="flex justify-between border-b border-border pb-4"
+                >
+                  <span className="font-body text-xs tracking-widest text-text-disabled uppercase">
+                    {label}
+                  </span>
+                  <span className="font-body text-xs text-text-primary">{value}</span>
+                </div>
+              ))}
+            </div>
           </div>
-        </BlurReveal>
-
-        <BlurReveal enabled={preloaderDone} delay={0.2}>
-          <div className="flex flex-col gap-4">
-            {[
-              { label: "Based in", value: "Thailand" },
-              { label: "Focus", value: "Software Engineer / Full-Stack / AI" },
-              { label: "Available", value: "Internship 2026" },
-            ].map(({ label, value }) => (
-              <div
-                key={label}
-                className="flex justify-between border-b border-border pb-4"
-              >
-                <span className="font-body text-text-disabled text-xs tracking-widest uppercase">
-                  {label}
-                </span>
-                <span className="font-body text-text-primary text-xs">
-                  {value}
-                </span>
-              </div>
-            ))}
-          </div>
-        </BlurReveal>
-      </div>
-    </section>
+        </div>
+      </section>
+    </div>
   );
 }

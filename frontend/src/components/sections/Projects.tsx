@@ -12,9 +12,17 @@ const PROJECTS = [
     subtitle: "Exploding Kittens",
     description:
       "Real-time multiplayer card game. Scalable room system supporting up to 5 players with event-driven architecture and sub-100ms sync.",
-    stack: ["Next.js", "Socket.io", "PostgreSQL", "TypeScript"],
+    stack: [
+      "Next.js",
+      "Socket.io",
+      "PostgreSQL",
+      "TypeScript",
+      "Prisma ORM",
+      "GitHub Actions",
+    ],
     link: "https://exploding-kittens-beta.vercel.app/",
     type: "Live",
+    featured: true,
   },
   {
     number: "02",
@@ -22,9 +30,17 @@ const PROJECTS = [
     subtitle: "System",
     description:
       "Full-stack real-time mobility platform for campus shuttles. Sub-500ms location updates via WebSocket and PostGIS spatial indexing.",
-    stack: ["Next.js", "Socket.io", "PostGIS", "OpenStreetMap"],
+    stack: [
+      "Next.js",
+      "Socket.io",
+      "PostGIS",
+      "OpenStreetMap",
+      "PostgreSQL",
+      "TypeScript",
+    ],
     link: "https://github.com/nsgundam/TramTrackingSystem",
     type: "GitHub",
+    featured: false,
   },
 ];
 
@@ -52,18 +68,32 @@ export default function Projects({ preloaderDone }: ProjectsProps) {
         </h2>
       </BlurReveal>
 
-      <div className="flex flex-col gap-8">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-[2fr_1fr] lg:gap-6">
         {PROJECTS.map((project, index) => (
           <BlurReveal
             key={project.number}
             enabled={preloaderDone}
-            delay={index * 0.12}
+            delay={index * 0.15}
+            className={project.featured ? "md:col-span-2 lg:col-span-1" : ""}
           >
             <article
-              className="group border border-border bg-surface p-5 sm:p-8
-                         hover:border-brand rounded-2xl"
-              style={{ transition: "border-color 0.3s" }}
+              className="group relative overflow-hidden rounded-2xl border border-border bg-surface p-5 md:p-6 lg:p-8 hover:-translate-y-1 hover:border-brand hover:shadow-[0_20px_40px_rgba(0,0,0,0.3)]"
+              style={{
+                transition:
+                  "border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease",
+              }}
             >
+              {project.featured ? (
+                <div
+                  aria-hidden="true"
+                  className="featured-glow pointer-events-none absolute -inset-px opacity-0 transition-opacity duration-500"
+                  style={{
+                    background:
+                      "radial-gradient(circle at 50% 0%, rgba(164,22,26,0.15), transparent 60%)",
+                  }}
+                />
+              ) : null}
+
               <div className="flex items-start justify-between mb-6">
                 <span className="font-body text-text-disabled text-xs tracking-widest">
                   {project.number}
@@ -72,11 +102,14 @@ export default function Projects({ preloaderDone }: ProjectsProps) {
                   href={project.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-body text-text-secondary text-xs tracking-widest uppercase
-                             hover:text-brand"
+                  className="group/link font-body text-text-secondary text-xs tracking-widest uppercase hover:text-brand"
+                  aria-label={`${project.type} link for ${project.title} ${project.subtitle} (opens in new tab)`}
                   style={{ transition: "color 0.3s" }}
                 >
-                  {project.type} ↗
+                  {project.type}{" "}
+                  <span className="inline-block transition-transform duration-300 group-hover/link:translate-x-[3px] group-hover/link:translate-y-[-3px]">
+                    ↗
+                  </span>
                 </a>
               </div>
 
@@ -91,16 +124,16 @@ export default function Projects({ preloaderDone }: ProjectsProps) {
                 {project.description}
               </p>
 
-              <div className="flex flex-wrap gap-2">
+              <ul className="flex flex-wrap gap-2">
                 {project.stack.map((tech) => (
-                  <span
+                  <li
                     key={tech}
                     className="font-body text-text-disabled text-xs border border-border px-3 py-1"
                   >
                     {tech}
-                  </span>
+                  </li>
                 ))}
-              </div>
+              </ul>
             </article>
           </BlurReveal>
         ))}

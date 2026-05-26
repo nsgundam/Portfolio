@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { gsap, ScrollTrigger } from "../../lib/gsap";
 
 interface NavbarProps {
@@ -26,6 +26,9 @@ const EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
 export default function Navbar({ preloaderDone }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const mobileMenuRef = useRef<HTMLDivElement | null>(null);
+  const menuButtonRef = useRef<HTMLButtonElement | null>(null);
 
   // ── Glass pill ScrollTrigger ─────────────────────────────────────────
   useEffect(() => {
@@ -49,7 +52,53 @@ export default function Navbar({ preloaderDone }: NavbarProps) {
     return () => document.removeEventListener("keydown", onKey);
   }, []);
 
+  // ── Track mobile breakpoint for navbar morphology ─────────────────────
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 767px)");
+    const updateMobile = () => setIsMobile(media.matches);
+    updateMobile();
+    media.addEventListener("change", updateMobile);
+    return () => media.removeEventListener("change", updateMobile);
+  }, []);
+
+  // ── Focus trap for mobile dialog menu ─────────────────────────────────
+  useEffect(() => {
+    if (!menuOpen) return;
+    const container = mobileMenuRef.current;
+    if (!container) return;
+    const menuButtonEl = menuButtonRef.current;
+
+    const focusable = Array.from(
+      container.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      )
+    );
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    first?.focus();
+
+    const onTrap = (e: KeyboardEvent) => {
+      if (e.key !== "Tab" || focusable.length === 0) return;
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last?.focus();
+        return;
+      }
+      if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first?.focus();
+      }
+    };
+
+    document.addEventListener("keydown", onTrap);
+    return () => {
+      document.removeEventListener("keydown", onTrap);
+      menuButtonEl?.focus();
+    };
+  }, [menuOpen]);
+
   const closeMenu = () => setMenuOpen(false);
+  const applyScrolledPill = scrolled && !isMobile;
 
   return (
     <>
@@ -58,19 +107,19 @@ export default function Navbar({ preloaderDone }: NavbarProps) {
         id="navbar"
         className="fixed z-40 flex items-center justify-between px-6 sm:px-8 left-1/2 -translate-x-1/2"
         style={{
-          height: scrolled ? "60px" : "72px",
-          top: scrolled ? "1rem" : "0px",
-          width: scrolled ? "92%" : "100%",
-          maxWidth: scrolled ? "42rem" : "100%",
-          borderRadius: scrolled ? "1rem" : "0px",
-          backgroundColor: scrolled ? SCROLLED_BG : DEFAULT_BG,
-          backdropFilter: scrolled
+          height: applyScrolledPill ? "60px" : "72px",
+          top: applyScrolledPill ? "1rem" : "0px",
+          width: applyScrolledPill ? "92%" : "100%",
+          maxWidth: applyScrolledPill ? "42rem" : "100%",
+          borderRadius: applyScrolledPill ? "1rem" : "0px",
+          backgroundColor: applyScrolledPill ? SCROLLED_BG : DEFAULT_BG,
+          backdropFilter: applyScrolledPill
             ? `blur(${BLUR}) saturate(${SATURATE})`
             : "blur(0px) saturate(100%)",
-          boxShadow: scrolled
+          boxShadow: applyScrolledPill
             ? "inset 0 1px 1px rgba(255,255,255,0.12), inset 0 -1px 4px rgba(0,0,0,0.40), 0 8px 32px rgba(0,0,0,0.25)"
             : "inset 0 0 0 rgba(255,255,255,0), inset 0 0 0 rgba(0,0,0,0), 0 0 0 rgba(0,0,0,0)",
-          border: scrolled
+          border: applyScrolledPill
             ? "1px solid rgba(255, 255, 255, 0.08)"
             : "1px solid rgba(255, 255, 255, 0)",
           transition: `all ${DURATION} ${EASE}`,
@@ -82,7 +131,7 @@ export default function Navbar({ preloaderDone }: NavbarProps) {
           id="navbar-logo"
           className="font-heading text-text-primary text-lg tracking-wider origin-left"
           style={{
-            transform: scrolled ? `scale(${LOGO_SCALE})` : "scale(1)",
+            transform: applyScrolledPill ? `scale(${LOGO_SCALE})` : "scale(1)",
             transition: `transform ${DURATION} ${EASE}`,
           }}
         >
@@ -98,6 +147,7 @@ export default function Navbar({ preloaderDone }: NavbarProps) {
 
         {/* Mobile hamburger — hidden on desktop */}
         <button
+          ref={menuButtonRef}
           onClick={() => setMenuOpen((v) => !v)}
           className="flex md:hidden flex-col justify-between w-5 h-3.5 shrink-0"
           aria-label={menuOpen ? "Close menu" : "Open menu"}
@@ -133,11 +183,12 @@ export default function Navbar({ preloaderDone }: NavbarProps) {
       {/* ── Mobile full-screen menu ───────────────────────────────────── */}
       {/* z-[39]: below navbar (z-40) so the hamburger/X stays clickable */}
       <div
+        ref={mobileMenuRef}
         id="mobile-menu"
         role="dialog"
         aria-modal="true"
         aria-label="Navigation menu"
-        className="fixed inset-0 z-[39] flex flex-col items-center justify-center md:hidden"
+        className="fixed inset-0 z-39 flex flex-col items-center justify-center md:hidden"
         style={{
           backgroundColor: "var(--color-bg)",
           opacity: menuOpen ? 1 : 0,
