@@ -11,6 +11,7 @@ export default function About({ preloaderDone }: AboutProps) {
   const panelRef = useRef<HTMLElement>(null);
   const labelRef = useRef<HTMLParagraphElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const photoRef = useRef<HTMLDivElement>(null);
   const bioRef = useRef<HTMLDivElement>(null);
   const infoRef = useRef<HTMLDivElement>(null);
 
@@ -25,6 +26,7 @@ export default function About({ preloaderDone }: AboutProps) {
     const revealTargets = [
       labelRef.current,
       headingRef.current,
+      photoRef.current,
       bioRef.current,
       infoRef.current,
     ];
@@ -43,6 +45,12 @@ export default function About({ preloaderDone }: AboutProps) {
           "-=0.3",
         )
         .fromTo(
+          photoRef.current,
+          { opacity: 0, scale: 0.9, filter: "blur(12px)" },
+          { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.8, ease: "power4.out" },
+          "-=0.4",
+        )
+        .fromTo(
           bioRef.current,
           { opacity: 0, filter: "blur(8px)" },
           { opacity: 1, filter: "blur(0px)", duration: 0.8, ease: "power4.out" },
@@ -58,7 +66,7 @@ export default function About({ preloaderDone }: AboutProps) {
 
     if (isReducedMotion) {
       gsap.set(panel, { y: 0 });
-      gsap.set(revealTargets, { opacity: 1, y: 0, filter: "blur(0px)" });
+      gsap.set(revealTargets, { opacity: 1, y: 0, filter: "blur(0px)", scale: 1 });
       return;
     }
 
@@ -107,7 +115,7 @@ export default function About({ preloaderDone }: AboutProps) {
 
           <h2
             ref={headingRef}
-            className="mb-16 font-heading leading-tight text-text-primary"
+            className="mb-12 font-heading leading-tight text-text-primary"
             style={{ fontSize: "clamp(32px, 4vw, 64px)" }}
           >
             Agile Technical
@@ -115,30 +123,63 @@ export default function About({ preloaderDone }: AboutProps) {
             <span className="text-text-secondary">Explorer</span>
           </h2>
 
-          <div className="grid grid-cols-1 gap-16 md:grid-cols-2">
-            <div ref={bioRef}>
-              <p className="font-body text-sm leading-relaxed text-text-secondary">
+          <div className="grid grid-cols-1 gap-12 md:grid-cols-3 lg:gap-16">
+            {/* Personal Photo */}
+            <div
+              ref={photoRef}
+              className="flex justify-center md:col-span-1"
+            >
+              <div className="w-full max-w-xs aspect-square rounded-2xl overflow-hidden border border-border bg-gradient-to-br from-surface to-bg shadow-lg">
+                {/* Placeholder for personal photo */}
+                <div
+                  className="w-full h-full flex items-center justify-center"
+                  style={{
+                    background: `
+                      radial-gradient(circle at 30% 40%, rgba(164, 22, 26, 0.2) 0%, transparent 50%),
+                      linear-gradient(135deg, rgba(22, 26, 29, 1) 0%, rgba(11, 9, 10, 1) 100%)
+                    `,
+                  }}
+                >
+                  <div className="text-center">
+                    <div className="font-heading text-6xl text-text-secondary opacity-20 mb-2">
+                      📸
+                    </div>
+                    <p className="font-body text-xs text-text-secondary opacity-50">
+                      Personal Photo
+                    </p>
+                    <p className="font-body text-xs text-text-disabled opacity-30 mt-1">
+                      (Add your image to public/images/)
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Bio Text */}
+            <div ref={bioRef} className="md:col-span-1">
+              <p className="font-body text-sm leading-relaxed text-text-secondary mb-4">
                 I am a developer driven by curiosity and a problem-solving mindset.
                 In a fast-evolving tech landscape, I define myself as an{" "}
                 <span className="text-text-primary">Agile Technical Explorer</span>
                 —always ready to leverage new tools to transform ideas into reality.
               </p>
-              <p className="mt-4 font-body text-sm leading-relaxed text-text-secondary">
+              <p className="font-body text-sm leading-relaxed text-text-secondary">
                 My focus lies in the intersection of efficient architecture and
                 sophisticated visuals, ensuring every project is built with purpose
                 and impact.
               </p>
             </div>
 
-            <div ref={infoRef} className="flex flex-col gap-4">
+            {/* Info Grid */}
+            <div ref={infoRef} className="flex flex-col gap-4 md:col-span-1">
               {[
                 { label: "Based in", value: "Thailand" },
-                { label: "Focus", value: "Software Engineer / Full-Stack / AI" },
+                { label: "Focus", value: "Software Engineer / Full-Stack" },
                 { label: "Available", value: "Internship 2026" },
               ].map(({ label, value }) => (
                 <div
                   key={label}
-                  className="flex justify-between border-b border-border pb-4"
+                  className="flex flex-col gap-2 border-b border-border pb-4"
                 >
                   <span className="font-body text-xs tracking-widest text-text-disabled uppercase">
                     {label}

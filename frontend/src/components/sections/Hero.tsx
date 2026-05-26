@@ -4,12 +4,15 @@ import Splitting from "splitting";
 import { gsap } from "../../lib/gsap";
 import { prefersReducedMotion } from "../../lib/motion";
 import { MagneticButton } from "../ui/MagneticButton";
+import { ScrollIndicator } from "../ui/ScrollIndicator";
 
 interface HeroProps {
   preloaderDone: boolean;
 }
 
 export default function Hero({ preloaderDone }: HeroProps) {
+  const sectionRef = useRef<HTMLElement>(null);
+  const bgRef = useRef<HTMLDivElement>(null);
   const labelRef = useRef<HTMLParagraphElement>(null);
   const nameRef = useRef<HTMLHeadingElement>(null);
   const taglineRef = useRef<HTMLParagraphElement>(null);
@@ -97,18 +100,65 @@ export default function Hero({ preloaderDone }: HeroProps) {
           ease: "power4.out",
         },
         "-=2.5",
-      ); // Bring it in earlier since tagline is 3.5s long
+      );
     });
+
+    return () => ctx.revert();
+  }, [preloaderDone]);
+
+  // Background fade effect on scroll
+  useEffect(() => {
+    if (!preloaderDone) return;
+
+    const section = sectionRef.current;
+    const bg = bgRef.current;
+    if (!section || !bg) return;
+
+    if (prefersReducedMotion()) {
+      return;
+    }
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        bg,
+        { opacity: 1 },
+        {
+          opacity: 0.1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: section,
+            start: "top top",
+            end: "bottom top",
+            scrub: true,
+            onEnter: () => {
+              gsap.set(bg, { opacity: 1 });
+            },
+          },
+        },
+      );
+    }, section);
 
     return () => ctx.revert();
   }, [preloaderDone]);
 
   return (
     <section
+      ref={sectionRef}
       id="hero"
       className="sticky top-0 z-0 flex h-screen flex-col items-center justify-center overflow-hidden px-5 text-center sm:px-8"
     >
-      <div className="pointer-events-none absolute inset-0 -z-10" />
+      {/* Enhanced Background */}
+      <div
+        ref={bgRef}
+        className="pointer-events-none absolute inset-0 -z-10 opacity-100 transition-opacity duration-300"
+        style={{
+          background: `
+            radial-gradient(circle at 30% 50%, rgba(164, 22, 26, 0.15) 0%, transparent 50%),
+            radial-gradient(circle at 70% 30%, rgba(164, 22, 26, 0.08) 0%, transparent 40%),
+            linear-gradient(135deg, rgba(11, 9, 10, 1) 0%, rgba(22, 26, 29, 0.5) 100%)
+          `,
+        }}
+      />
 
       <span
         ref={labelRef}
@@ -144,10 +194,7 @@ export default function Hero({ preloaderDone }: HeroProps) {
           aria-label="Scroll to About section"
           className="flex flex-col items-center gap-2"
         >
-          <span className="font-body text-text-disabled text-xs tracking-widest uppercase">
-            Scroll
-          </span>
-          <div className="h-8 w-px bg-border" aria-hidden="true" />
+          <ScrollIndicator />
         </MagneticButton>
       </div>
     </section>
