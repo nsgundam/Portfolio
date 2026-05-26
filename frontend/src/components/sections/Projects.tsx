@@ -1,4 +1,5 @@
 import { useScrollReveal } from "../../hooks/useScrollReveal";
+import { BlurReveal } from "../ui/BlurReveal";
 
 interface ProjectsProps {
   preloaderDone: boolean;
@@ -29,7 +30,6 @@ const PROJECTS = [
 
 export default function Projects({ preloaderDone }: ProjectsProps) {
   const sectionRef = useScrollReveal<HTMLElement>(preloaderDone);
-  const headingRef = useScrollReveal<HTMLHeadingElement>(preloaderDone);
 
   return (
     <section
@@ -41,62 +41,68 @@ export default function Projects({ preloaderDone }: ProjectsProps) {
         02 / Projects
       </p>
 
-      <h2
-        ref={headingRef}
-        className="font-heading text-text-primary leading-tight mb-16"
-        style={{ fontSize: "clamp(32px, 4vw, 64px)" }}
-      >
-        Showcase
-        <br />
-        <span className="text-text-secondary">Of Projects</span>
-      </h2>
+      <BlurReveal enabled={preloaderDone} className="mb-16">
+        <h2
+          className="font-heading text-text-primary leading-tight"
+          style={{ fontSize: "clamp(32px, 4vw, 64px)" }}
+        >
+          Showcase
+          <br />
+          <span className="text-text-secondary">Of Projects</span>
+        </h2>
+      </BlurReveal>
 
       <div className="flex flex-col gap-8">
-        {PROJECTS.map((project) => (
-          <article
+        {PROJECTS.map((project, index) => (
+          <BlurReveal
             key={project.number}
-            className="group border border-border bg-surface p-5 sm:p-8
-                       hover:border-brand rounded-2xl"
-            style={{ transition: "border-color 0.3s" }}
+            enabled={preloaderDone}
+            delay={index * 0.12}
           >
-            <div className="flex items-start justify-between mb-6">
-              <span className="font-body text-text-disabled text-xs tracking-widest">
-                {project.number}
-              </span>
-              <a
-                href={project.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-body text-text-secondary text-xs tracking-widest uppercase
-                           hover:text-brand"
-                style={{ transition: "color 0.3s" }}
-              >
-                {project.type} ↗
-              </a>
-            </div>
-
-            <h3 className="font-heading text-text-primary text-2xl mb-1">
-              {project.title}
-            </h3>
-            <p className="font-heading text-text-secondary text-2xl mb-6">
-              {project.subtitle}
-            </p>
-
-            <p className="font-body text-text-secondary text-sm leading-relaxed mb-8 max-w-xl">
-              {project.description}
-            </p>
-
-            <div className="flex flex-wrap gap-2">
-              {project.stack.map((tech) => (
-                <span
-                  key={tech}
-                  className="font-body text-text-disabled text-xs border border-border px-3 py-1"
-                >
-                  {tech}
+            <article
+              className="group border border-border bg-surface p-5 sm:p-8
+                         hover:border-brand rounded-2xl"
+              style={{ transition: "border-color 0.3s" }}
+            >
+              <div className="flex items-start justify-between mb-6">
+                <span className="font-body text-text-disabled text-xs tracking-widest">
+                  {project.number}
                 </span>
-              ))}
-            </div>
-          </article>
+                <a
+                  href={project.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-body text-text-secondary text-xs tracking-widest uppercase
+                             hover:text-brand"
+                  style={{ transition: "color 0.3s" }}
+                >
+                  {project.type} ↗
+                </a>
+              </div>
+
+              <h3 className="font-heading text-text-primary text-2xl mb-1">
+                {project.title}
+              </h3>
+              <p className="font-heading text-text-secondary text-2xl mb-6">
+                {project.subtitle}
+              </p>
+
+              <p className="font-body text-text-secondary text-sm leading-relaxed mb-8 max-w-xl">
+                {project.description}
+              </p>
+
+              <div className="flex flex-wrap gap-2">
+                {project.stack.map((tech) => (
+                  <span
+                    key={tech}
+                    className="font-body text-text-disabled text-xs border border-border px-3 py-1"
+                  >
+                    {tech}
+                  </span>
+                ))}
+              </div>
+            </article>
+          </BlurReveal>
         ))}
       </div>
     </section>

@@ -1,19 +1,35 @@
 // src/components/ui/ScrollProgress.tsx
 import { useEffect, useRef } from "react"
 import { gsap } from "../../lib/gsap"
+import { prefersReducedMotion } from "../../lib/motion"
 
 export default function ScrollProgress() {
   const lineRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    gsap.to(lineRef.current, {
+    const line = lineRef.current
+    if (!line) return
+
+    if (prefersReducedMotion()) {
+      const update = () => {
+        const max =
+          document.documentElement.scrollHeight - window.innerHeight
+        const progress = max > 0 ? window.scrollY / max : 0
+        gsap.set(line, { scaleX: progress })
+      }
+      update()
+      window.addEventListener("scroll", update, { passive: true })
+      return () => window.removeEventListener("scroll", update)
+    }
+
+    gsap.to(line, {
       scaleX: 1,
       ease: "none",
       scrollTrigger: {
         trigger: document.body,
         start: "top top",
         end: "bottom bottom",
-        scrub: true,           // เชื่อมกับ scroll position โดยตรง
+        scrub: true,
       },
     })
   }, [])

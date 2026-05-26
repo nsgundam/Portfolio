@@ -1,4 +1,3 @@
-// src/components/navbar/Navbar.tsx
 import { useEffect, useState } from "react";
 import { gsap, ScrollTrigger } from "../../lib/gsap";
 
@@ -196,7 +195,7 @@ function NavLink({ label, href }: { label: string; href: string }) {
       className="group font-body text-text-secondary text-sm tracking-widest uppercase relative overflow-hidden block"
       style={{ height: "1.2em" }}
     >
-      <div className="flex flex-col transition-transform duration-300 ease-in-out group-hover:-translate-y-1/2">
+      <div className="nav-rolling-inner flex flex-col transition-transform duration-300 ease-in-out group-hover:-translate-y-1/2">
         <span className="h-[1.2em] flex items-center">{label}</span>
         <span className="h-[1.2em] flex items-center text-brand">{label}</span>
       </div>

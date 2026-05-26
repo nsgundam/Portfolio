@@ -1,4 +1,6 @@
 import { useScrollReveal } from "../../hooks/useScrollReveal";
+import { BlurReveal } from "../ui/BlurReveal";
+import { MagneticButton } from "../ui/MagneticButton";
 
 interface ContactProps {
   preloaderDone: boolean;
@@ -24,7 +26,6 @@ const LINKS = [
 
 export default function Contact({ preloaderDone }: ContactProps) {
   const sectionRef = useScrollReveal<HTMLElement>(preloaderDone);
-  const headingRef = useScrollReveal<HTMLHeadingElement>(preloaderDone);
 
   return (
     <section
@@ -36,29 +37,25 @@ export default function Contact({ preloaderDone }: ContactProps) {
         04 / Contact
       </p>
 
-      <h2
-        ref={headingRef}
-        className="font-heading text-text-primary leading-tight mb-16"
-        style={{ fontSize: "clamp(32px, 4vw, 64px)" }}
-      >
-        Let's
-        <br />
-        <span className="text-text-secondary">Connect</span>
-      </h2>
+      <BlurReveal enabled={preloaderDone} className="mb-16">
+        <h2
+          className="font-heading text-text-primary leading-tight"
+          style={{ fontSize: "clamp(32px, 4vw, 64px)" }}
+        >
+          Let's
+          <br />
+          <span className="text-text-secondary">Connect</span>
+        </h2>
+      </BlurReveal>
 
-      {/* Big CTA */}
-      <a
+      <MagneticButton
         href="mailto:snarunat.99@gmail.com"
         className="font-heading text-text-primary block mb-20 leading-none hover:text-brand"
-        style={{
-          fontSize: "clamp(28px, 4vw, 56px)",
-          transition: "color 0.3s",
-        }}
+        style={{ fontSize: "clamp(28px, 4vw, 56px)", transition: "color 0.3s" }}
       >
         snarunat.99@gmail.com
-      </a>
+      </MagneticButton>
 
-      {/* Links */}
       <div className="flex flex-col gap-0">
         {LINKS.map(({ label, value, href }) => (
           <a
@@ -83,7 +80,6 @@ export default function Contact({ preloaderDone }: ContactProps) {
         ))}
       </div>
 
-      {/* Footer */}
       <p className="font-body text-text-disabled text-xs mt-20 pb-8">
         © 2026 Narunat Sutthibut. Built with React + Vite.
       </p>

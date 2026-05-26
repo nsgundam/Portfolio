@@ -2,6 +2,8 @@
 import { useEffect, useRef } from "react";
 import Splitting from "splitting";
 import { gsap } from "../../lib/gsap";
+import { prefersReducedMotion } from "../../lib/motion";
+import { MagneticButton } from "../ui/MagneticButton";
 
 interface HeroProps {
   preloaderDone: boolean;
@@ -32,11 +34,7 @@ export default function Hero({ preloaderDone }: HeroProps) {
   useEffect(() => {
     if (!preloaderDone) return;
 
-    const prefersReduced = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-
-    if (prefersReduced) {
+    if (prefersReducedMotion()) {
       gsap.set(labelRef.current, { opacity: 1, y: 0 });
       gsap.set(nameRef.current!.querySelectorAll(".char"), {
         opacity: 1,
@@ -139,13 +137,18 @@ export default function Hero({ preloaderDone }: HeroProps) {
 
       <div
         ref={scrollRef}
-        aria-hidden="true"
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+        className="absolute bottom-10 left-1/2 -translate-x-1/2"
       >
-        <span className="font-body text-text-disabled text-xs tracking-widest uppercase">
-          Scroll
-        </span>
-        <div className="h-8 w-px bg-border" />
+        <MagneticButton
+          href="#about"
+          aria-label="Scroll to About section"
+          className="flex flex-col items-center gap-2"
+        >
+          <span className="font-body text-text-disabled text-xs tracking-widest uppercase">
+            Scroll
+          </span>
+          <div className="h-8 w-px bg-border" aria-hidden="true" />
+        </MagneticButton>
       </div>
     </section>
   );

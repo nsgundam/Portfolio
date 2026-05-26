@@ -1,4 +1,3 @@
-// src/components/ui/MagneticButton.tsx
 import { useMagneticHover } from "../../hooks/useMagneticHover";
 
 const STRENGTH = 0.3;
@@ -21,19 +20,17 @@ export function MagneticButton({
   style,
   "aria-label": ariaLabel,
 }: MagneticButtonProps) {
-  const ref = useMagneticHover<HTMLAnchorElement & HTMLButtonElement>(
-    STRENGTH,
-    TRIGGER_PAD,
-  );
+  const ref = useMagneticHover<HTMLElement>(STRENGTH, TRIGGER_PAD);
 
   if (href) {
     const isExternal = href.startsWith("http");
     return (
       <a
-        ref={ref}
+        ref={ref as React.RefObject<HTMLAnchorElement>}
         href={href}
-        target="_blank"
-        {...(isExternal ? { rel: "noopener noreferrer" } : {})}
+        {...(isExternal
+          ? { target: "_blank", rel: "noopener noreferrer" }
+          : {})}
         className={className}
         style={style}
         aria-label={ariaLabel}
@@ -44,7 +41,14 @@ export function MagneticButton({
   }
 
   return (
-    <button ref={ref} onClick={onClick} className={className} style={style} aria-label={ariaLabel}>
+    <button
+      ref={ref as React.RefObject<HTMLButtonElement>}
+      type="button"
+      onClick={onClick}
+      className={className}
+      style={style}
+      aria-label={ariaLabel}
+    >
       {children}
     </button>
   );

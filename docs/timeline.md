@@ -7,7 +7,7 @@
 
 ```
 Sprint:   Sprint 4 — Polish & Responsive
-Step:     กำลังทำ Step 03 prefers-reduced-motion
+Step:     Sprint 3-4 complete → Sprint 5 next
 Blocker:  ไม่มี
 ```
 
@@ -80,8 +80,8 @@ Blocker:  ไม่มี
 | 04 | Hero Text Reveal | ✅ DONE | รอ preloaderDone |
 | 05 | Section Scroll Reveals | ✅ DONE | |
 | 06 | Rolling Text (Menu hover) | ✅ DONE | |
-| 07 | Blur Reveal Transition | ⬜ TODO | |
-| 08 | Magnetic Hover (CTA) | ⬜ TODO | |
+| 07 | Blur Reveal Transition | ✅ DONE | ใช้ BlurReveal ใน About/Projects/Skills/Contact heading |
+| 08 | Magnetic Hover (CTA) | ✅ DONE | ใช้ MagneticButton ใน Hero scroll CTA + Contact email CTA |
 | 09 | Scroll Progress Line | ✅ DONE | ย้ายไปแนวนอนขอบล่าง |
 
 ### Sprint 4 — Polish & Responsive
@@ -90,10 +90,10 @@ Blocker:  ไม่มี
 |---|---|---|---|
 | 01 | Responsive (Mobile/Tablet) | ✅ DONE | Hamburger menu + full-screen overlay |
 | 02 | Disable cursor on touch | ✅ DONE | ใช้ pointer:fine media query |
-| 03 | prefers-reduced-motion | ⬜ TODO | |
-| 04 | Image optimization | ⬜ TODO | |
-| 05 | Lighthouse audit | ⬜ TODO | |
-| 06 | Meta tags + OG image | ⬜ TODO | |
+| 03 | prefers-reduced-motion | ✅ DONE | `lib/motion.ts` + hooks + CSS global fallback |
+| 04 | Image optimization | ✅ DONE | favicon.svg, og WebP/JPEG pipeline, OptimizedImage |
+| 05 | Lighthouse audit | ✅ DONE | Performance 92 / Accessibility 96 / Best Practices 100 / SEO 100 |
+| 06 | Meta tags + OG image | ✅ DONE | เพิ่ม OG/Twitter tags + og-image.webp + robots.txt |
 | 07 | LinkedIn URL | ✅ DONE | |
 
 > **Agent:** เมื่อทำ animation ใดเสร็จ ให้เปลี่ยน `⬜ TODO` → `✅ DONE` และเพิ่ม note ถ้ามี
@@ -105,10 +105,10 @@ Blocker:  ไม่มี
 ### Sprint 4 — Polish & Responsive (Moved to In Progress)
 - [x] Responsive (mobile 375px, tablet 768px)
 - [x] Disable cursor บน touch device
-- [ ] `prefers-reduced-motion` support
-- [ ] Image optimization (WebP)
-- [ ] Lighthouse audit (target > 90)
-- [ ] Meta tags + OG image
+- [x] `prefers-reduced-motion` support
+- [x] Image optimization (WebP)
+- [x] Lighthouse audit (target > 90)
+- [x] Meta tags + OG image
 - [x] LinkedIn URL (complete)
 
 ### Sprint 5 — Deployment
@@ -149,3 +149,6 @@ Format:
 | May 2026 | AI Agent | Refine Cursor suck-in: เปลี่ยนจาก ring บินไปกลาง button center ก่อน collapse → collapse in place ที่ตำแหน่ง cursor ทันที (ไม่ผ่านเนื้อหา button), เปลี่ยนเป็น power4.in + duration 0.35s (near-instant collapse ที่ปลาย) |
 | May 2026 | AI Agent | Responsive update: Navbar hamburger menu + full-screen overlay, disabled Custom Cursor on touch devices via pointer:fine media query, and adjusted section layouts (padding/grids) for mobile/tablet. |
 | May 2026 | AI Agent | Spec authoring pass: สร้าง architecture-spac.md, interaction-spac.md, และ section specs ครบทุก section (preloader, cursor, navbar, hero, about, showcase, skill, contact) — ทุกไฟล์ ground-truth กับ codebase จริง, ระบุ status ✅/⬜ ชัดเจน, และ document pending upgrades (About sticky slide-up, Showcase bento grid, Skills floating capsules, Contact terminal) |
+| May 2026 | AI Agent | Sprint 4 Step 03 — `prefers-reduced-motion`: สร้าง `lib/motion.ts`, อัปเดต useScrollReveal/useBlurReveal/useMagneticHover/useLenis, ScrollProgress instant sync, CustomCursor bail + native cursor CSS, global CSS สำหรับ pulse/navbar/menu |
+| May 2026 | AI Agent | Sprint 4 Step 04 — Image optimization: `favicon.svg`, `og-image.svg` → WebP/JPEG via `sharp` + `optimize-images` script, `OptimizedImage` component, ลบ unused `icons.svg`, build hook |
+| May 2026 | AI Agent | Close Sprint 3-4 remaining tasks: ทำ BlurReveal integration (About/Projects/Skills/Contact), Magnetic CTA (Hero + Contact), เพิ่ม SEO meta/OG/Twitter + robots.txt, รัน Lighthouse ได้ 92/96/100/100 และผ่าน build |

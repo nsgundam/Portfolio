@@ -1,6 +1,7 @@
 import { useEffect } from "react"
 import Lenis from "lenis"
 import { gsap, ScrollTrigger } from "../lib/gsap"
+import { prefersReducedMotion } from "../lib/motion"
 
 export function useLenis() {
   useEffect(() => {
@@ -9,6 +10,12 @@ export function useLenis() {
       window.history.scrollRestoration = "manual"
     }
     window.scrollTo(0, 0)
+
+    if (prefersReducedMotion()) {
+      const onScroll = () => ScrollTrigger.update()
+      window.addEventListener("scroll", onScroll, { passive: true })
+      return () => window.removeEventListener("scroll", onScroll)
+    }
 
     const lenis = new Lenis({
       duration: 1.2,

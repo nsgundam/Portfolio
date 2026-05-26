@@ -1,6 +1,7 @@
 // src/hooks/useBlurReveal.ts
 import { useEffect, useRef } from "react";
 import { gsap } from "../lib/gsap";
+import { prefersReducedMotion } from "../lib/motion";
 
 // enabled defaults to true so elements that don't need gating still work.
 // Pass preloaderDone from App to respect the "all ScrollTriggers wait for
@@ -21,6 +22,13 @@ export function useBlurReveal<T extends HTMLElement>(
     if (!el || !enabled) return;
 
     const blurStart = options?.blurStart ?? "20px";
+
+    if (prefersReducedMotion()) {
+      gsap.set(el, { opacity: 1, filter: "blur(0px)" });
+      return;
+    }
+
+    gsap.set(el, { opacity: 0, filter: `blur(${blurStart})` });
     const duration = options?.duration ?? 0.8;
     const delay = options?.delay ?? 0;
     const start = options?.start ?? "top 80%";

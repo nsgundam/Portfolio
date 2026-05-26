@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "../../lib/gsap";
+import { prefersReducedMotion } from "../../lib/motion";
 
 const RING_SIZE = 32; // default circle diameter (px)
 const FOLLOW_DURATION = 0.5; // how long ring takes to reach mouse
@@ -10,16 +11,14 @@ export default function CustomCursor() {
   const ringRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Bail out entirely on touch / coarse-pointer devices.
-    // The CSS @media (pointer: fine) rule already restores the native cursor;
-    // this guard stops GSAP from running and keeps the elements invisible.
-    if (!window.matchMedia("(pointer: fine)").matches) return;
-
-    // Respect prefers-reduced-motion: disable the stretch effect only.
-    // Dot tracking, ring following, and hover animations remain active.
-    const prefersReduced = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
+    // Bail out on touch / coarse-pointer, or when reduced motion is requested.
+    // CSS restores the native cursor in both cases; GSAP stays off.
+    if (
+      !window.matchMedia("(pointer: fine)").matches ||
+      prefersReducedMotion()
+    ) {
+      return;
+    }
 
     const dot = dotRef.current!;
     const ring = ringRef.current!;
@@ -64,7 +63,6 @@ export default function CustomCursor() {
     // Gated by isHovering so it never fights the enter/leave scale tweens.
     const renderStretch = () => {
       if (isHovering) return;
-      if (prefersReduced) return;
       const rx = gsap.getProperty(ring, "x") as number;
       const ry = gsap.getProperty(ring, "y") as number;
       const dx = mouse.x - rx;

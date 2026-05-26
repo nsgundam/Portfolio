@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "../../lib/gsap";
+import { prefersReducedMotion } from "../../lib/motion";
 
 interface PreloaderProps {
   onComplete: () => void; // callback บอก App ว่า exit เสร็จแล้ว
@@ -14,11 +15,7 @@ export default function Preloader({ onComplete }: PreloaderProps) {
     const overlay = overlayRef.current!;
     const counter = counterRef.current!;
 
-    const prefersReduced = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
-
-    if (prefersReduced) {
+    if (prefersReducedMotion()) {
       gsap.set(overlay, { display: "none" });
       onComplete();
       return;

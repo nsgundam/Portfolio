@@ -1,6 +1,7 @@
 // src/hooks/useMagneticHover.ts
 import { useEffect, useRef } from "react";
 import { gsap } from "../lib/gsap";
+import { prefersReducedMotion } from "../lib/motion";
 
 // Design tokens (interaction-spac.md §2)
 const DEFAULT_STRENGTH = 0.3;
@@ -20,12 +21,18 @@ const DEFAULT_TRIGGER_PAD = 40;
 export function useMagneticHover<T extends HTMLElement>(
   strength: number = DEFAULT_STRENGTH,
   triggerPad: number = DEFAULT_TRIGGER_PAD,
-): React.RefObject<T> {
+): React.RefObject<T | null> {
   const ref = useRef<T>(null);
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (
+      !el ||
+      prefersReducedMotion() ||
+      !window.matchMedia("(pointer: fine)").matches
+    ) {
+      return;
+    }
 
     // Track whether the cursor is currently inside the trigger zone so we
     // don't fire the snap-back tween on every frame when already outside.

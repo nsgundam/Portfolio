@@ -1,4 +1,5 @@
 import { useScrollReveal } from "../../hooks/useScrollReveal";
+import { BlurReveal } from "../ui/BlurReveal";
 
 interface SkillsProps {
   preloaderDone: boolean;
@@ -36,7 +37,6 @@ const SKILL_GROUPS = [
 
 export default function Skills({ preloaderDone }: SkillsProps) {
   const sectionRef = useScrollReveal<HTMLElement>(preloaderDone);
-  const headingRef = useScrollReveal<HTMLHeadingElement>(preloaderDone);
 
   return (
     <section
@@ -48,40 +48,44 @@ export default function Skills({ preloaderDone }: SkillsProps) {
         03 / Skills
       </p>
 
-      <h2
-        ref={headingRef}
-        className="font-heading text-text-primary leading-tight mb-16"
-        style={{ fontSize: "clamp(32px, 4vw, 64px)" }}
-      >
-        Tech
-        <br />
-        <span className="text-text-secondary">Stack</span>
-      </h2>
+      <BlurReveal enabled={preloaderDone} className="mb-16">
+        <h2
+          className="font-heading text-text-primary leading-tight"
+          style={{ fontSize: "clamp(32px, 4vw, 64px)" }}
+        >
+          Tech
+          <br />
+          <span className="text-text-secondary">Stack</span>
+        </h2>
+      </BlurReveal>
 
       <div className="flex flex-col">
-        {SKILL_GROUPS.map((group) => (
-          <div
+        {SKILL_GROUPS.map((group, index) => (
+          <BlurReveal
             key={group.category}
-            className="grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-8 border-t border-border py-6 sm:py-8
-                         last:border-b"
+            enabled={preloaderDone}
+            delay={index * 0.08}
           >
-            {/* Category */}
-            <span className="font-body text-text-disabled text-xs tracking-widest uppercase pt-1">
-              {group.category}
-            </span>
+            <div
+              className="grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-8 border-t border-border py-6 sm:py-8
+                           last:border-b"
+            >
+              <span className="font-body text-text-disabled text-xs tracking-widest uppercase pt-1">
+                {group.category}
+              </span>
 
-            {/* Skills */}
-            <div className="sm:col-span-2 flex flex-wrap gap-x-6 gap-y-2">
-              {group.skills.map((skill) => (
-                <span
-                  key={skill}
-                  className="font-body text-text-primary text-sm"
-                >
-                  {skill}
-                </span>
-              ))}
+              <div className="sm:col-span-2 flex flex-wrap gap-x-6 gap-y-2">
+                {group.skills.map((skill) => (
+                  <span
+                    key={skill}
+                    className="font-body text-text-primary text-sm"
+                  >
+                    {skill}
+                  </span>
+                ))}
+              </div>
             </div>
-          </div>
+          </BlurReveal>
         ))}
       </div>
     </section>

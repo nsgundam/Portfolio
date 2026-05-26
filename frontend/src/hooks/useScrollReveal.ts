@@ -1,6 +1,7 @@
 // src/hooks/useScrollReveal.ts
 import { useEffect, useRef } from "react";
 import { gsap } from "../lib/gsap";
+import { prefersReducedMotion } from "../lib/motion";
 
 // enabled defaults to true so sections that don't need gating still work.
 // Pass preloaderDone from App to respect the "all ScrollTriggers wait for
@@ -13,6 +14,11 @@ export function useScrollReveal<T extends HTMLElement>(
   useEffect(() => {
     const el = ref.current;
     if (!el || !enabled) return;
+
+    if (prefersReducedMotion()) {
+      gsap.set(el, { opacity: 1, y: 0 });
+      return;
+    }
 
     const ctx = gsap.context(() => {
       gsap.fromTo(

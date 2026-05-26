@@ -109,7 +109,31 @@ article:hover .featured-glow {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .terminal-cursor {
-        animation: none;
+    html {
+        scroll-behavior: auto;
+    }
+
+    /* Restore native cursor — custom cursor GSAP is disabled */
+    @media (pointer: fine) {
+        * {
+            cursor: auto;
+        }
+    }
+
+    .terminal-cursor,
+    .animate-pulse {
+        animation: none !important;
+    }
+
+    /* Navbar glass pill, mobile menu, rolling text */
+    #navbar,
+    #navbar-logo,
+    #mobile-menu,
+    #mobile-menu a,
+    #mobile-menu p,
+    .nav-rolling-inner {
+        transition-duration: 0.01ms !important;
+        transition-delay: 0ms !important;
+        transform: none !important;
     }
 }
