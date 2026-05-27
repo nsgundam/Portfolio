@@ -5,135 +5,148 @@
    These become utility classes: bg-brand, text-brand, etc.
 ─────────────────────────────────────────────────── */
 @theme {
-    /* Colors */
-    --color-bg: #0b090a;
-    --color-surface: #161a1d;
-    --color-border: #2a2d30;
-    --color-brand: #a4161a;
-    --color-accent: #a4161a;
-    --color-brand-light: #e5383b;
-    --color-text-primary: #f5f3f4;
-    --color-text-secondary: #6b7280;
-    --color-text-disabled: #3d4147;
+  /* Colors */
+  --color-bg: #0b090a;
+  --color-surface: #161a1d;
+  --color-border: #2a2d30;
+  --color-brand: #a4161a;
+  --color-accent: #a4161a;
+  --color-brand-light: #e5383b;
+  --color-text-primary: #f5f3f4;
+  --color-text-secondary: #6b7280;
+  --color-text-disabled: #3d4147;
 
-    /* NOTE: --color-brand and --color-accent are intentionally identical (#A4161A).
+  /* NOTE: --color-brand and --color-accent are intentionally identical (#A4161A).
      Brand = structural use (borders, labels). Accent = decorative use (cursor, highlights).
      They may diverge in future iterations. */
 
-    /* Fonts */
-    --font-heading: "Space Mono", monospace;
-    --font-body: "IBM Plex Mono", monospace;
+  /* Fonts */
+  --font-heading: "Space Mono", monospace;
+  --font-body: "IBM Plex Mono", monospace;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-expo: cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-depth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  /* Depth scale — for 3D entrances */
+  --scale-far: 0.85; /* elements entering from "far away" */
+  --scale-near: 1.05; /* elements overshooting slightly */
 }
 
 @layer base {
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 
-    /* Hide native cursor only on precise-pointer (mouse/trackpad) devices.
+  /* Hide native cursor only on precise-pointer (mouse/trackpad) devices.
        Touch / coarse-pointer devices keep their native cursor. */
-    @media (pointer: fine) {
-        * {
-            cursor: none;
-        }
+  @media (pointer: fine) {
+    * {
+      cursor: none;
     }
+  }
 
-    html {
-        background-color: var(--color-bg);
-        color: var(--color-text-primary);
-        font-family: var(--font-body);
+  html {
+    background-color: var(--color-bg);
+    color: var(--color-text-primary);
+    font-family: var(--font-body);
 
-        scroll-behavior: smooth;
-        line-height: 1.6;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-    }
+    scroll-behavior: smooth;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-    body {
-        overflow-x: hidden;
-    }
+  body {
+    overflow-x: hidden;
+  }
 
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        font-family: var(--font-heading);
-        line-height: 1.2;
-    }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+    line-height: 1.2;
+  }
 
-    a {
-        color: inherit;
-        text-decoration: none;
-    }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
 
-    .word {
-        overflow: hidden;
-        display: inline-flex;
-    }
+  .word {
+    overflow: hidden;
+    display: inline-flex;
+  }
 
-    .char {
-        display: inline-block;
-    }
+  .char {
+    display: inline-block;
+  }
 }
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-    width: 4px;
+  width: 4px;
 }
 ::-webkit-scrollbar-track {
-    background: var(--color-bg);
+  background: var(--color-bg);
 }
 ::-webkit-scrollbar-thumb {
-    background: var(--color-border);
-    border-radius: 4px;
+  background: var(--color-border);
+  border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--color-brand);
+  background: var(--color-brand);
 }
 
 /* Project card — featured ambient glow on hover */
 article:hover .featured-glow {
-    opacity: 0.8 !important;
+  opacity: 0.8 !important;
 }
 
 /* Terminal cursor blink */
 @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50%       { opacity: 0; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
 }
 .terminal-cursor {
-    animation: blink 0.8s step-start infinite;
+  animation: blink 0.8s step-start infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
-    html {
-        scroll-behavior: auto;
-    }
+  html {
+    scroll-behavior: auto;
+  }
 
-    /* Restore native cursor — custom cursor GSAP is disabled */
-    @media (pointer: fine) {
-        * {
-            cursor: auto;
-        }
+  /* Restore native cursor — custom cursor GSAP is disabled */
+  @media (pointer: fine) {
+    * {
+      cursor: auto;
     }
+  }
 
-    .terminal-cursor,
-    .animate-pulse {
-        animation: none !important;
-    }
+  .terminal-cursor,
+  .animate-pulse {
+    animation: none !important;
+  }
 
-    /* Navbar glass pill, mobile menu, rolling text */
-    #navbar,
-    #navbar-logo,
-    #mobile-menu,
-    #mobile-menu a,
-    #mobile-menu p,
-    .nav-rolling-inner {
-        transition-duration: 0.01ms !important;
-        transition-delay: 0ms !important;
-        transform: none !important;
-    }
+  /* Navbar glass pill, mobile menu, rolling text */
+  #navbar,
+  #navbar-logo,
+  #mobile-menu,
+  #mobile-menu a,
+  #mobile-menu p,
+  .nav-rolling-inner {
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+    transform: none !important;
+  }
 }

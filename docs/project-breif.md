@@ -1,5 +1,6 @@
 # Portfolio Website — Project Brief
-> Last updated: April 2026 | Deadline: 31 May 2026
+> Refactored: May 2026 — lukebaffait.fr reference
+> Deadline: 31 May 2026
 
 ---
 
@@ -7,10 +8,10 @@
 
 | Field | Value |
 |---|---|
-| สาย | Software Engineer / Fullstack Web Developer / PM |
-| Target | Startup |
+| Role | Software Engineer / Fullstack Web Developer |
+| Target | Startup (early to growth stage) |
 | Deadline | 31 May 2026 |
-| อยากให้ผู้ดูรู้สึก | น่าตื่นเต้น และดูน่าค้นหา |
+| Feel | Editorial, spatial, quietly confident — not loud, not generic |
 
 ---
 
@@ -19,153 +20,256 @@
 | Field | Value |
 |---|---|
 | Tagline | Aiming high, building what matters. |
-| Personality tone | Sophisticated & Tech-savvy |
-| จุดแข็ง | Agile Technical Explorer |
-| Color scheme | Dark mode only |
+| Tone | Sophisticated, editorial, technically honest |
+| Strength | Real-time systems + full-stack depth |
+| Identity line | "I build real-time systems that feel good to use." |
+| Color scheme | Dark mode only — warm palette (see design-system.md) |
+
+### The Identity Line
+
+This single sentence covers both projects and explains your value to a startup:
+- "Real-time systems" → proves engineering depth (Socket.io, WebSocket, PostGIS)
+- "Feel good to use" → proves you care about the product, not just the code
+- Short enough to be a mental anchor after the recruiter closes the tab
+
+Use it implicitly in the About copy. Never state it literally on the page.
 
 ---
 
-## 03 Tech Stack
+## 03 Tech Stack (unchanged)
 
-| Layer | Technology | หมายเหตุ |
-|---|---|---|
-| Framework | React + Vite | CSR, Single Page |
-| Language | TypeScript | บังคับ — ช่วย impress interviewer |
-| Animation หลัก | GSAP + ScrollTrigger | ตัวหลักของทุก animation |
-| Smooth Scroll | Lenis | คู่หูของ GSAP ScrollTrigger |
-| Text Animation | Splitting.js | แยก chars/words สำหรับ reveal |
-| Styling | Tailwind CSS | utility-first, เร็วดี |
-| Code Quality | ESLint + Prettier | แสดง professionalism |
-| Deployment | Vercel | ฟรี + เร็ว + ง่าย |
+| Layer | Technology |
+|---|---|
+| Framework | React + Vite (CSR, Single Page) |
+| Language | TypeScript |
+| Animation | GSAP + ScrollTrigger |
+| Smooth Scroll | Lenis |
+| Text Animation | Splitting.js |
+| Styling | Tailwind CSS v4 |
+| Code Quality | ESLint + Prettier |
+| Deployment | Vercel |
 
 ---
 
-## 04 Effect List
+## 04 Effect List (updated priority)
 
-| # | Effect | Priority | หมายเหตุ |
+| # | Effect | Priority | Status |
 |---|---|---|---|
-| 01 | Cinematic Preloader (0→100) | 🔴 Must Have | Signature ของเว็บ — ขาดไม่ได้ |
-| 02 | Custom Cursor + Spring Physics | 🔴 Must Have | เสริม Sophisticated tone |
-| 03 | Glassmorphism Navbar | 🔴 Must Have | ใช้งานตลอด — code ร่วมกับ Logo Tuck |
-| 04 | Scroll-Triggered Logo Tuck | 🔴 Must Have | เชื่อมกับ Navbar — ทำพร้อมกันได้เลย |
-| 05 | Rolling Text on Hover (Menu) | 🟡 Should Have | Nav interaction ดูมี class — GSAP ล้วน |
-| 06 | Blur Reveal Transition | 🟡 Should Have | Section transition ดู cinematic |
-| 07 | Magnetic Hover on CTA | 🟡 Should Have | ใส่เฉพาะปุ่มหลัก ไม่ต้องทุก element |
-| 08 | Scroll Progress Line | 🟢 Nice to Have | Visual indicator ช่วย UX — เพิ่มทีหลังได้ |
+| 01 | Cinematic Preloader (0→100) | 🔴 Must Have | ✅ Done — keep as-is |
+| 02 | Custom Cursor + Spring Physics | 🔴 Must Have | ✅ Done — keep as-is |
+| 03 | Glassmorphism Navbar + Logo Tuck | 🔴 Must Have | ✅ Done — warm tint update only |
+| 04 | Aggressive ScrollTrigger Pinning | 🔴 Must Have | ⬜ New — replaces flat scrolling |
+| 05 | Depth Reveal Entrance (scale+blur) | 🔴 Must Have | ⬜ New — replaces flat fade+slide |
+| 06 | Rolling Text on Hover (Menu) | 🟡 Should Have | ✅ Done — keep as-is |
+| 07 | Magnetic Hover on CTA | 🟡 Should Have | ✅ Done — keep as-is |
+| 08 | Scroll Progress Line | 🟢 Nice to Have | ✅ Done — color update only |
 
 ---
 
-## 05 Hero Section
+## 05 Hero Section (updated)
 
 | Field | Value |
 |---|---|
 | Name | Narunat Sutthibut |
+| Label | Full Stack Developer |
 | Tagline | Aiming high, building what matters. |
-| Background | Subtle gradient (dark — กำหนดใน Phase 3) |
+| Font | Cormorant Garamond — name in Display XL, italic on "matters" |
+| Motion | Chars bloom from blur on scroll pin, tagline reveals from overflow |
+
+### Typography Direction
+
+The name should feel like a title card from a film — huge, warm cream,
+Cormorant Garamond 300 weight. "Sutthibut" can break to a second line if needed.
+The label above ("Full Stack Developer") stays Space Mono, label size, gold accent.
 
 ---
 
-## 06 About
+## 06 About (rewritten copy + new layout)
 
-I am a developer driven by curiosity and a problem-solving mindset. In a fast-evolving tech landscape, I define myself as an **Agile Technical Explorer**—always ready to leverage new tools to transform ideas into reality. My focus lies in the intersection of efficient architecture and sophisticated visuals, ensuring every project is built with purpose and impact.
+### Layout Change
 
----
+Remove the three-column grid entirely.
+New structure: full-width, generous vertical rhythm, no boxes.
 
-## 07 Projects
+```
+[section number]          ← label font, accent color, top left
+[giant heading]           ← display font, huge, warm cream
+[bio — 3 short lines]     ← body font, text-secondary, wide measure
+[facts — horizontal row]  ← label font, no borders, just spacing
+```
 
-### ▸ Boardgame Online — Exploding Kittens
+### Copy (final — use exactly this)
 
-**Description**
-A high-stakes, real-time adaptation of the strategic card game. This project focuses on translating intricate game mechanics—such as turn-based logic, card effects, and deck randomization—into a synchronized digital environment. Designed with an event-driven architecture, the platform provides a responsive, low-latency experience that brings the tension of the physical game to the web. Developed a scalable room management system supporting multi-player concurrency (up to 5 players per room) with automated seating and real-time deck shuffling.
+**Heading (split across two lines, italic on second):**
+```
+Agile Technical
+Explorer.
+```
 
-**Tech Stack**
-| Layer | Technology |
-|---|---|
-| Frontend | Next.js, Tailwind CSS, Framer Motion, TypeScript |
-| Backend | Node.js, Express, Socket.io, PostgreSQL, Prisma ORM, TypeScript |
-| CI/CD | GitHub Actions |
-| Hosting | Vercel, Render, Neon |
+**Bio (three lines, each reveals separately on scroll):**
+```
+Line 1: A developer driven by curiosity and a problem-solving mindset.
+Line 2: I work at the intersection of efficient architecture and sophisticated
+        visuals — building systems that are both fast and intentional.
+Line 3: Currently in my final year, looking for a team that moves with purpose.
+```
 
-**Link:** https://exploding-kittens-beta.vercel.app/
+**Facts row:**
+```
+Based in        → Thailand
+Focus           → Full-Stack / Real-Time
+Status          → Final year, available 2026
+```
 
----
-
-### ▸ TramTracking System
-
-**Description**
-A high-performance, full-stack real-time mobility solution designed for campus shuttle services. The platform bridges the gap between commuters and fleet operators by providing a live-map interface with sub-second synchronization. By leveraging geospatial indexing, the system ensures pinpoint accuracy in vehicle tracking and route management. Achieved sub-500ms latency for location updates using WebSocket (Socket.io) optimization, ensuring a seamless "live" experience for users.
-
-**Tech Stack**
-| Layer | Technology |
-|---|---|
-| Frontend | Next.js, Tailwind CSS, OpenStreetMap API, TypeScript |
-| Backend | Node.js, Express, Socket.io, PostgreSQL, Prisma ORM, TypeScript |
-| Hosting | Vercel, Render, Neon |
-
-**Link:** https://github.com/nsgundam/TramTrackingSystem
-
----
-
-## 08 Skills
-
-### Frontend Development
-- **Core:** React, Next.js (App Router), TypeScript
-- **Styling:** Tailwind CSS, CSS Modules, Responsive Design
-- **Motion & Interaction:** GSAP (ScrollTrigger), Lenis Smooth Scroll, Framer Motion
-- **State Management:** Context API
-
-### Backend Development
-- **Runtime & Framework:** Node.js, Express
-- **Real-time:** Socket.io
-- **API Design:** RESTful API Development
-- **Integration:** IoT Connectivity
-
-### Database & Storage
-- **Relational:** PostgreSQL, MySQL
-- **NoSQL:** MongoDB
-- **Spatial:** PostGIS (Spatial queries & tracking)
-
-### Infrastructure & Tools
-- **Deployment:** Vercel, Docker, Neon, Render
-- **Version Control:** Git, GitHub
-- **Process:** Agile/Scrum, Sprint Planning
-- **API Testing:** Postman
+### What Was Removed
+- Photo placeholder — removed entirely
+- Three-column grid — removed
+- All bordered boxes — removed
+- "Agile Technical Explorer" repeated twice — now appears once, huge
 
 ---
 
-## 09 Contact
+## 07 Projects (full rewrite — full-screen stacked)
 
-| Channel | Value |
-|---|---|
-| Email | snarunat.99@gmail.com |
-| GitHub | github.com/nsgundam |
-| LinkedIn | — |
-| Fastwork | fastwork.co/user/narunat.su99 |
+### Layout: Full-Screen Stacked Pinned Panels
+
+Each project is a full viewport height section.
+ScrollTrigger pins it. The content reveals on a scrubbed timeline.
+After the content is fully revealed, the pin releases and the next project arrives.
+
+### Project 01 — Boardgame Online: Exploding Kittens
+
+**One-liner (strong, use exactly this):**
+> A synchronized card game engine — real-time state, five players, zero conflicts.
+
+**Description (body copy under the one-liner):**
+> Built event-driven game logic that coordinates turn management, deck randomization,
+> and card effects across concurrent players via Socket.io. Scalable room architecture
+> handles up to five players with automated seating and sub-100ms sync.
+
+**Stack:** Next.js · TypeScript · Socket.io · PostgreSQL · Prisma ORM · GitHub Actions
+
+**Link:** https://exploding-kittens-beta.vercel.app/ (Live)
 
 ---
 
-## 10 Reference Websites
+### Project 02 — TramTracking System
 
-### jasminegunarto.com
-- **Cinematic Preloader** — - Visual Structure: หน้าจอโหลดดิ้งไม่ใช่แค่สัญลักษณ์หมุนๆ ธรรมดา แต่ทำหน้าที่เป็นเหมือน "ม่าน" ที่ปิดบังการเตรียมความพร้อมของรูปภาพและฟอนต์ด้านหลัง มักจะมาพร้อมกับตัวเลขเปอร์เซ็นต์ที่วิ่งขึ้น หรือ Typography ที่เรียบหรู
-- Motion Dynamics: เมื่อโหลดข้อมูลเสร็จสิ้น หน้าโหลดดิ้งจะไม่หายไปแบบกระตุก แต่จะใช้การสไลด์ออก (เช่น เลื่อนขึ้นด้านบน หรือแยกออกเป็นสองฝั่ง) หรือเฟดหายไปอย่างนุ่มนวล เพื่อส่งไม้ต่อให้ Animation ของหน้า Hero เริ่มทำงานต่อได้อย่างลื่นไหล
-- Seamless Pre-loader to Hero Reveal
-- **Magnetic Hover Effect** — ปุ่มดูดเมาส์เข้าหาตัวเอง
+**One-liner (strong, use exactly this):**
+> A live campus mobility platform — sub-500ms location sync, pinpoint accuracy.
 
-### studionamma.com
-- **Font reference:** Poiret One, Comfortaa, Montserrat, Vina Sans
+**Description (body copy under the one-liner):**
+> Full-stack real-time tracking for campus shuttle fleets. WebSocket optimization
+> achieves sub-500ms location updates. PostGIS spatial indexing delivers
+> precise route management and geofencing at scale.
 
-### moncy.dev
-- **Scroll Progress Line** — Vertical timeline ที่ความสูงเส้นผันแปรตาม scroll position (GSAP ScrollTrigger)
+**Stack:** Next.js · TypeScript · Socket.io · PostgreSQL · PostGIS · OpenStreetMap
 
-### nareshkhatri.site
-- **Custom Cursor** — The cursor utilizes spring physics or easing. While the central dot tracks the exact mouse coordinates instantly, the outer ring follows with a slight mathematical delay, creating a buttery, fluid trailing effect.
+**Link:** https://github.com/nsgundam/TramTrackingSystem (GitHub)
 
-### new.studio
-- **Glassmorphism Navbar** — `rgba(255,255,255,0.05)` + `backdrop-blur` ให้ความรู้สึกกระจกฝ้าเวลา scroll
-- **Blur Reveal Transition** — element โผล่จากเบลอจัดๆ แล้วค่อยๆ focus คล้ายเลนส์กล้อง
+---
 
-### donmolinico.es
-- **Rolling Text Hover** — ตัวอักษรเลื่อนขึ้นแล้วสลับคำเหมือน Split-flap display
-- **Scroll-Triggered Logo Tuck** — โลโก้ใหญ่ตอนแรก พอ scroll เกิน 50px จะ scale down เข้า Navbar
-  - `GSAP ScrollTrigger` + `.is-scrolled` class + `Flexbox` align + Glassmorphism bg
+### Project Panel Layout (per project)
+
+```
+[project number]       ← "01" or "02", label font, text-disabled, top left
+[project name]         ← display font, Display LG, warm cream
+[one-liner]            ← body font, Body LG, text-secondary, italic feel
+[stack tags]           ← label font, pill borders, stagger in
+[link]                 ← label font, accent color, arrow →
+```
+
+---
+
+## 08 Skills (rewritten — two honest groups)
+
+### Layout Change
+
+Remove all floating cards.
+Two sections, side by side on desktop, stacked on mobile.
+No borders. No boxes. Just type and spacing.
+
+### Group 1: "Shipped with"
+
+Technologies that appear in production projects or serious builds.
+These have earned the right to be listed.
+
+```
+Next.js · React · TypeScript
+Node.js · Express · Socket.io
+PostgreSQL · PostGIS · Prisma ORM
+Tailwind CSS · GSAP · Lenis
+Git · GitHub Actions · Vercel
+```
+
+### Group 2: "Learning with"
+
+Technologies actively being learned or used in non-production contexts.
+The honesty here is a feature, not a weakness.
+
+```
+Docker · MongoDB · MySQL
+Agile / Scrum · Postman
+```
+
+### Typography
+
+- Group labels: `font-label`, `text-disabled`, `uppercase`, `tracking-widest`
+- "Shipped with" / "Learning with": `font-display`, Display MD, `text-secondary`
+- Skill names: `font-body`, Body SM, `text-primary` — comma-separated inline, not pill tags
+
+---
+
+## 09 Contact (unchanged structure, updated copy)
+
+### Copy Changes
+
+**Heading:**
+```
+Let's
+Connect.
+```
+("Connect" in italic Cormorant Garamond)
+
+**Email CTA (MagneticButton — keep):**
+```
+snarunat.99@gmail.com
+```
+
+**Terminal — keep the structure, update boot lines:**
+```
+> Initializing contact protocol...
+> Loading communication channels...
+> Status: READY
+
+> Available channels:
+```
+
+**Links:**
+```
+email    → snarunat.99@gmail.com
+github   → github.com/nsgundam
+linkedin → linkedin.com/in/narunat-sutthibut
+```
+
+### Footer
+```
+© 2026 Narunat Sutthibut. Built with React + GSAP.
+```
+
+---
+
+## 10 Reference
+
+### Primary Reference
+**lukebaffait.fr**
+- Depth reveals: scale + blur entrance, not just fade+slide
+- Pinned scroll: each section earns its content before releasing
+- Typography: serif display + mono body = editorial tension
+- Accent: near-invisible, discovered not announced
+- Density: sparse — space is the design, not decoration
+
+### Supporting References
+- **jasminegunarto.com** — cinematic preloader (already implemented)
+- **donmolinico.es** — rolling text hover, logo tuck (already implemented)
+- **new.studio** — glassmorphism nav, blur reveal (already implemented)
