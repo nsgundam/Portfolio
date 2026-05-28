@@ -128,7 +128,7 @@ export default function About({ preloaderDone }: AboutProps) {
               ref={photoRef}
               className="flex justify-center md:col-span-1"
             >
-              <div className="w-full max-w-xs aspect-square rounded-2xl overflow-hidden border border-border bg-gradient-to-br from-surface to-bg shadow-lg">
+              <div className="w-full max-w-xs aspect-square rounded-2xl overflow-hidden border border-border bg-linear-to-br from-surface to-bg shadow-lg">
                 {/* Placeholder for personal photo */}
                 <div
                   className="w-full h-full flex items-center justify-center"

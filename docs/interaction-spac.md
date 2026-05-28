@@ -231,7 +231,7 @@ Progress 80% → 100%: scroll indicator fades in { opacity:0→1 }
   </h2>
 
   {/* Bio — three lines, each a separate ref for stagger */}
-  <div ref={bioRef} className="max-w-[640px] space-y-4 mb-20">
+  <div ref={bioRef} className="max-w-160 space-y-4 mb-20">
     <p ref={line1Ref} className="font-body text-text-secondary text-base leading-[1.8]">
       A developer driven by curiosity and a problem-solving mindset.
     </p>
@@ -326,7 +326,7 @@ Each ProjectPanel is a full-screen section with its own `usePinnedTimeline(+=700
 
   {/* Description — body copy */}
   <p ref={descRef} className="font-body text-text-secondary text-sm
-    leading-[1.8] max-w-[560px] mb-10">
+    leading-[1.8] max-w-140 mb-10">
     {project.description}
   </p>
 
@@ -411,7 +411,7 @@ It echoes lukebaffait's use of typographic scale for spatial tension.
   </h2>
 
   {/* Two groups — side by side on desktop */}
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-16 max-w-[800px]">
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-16 max-w-200">
 
     {/* Group 1 */}
     <div ref={group1Ref}>

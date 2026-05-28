@@ -106,7 +106,7 @@ export function ProjectWindow({
       {/* Content Area */}
       <div
         ref={contentRef}
-        className="p-8 md:p-12 min-h-96 bg-gradient-to-br from-surface to-bg"
+        className="p-8 md:p-12 min-h-96 bg-linear-to-br from-surface to-bg"
         key={`project-${activeIndex}`}
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

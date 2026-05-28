@@ -111,7 +111,7 @@ export default function Contact({ preloaderDone }: ContactProps) {
 
       <div
         ref={terminalRef}
-        className="w-full max-w-[640px] overflow-hidden rounded-xl border border-border bg-[rgba(22,26,29,0.8)] font-body"
+        className="w-full max-w-160 overflow-hidden rounded-xl border border-border bg-[rgba(22,26,29,0.8)] font-body"
       >
         <div className="relative flex h-9 items-center border-b border-border bg-white/5 px-4">
           <div className="flex items-center gap-1.5">
