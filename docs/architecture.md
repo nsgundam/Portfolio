@@ -2,7 +2,7 @@
 >
 > Refactored: May 2026 — lukebaffait.fr reference
 > Agent: Read this before touching any file structure or creating new components.
-> Cross-reference: design-system.md, interaction-spac.md, Agent.md
+> Cross-reference: design-motion.md, decision.md
 
 ---
 
