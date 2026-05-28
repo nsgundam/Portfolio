@@ -37,6 +37,14 @@ Agents should follow the distilled system prompt, coding style, and prohibitions
 * Do not sacrifice usability for animation.
 * Do not produce placeholder-quality code.
 
+## Required Reading
+
+Before touching any file, read these in order:
+
+1. `docs/architecture.md` — folder structure + state
+2. `docs/design-motion.md` — visual + animation specs
+3. `docs/decision.md` — do not reverse these decisions
+
 ---
 
 Use `cd frontend && npm run dev` for live development and keep the dev server running when iterating.
