@@ -101,21 +101,20 @@ export default function About({ preloaderDone }: AboutProps) {
       <section
         id="about"
         ref={panelRef}
-        className="about-panel min-h-screen rounded-t-[24px] border-t border-white/10 px-5 py-20 shadow-[0_-20px_60px_rgba(0,0,0,0.5)] backdrop-blur-md sm:px-8 md:py-32"
-        style={{ backgroundColor: "rgba(22, 26, 29, 0.92)" }}
+        className="about-panel min-h-screen px-5 py-20 shadow-[0_-20px_60px_rgba(0,0,0,0.5)] backdrop-blur-md sm:px-8 md:py-32"
       >
         <div className="mx-auto max-w-5xl">
           <p
             ref={labelRef}
             aria-hidden="true"
-            className="mb-4 font-body text-xs tracking-[0.3em] text-brand uppercase"
+            className="mb-4 font-body text-xs tracking-[0.3em] text-accent uppercase"
           >
             01 / About
           </p>
 
           <h2
             ref={headingRef}
-            className="mb-12 font-heading leading-tight text-text-primary"
+            className="mb-12 font-display leading-tight text-text-primary"
             style={{ fontSize: "clamp(32px, 4vw, 64px)" }}
           >
             Agile Technical
@@ -141,7 +140,7 @@ export default function About({ preloaderDone }: AboutProps) {
                   }}
                 >
                   <div className="text-center">
-                    <div className="font-heading text-6xl text-text-secondary opacity-20 mb-2">
+                    <div className="font-display text-6xl text-text-secondary opacity-20 mb-2">
                       📸
                     </div>
                     <p className="font-body text-xs text-text-secondary opacity-50">
