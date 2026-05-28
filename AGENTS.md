@@ -23,9 +23,9 @@ Agents should follow the distilled system prompt, coding style, and prohibitions
 * Dark mode only.
 * Keep component-specific styles co-located with the component when practical.
 * Responsive behavior:
-  - Desktop: full cinematic experience
-  - Tablet: reduced complexity
-  - Mobile: simplified motion and no excessive hover/custom cursor behavior
+  * Desktop: full cinematic experience
+  * Tablet: reduced complexity
+  * Mobile: simplified motion and no excessive hover/custom cursor behavior
 
 ## Prohibitions
 

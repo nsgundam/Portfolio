@@ -1,4 +1,5 @@
 # Portfolio Website — Project Brief
+>
 > Refactored: May 2026 — lukebaffait.fr reference
 > Deadline: 31 May 2026
 
@@ -7,7 +8,7 @@
 ## 01 Project Goal
 
 | Field | Value |
-|---|---|
+| --- | --- |
 | Role | Software Engineer / Fullstack Web Developer |
 | Target | Startup (early to growth stage) |
 | Deadline | 31 May 2026 |
@@ -18,7 +19,7 @@
 ## 02 Personal Identity
 
 | Field | Value |
-|---|---|
+| --- | --- |
 | Tagline | Aiming high, building what matters. |
 | Tone | Sophisticated, editorial, technically honest |
 | Strength | Real-time systems + full-stack depth |
@@ -28,6 +29,7 @@
 ### The Identity Line
 
 This single sentence covers both projects and explains your value to a startup:
+
 - "Real-time systems" → proves engineering depth (Socket.io, WebSocket, PostGIS)
 - "Feel good to use" → proves you care about the product, not just the code
 - Short enough to be a mental anchor after the recruiter closes the tab
@@ -39,7 +41,7 @@ Use it implicitly in the About copy. Never state it literally on the page.
 ## 03 Tech Stack (unchanged)
 
 | Layer | Technology |
-|---|---|
+| --- | --- |
 | Framework | React + Vite (CSR, Single Page) |
 | Language | TypeScript |
 | Animation | GSAP + ScrollTrigger |
@@ -54,7 +56,7 @@ Use it implicitly in the About copy. Never state it literally on the page.
 ## 04 Effect List (updated priority)
 
 | # | Effect | Priority | Status |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | 01 | Cinematic Preloader (0→100) | 🔴 Must Have | ✅ Done — keep as-is |
 | 02 | Custom Cursor + Spring Physics | 🔴 Must Have | ✅ Done — keep as-is |
 | 03 | Glassmorphism Navbar + Logo Tuck | 🔴 Must Have | ✅ Done — warm tint update only |
@@ -69,7 +71,7 @@ Use it implicitly in the About copy. Never state it literally on the page.
 ## 05 Hero Section (updated)
 
 | Field | Value |
-|---|---|
+| --- | --- |
 | Name | Narunat Sutthibut |
 | Label | Full Stack Developer |
 | Tagline | Aiming high, building what matters. |
@@ -91,7 +93,7 @@ The label above ("Full Stack Developer") stays Space Mono, label size, gold acce
 Remove the three-column grid entirely.
 New structure: full-width, generous vertical rhythm, no boxes.
 
-```
+```bash
 [section number]          ← label font, accent color, top left
 [giant heading]           ← display font, huge, warm cream
 [bio — 3 short lines]     ← body font, text-secondary, wide measure
@@ -101,13 +103,15 @@ New structure: full-width, generous vertical rhythm, no boxes.
 ### Copy (final — use exactly this)
 
 **Heading (split across two lines, italic on second):**
-```
+
+```bash
 Agile Technical
 Explorer.
 ```
 
 **Bio (three lines, each reveals separately on scroll):**
-```
+
+```bash
 Line 1: A developer driven by curiosity and a problem-solving mindset.
 Line 2: I work at the intersection of efficient architecture and sophisticated
         visuals — building systems that are both fast and intentional.
@@ -115,13 +119,15 @@ Line 3: Currently in my final year, looking for a team that moves with purpose.
 ```
 
 **Facts row:**
-```
+
+```bsah
 Based in        → Thailand
 Focus           → Full-Stack / Real-Time
 Status          → Final year, available 2026
 ```
 
 ### What Was Removed
+
 - Photo placeholder — removed entirely
 - Three-column grid — removed
 - All bordered boxes — removed
@@ -149,7 +155,7 @@ After the content is fully revealed, the pin releases and the next project arriv
 
 **Stack:** Next.js · TypeScript · Socket.io · PostgreSQL · Prisma ORM · GitHub Actions
 
-**Link:** https://exploding-kittens-beta.vercel.app/ (Live)
+**Link:** <https://exploding-kittens-beta.vercel.app/> (Live)
 
 ---
 
@@ -165,13 +171,13 @@ After the content is fully revealed, the pin releases and the next project arriv
 
 **Stack:** Next.js · TypeScript · Socket.io · PostgreSQL · PostGIS · OpenStreetMap
 
-**Link:** https://github.com/nsgundam/TramTrackingSystem (GitHub)
+**Link:** <https://github.com/nsgundam/TramTrackingSystem> (GitHub)
 
 ---
 
 ### Project Panel Layout (per project)
 
-```
+```bash
 [project number]       ← "01" or "02", label font, text-disabled, top left
 [project name]         ← display font, Display LG, warm cream
 [one-liner]            ← body font, Body LG, text-secondary, italic feel
@@ -181,20 +187,14 @@ After the content is fully revealed, the pin releases and the next project arriv
 
 ---
 
-## 08 Skills (rewritten — two honest groups)
-
-### Layout Change
-
-Remove all floating cards.
-Two sections, side by side on desktop, stacked on mobile.
-No borders. No boxes. Just type and spacing.
+## 08 Skills
 
 ### Group 1: "Shipped with"
 
 Technologies that appear in production projects or serious builds.
 These have earned the right to be listed.
 
-```
+```bash
 Next.js · React · TypeScript
 Node.js · Express · Socket.io
 PostgreSQL · PostGIS · Prisma ORM
@@ -207,7 +207,7 @@ Git · GitHub Actions · Vercel
 Technologies actively being learned or used in non-production contexts.
 The honesty here is a feature, not a weakness.
 
-```
+```bash
 Docker · MongoDB · MySQL
 Agile / Scrum · Postman
 ```
@@ -225,19 +225,23 @@ Agile / Scrum · Postman
 ### Copy Changes
 
 **Heading:**
-```
+
+```bash
 Let's
 Connect.
 ```
+
 ("Connect" in italic Cormorant Garamond)
 
 **Email CTA (MagneticButton — keep):**
-```
+
+```bash
 snarunat.99@gmail.com
 ```
 
 **Terminal — keep the structure, update boot lines:**
-```
+
+```bash
 > Initializing contact protocol...
 > Loading communication channels...
 > Status: READY
@@ -246,14 +250,16 @@ snarunat.99@gmail.com
 ```
 
 **Links:**
-```
+
+```bash
 email    → snarunat.99@gmail.com
 github   → github.com/nsgundam
 linkedin → linkedin.com/in/narunat-sutthibut
 ```
 
 ### Footer
-```
+
+```bash
 © 2026 Narunat Sutthibut. Built with React + GSAP.
 ```
 
@@ -262,7 +268,9 @@ linkedin → linkedin.com/in/narunat-sutthibut
 ## 10 Reference
 
 ### Primary Reference
-**lukebaffait.fr**
+
+**lukebaffait.fr
+
 - Depth reveals: scale + blur entrance, not just fade+slide
 - Pinned scroll: each section earns its content before releasing
 - Typography: serif display + mono body = editorial tension
@@ -270,6 +278,7 @@ linkedin → linkedin.com/in/narunat-sutthibut
 - Density: sparse — space is the design, not decoration
 
 ### Supporting References
+
 - **jasminegunarto.com** — cinematic preloader (already implemented)
 - **donmolinico.es** — rolling text hover, logo tuck (already implemented)
 - **new.studio** — glassmorphism nav, blur reveal (already implemented)

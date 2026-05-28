@@ -1,4 +1,5 @@
 # Architecture Spec
+>
 > Refactored: May 2026 — lukebaffait.fr reference
 > Agent: Read this before touching any file structure or creating new components.
 > Cross-reference: design-system.md, interaction-spac.md, Agent.md
@@ -11,10 +12,10 @@ Single Page Application. No routing. All navigation via anchor links (`#section-
 Cinematic pinned scroll storytelling — each section is a locked cinematic moment
 before the scroll releases. The user earns every section.
 
-**Stack (locked — do not change):**
+**Stack:**
 
 | Layer | Package | Version |
-|---|---|---|
+| --- | --- | --- |
 | Framework | React + Vite | React 19, Vite 8 |
 | Language | TypeScript | ~6.0 |
 | Animation | GSAP + ScrollTrigger | ^3.15 |
@@ -27,7 +28,7 @@ before the scroll releases. The user earns every section.
 
 ## 2. Folder Structure
 
-```
+```bash
 frontend/
   src/
     components/
@@ -77,7 +78,7 @@ frontend/
 
 ## 3. Component Hierarchy (unchanged structure)
 
-```
+```bash
 App
 ├── AmbientBackground          (fixed, z-[-1])
 ├── CustomCursor               (fixed, z-[9999])
@@ -95,7 +96,7 @@ App
 **Z-index ladder (do not break this order):**
 
 | Layer | z-index | Component |
-|---|---|---|
+| --- | --- | --- |
 | Background | -1 | AmbientBackground |
 | Sections | 0–9 | All `<section>` elements |
 | About panel | 10 | About panel covering Hero |
@@ -211,7 +212,7 @@ No ScrollTrigger initializes before `preloaderDone === true`.
 There are now two animation modes. Know which to use:
 
 | Mode | When | How |
-|---|---|---|
+| --- | --- | --- |
 | **Pinned + Scrub** | Hero, About, Projects, Skills — major sections | `usePinnedTimeline` + timeline added to scrubbed ST |
 | **Triggered + Time** | Contact terminal lines, navbar, preloader, cursor | `useEffect` with `gsap.timeline()`, not scrubbed |
 
@@ -267,6 +268,7 @@ This keeps Projects.tsx clean — it's just a container and data source.
 ```
 
 Tailwind utility classes this creates:
+
 - `font-display` → Cormorant Garamond (headings)
 - `font-label` → Space Mono (was `font-heading` — rename this)
 - `font-body` → IBM Plex Mono (unchanged)
@@ -280,7 +282,7 @@ EXCEPT section H1/H2 which should now use `font-display`.
 ## 10. Responsive Breakpoints (unchanged)
 
 | Breakpoint | Behavior |
-|---|---|
+| --- | --- |
 | Mobile `< 768px` | Disable custom cursor, simplify hover, hamburger nav, single-column |
 | Tablet `768px–1024px` | Reduce pin distances by 40%, 2-column grids |
 | Desktop `> 1024px` | Full cinematic experience, all pins active |

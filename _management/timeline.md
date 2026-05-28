@@ -1,11 +1,12 @@
 # Timeline & Progress Tracker
+>
 > อัปเดตไฟล์นี้ทุกครั้งหลังทำงานเสร็จในแต่ละ step
 
 ---
 
 ## 🔴 Current Status
 
-```
+```bash
 Sprint:   Sprint 5 — Refactor (lukebaffait.fr style)
 Step:     Docs rewritten → ready to implement
 Blocker:  ไม่มี
@@ -36,6 +37,7 @@ Blocker:  ไม่มี
 ## 🔄 Sprint 5 — Refactor (Do in this exact order)
 
 ### Step 00 — Docs (✅ Done)
+
 - [x] `design-system.md` — warm palette, Cormorant Garamond, depth tokens
 - [x] `project-brief.md` — identity line, copy rewrites, section specs
 - [x] `architecture-spac.md` — pinning architecture, new hook, font rename
@@ -44,6 +46,7 @@ Blocker:  ไม่มี
 - [x] `timeline.md` — this file
 
 ### Step 01 — Tokens + Font (do first, unblocks everything)
+
 - [ ] Update `index.css` @theme — warm palette, new font tokens
 - [ ] Update `index.html` — add Cormorant Garamond to Google Fonts import
 - [ ] Global find-replace: `font-heading` → `font-label` or `font-display`
@@ -52,17 +55,20 @@ Blocker:  ไม่มี
 - [ ] Verify Preloader still looks correct with new tokens
 
 ### Step 02 — New Hook + lib/gsap export
+
 - [ ] Build `src/hooks/usePinnedTimeline.ts` (see interaction-spac.md §6)
 - [ ] Add `depthReveal()` and `depthRevealVars` export to `src/lib/gsap.ts`
 - [ ] Test hook in isolation before attaching to any section
 
 ### Step 03 — Hero pin upgrade
+
 - [ ] Replace time-based useEffect timeline → `usePinnedTimeline(preloaderDone, { pinDistance: 500 })`
 - [ ] Update name typography: `font-display`, Display XL, fontWeight 300
 - [ ] Add italic to "matters." in tagline
 - [ ] Verify preloader → hero handoff still works
 
 ### Step 04 — About full rewrite
+
 - [ ] Remove three-column grid
 - [ ] Remove photo placeholder
 - [ ] New DOM structure (see interaction-spac.md §8)
@@ -71,6 +77,7 @@ Blocker:  ไม่มี
 - [ ] Wire scrubbed timeline: label → heading depthReveal → lines → facts
 
 ### Step 05 — Projects full rewrite
+
 - [ ] Delete `ProjectWindow.tsx`
 - [ ] Create `src/components/ui/ProjectPanel.tsx` (see interaction-spac.md §9)
 - [ ] Rewrite `Projects.tsx` as container that maps → `<ProjectPanel>`
@@ -79,18 +86,21 @@ Blocker:  ไม่มี
 - [ ] Add giant faint background number
 
 ### Step 06 — Skills rewrite
+
 - [ ] Remove SKILL_GROUPS + FLOAT_CONFIG + floating animation
 - [ ] New two-group layout (see interaction-spac.md §10)
 - [ ] Attach `usePinnedTimeline(preloaderDone, { pinDistance: 400 })`
 - [ ] Wire scrubbed timeline: heading → group 1 → group 2
 
 ### Step 07 — Contact font update
+
 - [ ] Heading → `font-display`
 - [ ] Email CTA → `font-display` weight 300
 - [ ] "Connect." italic
 - [ ] Terminal + boot lines: unchanged
 
 ### Step 08 — Full QA pass
+
 - [ ] Scroll through every section on desktop — check pin timing feels right
 - [ ] Check mobile (375px) — pins should feel shorter, not claustrophobic
 - [ ] Check tablet (768px) — pin distances 60% of desktop
@@ -115,7 +125,7 @@ Blocker:  ไม่มี
 ## ⚠️ Breaking Changes in Sprint 5
 
 | File | Change | Risk |
-|---|---|---|
+| --- | --- | --- |
 | `index.css` | All color tokens change | High — affects every component |
 | `index.html` | New font import | Low |
 | All components | `font-heading` → `font-label` or `font-display` | Medium — find-replace |
@@ -133,7 +143,7 @@ Work through each section in order and it will come back together.
 ## 📝 Agent Update Log
 
 | Date | Session | งานที่ทำ |
-|---|---|---|
+| --- | --- | --- |
 | Apr 2026 | Planning | Phase 1–3 + Playground + Sprint 1–2 เสร็จสมบูรณ์ |
 | May 2026 | AI Agent | Sprint 3–4 animations, responsive, prefers-reduced-motion, image optimization, SEO |
 | May 2026 | AI Agent | Full section alignment pass, terminal UI, sticky About, full-screen project panels |
