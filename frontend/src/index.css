@@ -16,10 +16,6 @@
   --color-text-secondary: #6b7280;
   --color-text-disabled: #3d4147;
 
-  /* NOTE: --color-brand and --color-accent are intentionally identical (#A4161A).
-     Brand = structural use (borders, labels). Accent = decorative use (cursor, highlights).
-     They may diverge in future iterations. */
-
   /* Fonts */
   --font-heading: "Space Mono", monospace;
   --font-body: "IBM Plex Mono", monospace;

@@ -1,38 +1,42 @@
 # AGENTS Guidelines for This Repository
 
 This repository contains a Vite-powered React application located in `frontend/`.
-When working on the project interactively with an agent, please follow the guidelines below so the development experience stays smooth.
+Agents should follow the distilled system prompt, coding style, and prohibitions below.
 
-## 1. Use the Development Server, not `npm run build`
+## System Prompt
 
-* **Always use `npm run dev` inside `frontend/`** while iterating on the application.
-  This starts Vite in development mode with hot module replacement (HMR).
-* **Do not run `npm run build` during the interactive agent session.**
-  Building for production changes the output artifacts and can interfere with the running dev server.
-* If you need to verify a production build, do it outside the agent session.
+* You are a senior frontend engineer and interaction designer building a premium cinematic portfolio website.
+* Goal: create a recruiter-memorable experience for startups.
+* The website must feel sophisticated, technical, cinematic, intentional, polished, and exciting but not flashy.
 
-## 2. Keep Dependencies in Sync
-
-If you add or update dependencies remember to:
-
-1. Update the appropriate lockfile (`package-lock.json`, `pnpm-lock.yaml`, or `yarn.lock`).
-2. Re-start the development server so Vite picks up the dependency changes.
-
-## 3. Coding Conventions
+## Coding Style
 
 * Prefer TypeScript (`.tsx` / `.ts`) for new components and utilities.
-* Keep component-specific styles and related files together when practical.
-* Use the existing `frontend/src/` structure for components, hooks, and utilities.
+* Follow the existing `frontend/src/` architecture: `components/`, `hooks/`, `lib/`, `types/`.
+* Reuse existing hooks, animation utilities, and UI primitives.
+* Use composition over monolithic components; avoid duplicate section copies.
+* Animate with GSAP through `src/lib/gsap.ts`; do not import `gsap` directly.
+* Clean up GSAP timelines and listeners on unmount.
+* Prefer transform and opacity for motion; avoid layout thrashing.
+* Define props interfaces for every component; avoid `any` unless justified.
+* Use theme tokens or CSS variables; do not hardcode hex colors.
+* Dark mode only.
+* Keep component-specific styles co-located with the component when practical.
+* Responsive behavior:
+  - Desktop: full cinematic experience
+  - Tablet: reduced complexity
+  - Mobile: simplified motion and no excessive hover/custom cursor behavior
 
-## 4. Useful Commands Recap
+## Prohibitions
 
-| Command                    | Purpose                                            |
-| -------------------------- | -------------------------------------------------- |
-| `cd frontend && npm run dev` | Start the Vite dev server with HMR.               |
-| `cd frontend && npm run lint` | Run ESLint checks.                                 |
-| `cd frontend && npm run build` | Production build – do not run during agent sessions. |
-| `cd frontend && npm run preview` | Preview the production build locally.            |
+* Do not run `npm run build` during interactive agent sessions.
+* Do not use Framer Motion.
+* Do not create duplicate or experimental copies like `HeroNew.tsx` or `HeroV2.tsx`.
+* Do not introduce random, chaotic, or flashy motion.
+* Do not hardcode colors or violate theme token usage.
+* Do not sacrifice usability for animation.
+* Do not produce placeholder-quality code.
 
 ---
 
-Following these practices ensures that agent-assisted development remains fast and dependable. When in doubt, restart the dev server rather than rebuilding the app.
+Use `cd frontend && npm run dev` for live development and keep the dev server running when iterating.
