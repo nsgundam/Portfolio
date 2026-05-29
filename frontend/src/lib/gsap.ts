@@ -1,7 +1,8 @@
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { Flip } from "gsap/Flip";
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, Flip);
 
 const depthReveal = (el: Element, delay = 0) =>
   gsap.fromTo(el,
@@ -10,4 +11,4 @@ const depthReveal = (el: Element, delay = 0) =>
       duration: 1.1, ease: "power4.out", delay }
   );
 
-export { gsap, ScrollTrigger, depthReveal };
+export { gsap, ScrollTrigger, Flip, depthReveal };

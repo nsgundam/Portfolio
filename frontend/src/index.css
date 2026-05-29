@@ -146,3 +146,8 @@ article:hover .featured-glow {
     transform: none !important;
   }
 }
+
+.no-scroll {
+  overflow: hidden !important;
+  height: 100% !important;
+}

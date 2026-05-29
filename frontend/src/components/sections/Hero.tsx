@@ -1,22 +1,26 @@
 // src/components/sections/Hero.tsx
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useState, useRef } from "react";
 import Splitting from "splitting";
-import { gsap } from "../../lib/gsap";
+import { gsap, Flip } from "../../lib/gsap";
 import { prefersReducedMotion } from "../../lib/motion";
 import { MagneticButton } from "../ui/MagneticButton";
 import { ScrollIndicator } from "../ui/ScrollIndicator";
 
 interface HeroProps {
   preloaderDone: boolean;
+  onTransitionComplete: () => void;
 }
 
-export default function Hero({ preloaderDone }: HeroProps) {
+export default function Hero({ preloaderDone, onTransitionComplete }: HeroProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const bgRef = useRef<HTMLDivElement>(null);
   const labelRef = useRef<HTMLParagraphElement>(null);
   const nameRef = useRef<HTMLHeadingElement>(null);
   const taglineRef = useRef<HTMLParagraphElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const [isCentered, setIsCentered] = useState(() => !prefersReducedMotion());
+  const flipStateRef = useRef<any>(null);
 
   // Setup and hide elements initially to avoid FOUC
   useEffect(() => {
@@ -34,6 +38,7 @@ export default function Hero({ preloaderDone }: HeroProps) {
     );
   }, []);
 
+  // 1. Reveal name characters at the center
   useEffect(() => {
     if (!preloaderDone) return;
 
@@ -48,23 +53,12 @@ export default function Hero({ preloaderDone }: HeroProps) {
         y: "0%",
       });
       gsap.set(scrollRef.current, { opacity: 1 });
+      onTransitionComplete();
       return;
     }
 
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline();
-
-      // Label fade in
-      tl.to(labelRef.current, {
-        opacity: 1,
-        y: 0,
-        startAt: { y: 20 },
-        duration: 0.6,
-        ease: "power4.out",
-      });
-
-      // Name — char stagger (Tuning from design system)
-      tl.to(
+      gsap.to(
         nameRef.current!.querySelectorAll(".char"),
         {
           opacity: 1,
@@ -73,38 +67,73 @@ export default function Hero({ preloaderDone }: HeroProps) {
           duration: 1.2,
           ease: "power2.out",
           stagger: { each: 0.03, from: "edges" },
-        },
-        "-=0.3",
+          onComplete: () => {
+            // Capture the layout state of name element at the center
+            const state = Flip.getState(nameRef.current);
+            flipStateRef.current = state;
+            setIsCentered(false);
+          },
+        }
       );
-
-      // Tagline — word stagger (Tuning from design system)
-      tl.to(
-        taglineRef.current!.querySelectorAll(".word"),
-        {
-          opacity: 1,
-          y: "0%",
-          startAt: { y: "100%" },
-          duration: 3.5,
-          ease: "power4.out",
-          stagger: 0,
-        },
-        "-=0.4",
-      );
-
-      // Scroll hint
-      tl.to(
-        scrollRef.current,
-        {
-          opacity: 1,
-          duration: 0.6,
-          ease: "power4.out",
-        },
-        "-=2.5",
-      );
-    });
+    }, sectionRef);
 
     return () => ctx.revert();
-  }, [preloaderDone]);
+  }, [preloaderDone, onTransitionComplete]);
+
+  // 2. Perform the layout transition to natural flow position and reveal the rest of UI
+  useLayoutEffect(() => {
+    if (isCentered || !preloaderDone || prefersReducedMotion()) return;
+
+    const ctx = gsap.context(() => {
+      if (flipStateRef.current) {
+        // Signal transition complete to App.tsx immediately to fade in Navbar/ScrollProgress simultaneously
+        onTransitionComplete();
+
+        Flip.from(flipStateRef.current, {
+          duration: 1.5,
+          ease: "power4.inOut",
+        });
+
+        const tl = gsap.timeline();
+
+        // Label fade in
+        tl.to(labelRef.current, {
+          opacity: 1,
+          y: 0,
+          startAt: { y: 20 },
+          duration: 1.0,
+          ease: "power4.out",
+        });
+
+        // Tagline word reveal
+        tl.to(
+          taglineRef.current!.querySelectorAll(".word"),
+          {
+            opacity: 1,
+            y: "0%",
+            startAt: { y: "100%" },
+            duration: 1.2,
+            ease: "power4.out",
+            stagger: 0.02,
+          },
+          "-=0.7",
+        );
+
+        // Scroll indicator fade in
+        tl.to(
+          scrollRef.current,
+          {
+            opacity: 1,
+            duration: 0.8,
+            ease: "power4.out",
+          },
+          "-=0.9",
+        );
+      }
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, [isCentered, preloaderDone, onTransitionComplete]);
 
   // Background fade effect on scroll
   useEffect(() => {
@@ -171,7 +200,11 @@ export default function Hero({ preloaderDone }: HeroProps) {
       <h1
         ref={nameRef}
         aria-label="Narunat Sutthibut"
-        className="font-heading text-text-primary mb-6 leading-none tracking-tight"
+        className={
+          isCentered
+            ? "fixed left-0 right-0 top-1/2 -translate-y-1/2 z-30 font-heading text-text-primary leading-none tracking-tight select-none pointer-events-none text-center px-5 sm:px-8 w-full"
+            : "relative font-heading text-text-primary mb-6 leading-none tracking-tight text-center"
+        }
         style={{ fontSize: "clamp(48px, 8vw, 120px)" }}
       >
         Narunat Sutthibut

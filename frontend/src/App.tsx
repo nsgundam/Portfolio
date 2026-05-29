@@ -11,17 +11,35 @@ import Skills from "./components/sections/Skills";
 import Contact from "./components/sections/Contact";
 import { useState, useCallback, useEffect } from "react";
 import { ScrollTrigger } from "./lib/gsap";
+import { prefersReducedMotion } from "./lib/motion";
 
 export default function App() {
   useLenis();
   const [preloaderDone, setPreloaderDone] = useState(false);
+  const [heroTransitionComplete, setHeroTransitionComplete] = useState(() => prefersReducedMotion());
+
   const handlePreloaderComplete = useCallback(() => setPreloaderDone(true), []);
+  const handleHeroTransitionComplete = useCallback(() => setHeroTransitionComplete(true), []);
 
   useEffect(() => {
     if (preloaderDone) {
       ScrollTrigger.refresh();
     }
   }, [preloaderDone]);
+
+  useEffect(() => {
+    if (!heroTransitionComplete) {
+      document.documentElement.classList.add("no-scroll");
+      document.body.classList.add("no-scroll");
+    } else {
+      document.documentElement.classList.remove("no-scroll");
+      document.body.classList.remove("no-scroll");
+    }
+    return () => {
+      document.documentElement.classList.remove("no-scroll");
+      document.body.classList.remove("no-scroll");
+    };
+  }, [heroTransitionComplete]);
 
   return (
     <>
@@ -39,17 +57,20 @@ export default function App() {
 
       {/* Global overlays */}
       <CustomCursor />
-      <ScrollProgress />
+      <ScrollProgress heroTransitionComplete={heroTransitionComplete} />
 
       {/* Preloader — unmounts itself after exit */}
       <Preloader onComplete={handlePreloaderComplete} />
 
       {/* Primary nav */}
-      <Navbar preloaderDone={preloaderDone} />
+      <Navbar preloaderDone={preloaderDone} heroTransitionComplete={heroTransitionComplete} />
 
       {/* Page sections */}
       <main>
-        <Hero preloaderDone={preloaderDone} />
+        <Hero
+          preloaderDone={preloaderDone}
+          onTransitionComplete={handleHeroTransitionComplete}
+        />
         <About preloaderDone={preloaderDone} />
         <Projects preloaderDone={preloaderDone} />
         <Skills preloaderDone={preloaderDone} />

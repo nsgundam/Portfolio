@@ -3,7 +3,11 @@ import { useEffect, useRef } from "react"
 import { gsap } from "../../lib/gsap"
 import { prefersReducedMotion } from "../../lib/motion"
 
-export default function ScrollProgress() {
+interface ScrollProgressProps {
+  heroTransitionComplete?: boolean;
+}
+
+export default function ScrollProgress({ heroTransitionComplete }: ScrollProgressProps) {
   const lineRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -36,8 +40,12 @@ export default function ScrollProgress() {
 
   return (
     <div
-      className="fixed left-0 bottom-0 z-30 h-0.5 bg-border"
-      style={{ width: "100vw" }}
+      className="fixed left-0 bottom-0 z-30 h-0.5 bg-border transition-opacity duration-700"
+      style={{
+        width: "100vw",
+        opacity: heroTransitionComplete ? 1 : 0,
+        pointerEvents: heroTransitionComplete ? "auto" : "none",
+      }}
     >
       <div
         ref={lineRef}

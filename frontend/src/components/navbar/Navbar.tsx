@@ -3,6 +3,7 @@ import { gsap, ScrollTrigger } from "../../lib/gsap";
 
 interface NavbarProps {
   preloaderDone: boolean;
+  heroTransitionComplete?: boolean;
 }
 
 const NAV_LINKS = [
@@ -23,7 +24,7 @@ const DURATION = "0.7s";
 const EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
 // ──────────────────────────────────────────────────
 
-export default function Navbar({ preloaderDone }: NavbarProps) {
+export default function Navbar({ preloaderDone, heroTransitionComplete }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -122,6 +123,8 @@ export default function Navbar({ preloaderDone }: NavbarProps) {
           border: applyScrolledPill
             ? "1px solid rgba(255, 255, 255, 0.08)"
             : "1px solid rgba(255, 255, 255, 0)",
+          opacity: heroTransitionComplete ? 1 : 0,
+          pointerEvents: heroTransitionComplete ? "auto" : "none",
           transition: `all ${DURATION} ${EASE}`,
         }}
       >
