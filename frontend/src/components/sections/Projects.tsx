@@ -57,7 +57,7 @@ export default function Projects({ preloaderDone }: ProjectsProps) {
       className="relative px-5 sm:px-8 py-20 md:py-32 max-w-6xl mx-auto"
     >
       {/* Sticky Heading */}
-      <div className="sticky top-0 z-20 bg-bg/80 backdrop-blur-md pb-8 pt-4 -mx-5 sm:-mx-8 px-5 sm:px-8">
+      <div className="top-0 z-20 backdrop-blur-md pb-8 pt-4 -mx-5 sm:-mx-8 px-5 sm:px-8">
         <p className="font-body text-brand text-xs tracking-[0.3em] uppercase mb-4">
           02 / Projects
         </p>

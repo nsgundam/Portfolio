@@ -3,7 +3,6 @@ import { useEffect, useLayoutEffect, useState, useRef } from "react";
 import Splitting from "splitting";
 import { gsap, Flip } from "../../lib/gsap";
 import { prefersReducedMotion } from "../../lib/motion";
-import { MagneticButton } from "../ui/MagneticButton";
 import { ScrollIndicator } from "../ui/ScrollIndicator";
 
 interface HeroProps {
@@ -11,7 +10,10 @@ interface HeroProps {
   onTransitionComplete: () => void;
 }
 
-export default function Hero({ preloaderDone, onTransitionComplete }: HeroProps) {
+export default function Hero({
+  preloaderDone,
+  onTransitionComplete,
+}: HeroProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const bgRef = useRef<HTMLDivElement>(null);
   const labelRef = useRef<HTMLParagraphElement>(null);
@@ -58,23 +60,20 @@ export default function Hero({ preloaderDone, onTransitionComplete }: HeroProps)
     }
 
     const ctx = gsap.context(() => {
-      gsap.to(
-        nameRef.current!.querySelectorAll(".char"),
-        {
-          opacity: 1,
-          filter: "blur(0px)",
-          startAt: { filter: "blur(10px)" },
-          duration: 1.2,
-          ease: "power2.out",
-          stagger: { each: 0.03, from: "edges" },
-          onComplete: () => {
-            // Capture the layout state of name element at the center
-            const state = Flip.getState(nameRef.current);
-            flipStateRef.current = state;
-            setIsCentered(false);
-          },
-        }
-      );
+      gsap.to(nameRef.current!.querySelectorAll(".char"), {
+        opacity: 1,
+        filter: "blur(0px)",
+        startAt: { filter: "blur(10px)" },
+        duration: 1.2,
+        ease: "power2.out",
+        stagger: { each: 0.03, from: "edges" },
+        onComplete: () => {
+          // Capture the layout state of name element at the center
+          const state = Flip.getState(nameRef.current);
+          flipStateRef.current = state;
+          setIsCentered(false);
+        },
+      });
     }, sectionRef);
 
     return () => ctx.revert();
@@ -174,7 +173,7 @@ export default function Hero({ preloaderDone, onTransitionComplete }: HeroProps)
     <section
       ref={sectionRef}
       id="hero"
-      className="sticky top-0 z-0 flex h-screen flex-col items-center justify-center overflow-hidden px-5 text-center sm:px-8"
+      className="top-0 z-0 flex h-screen flex-col items-center justify-center overflow-hidden px-5 text-center sm:px-8"
     >
       {/* Enhanced Background */}
       <div
@@ -191,7 +190,7 @@ export default function Hero({ preloaderDone, onTransitionComplete }: HeroProps)
 
       <span
         ref={labelRef}
-        className="font-body text-text-secondary mb-6 text-xs tracking-[0.3em] uppercase"
+        className="font-body text-text-primary mb-6 text-xs tracking-[0.3em] uppercase"
       >
         Full Stack Developer
       </span>
@@ -213,7 +212,7 @@ export default function Hero({ preloaderDone, onTransitionComplete }: HeroProps)
       <p
         ref={taglineRef}
         aria-label="Aiming high, building what matters."
-        className="font-body text-text-secondary max-w-md text-sm leading-relaxed"
+        className="font-body text-text-primary max-w-md text-sm leading-relaxed"
       >
         Aiming high, building what matters.
       </p>
@@ -222,13 +221,7 @@ export default function Hero({ preloaderDone, onTransitionComplete }: HeroProps)
         ref={scrollRef}
         className="absolute bottom-10 left-1/2 -translate-x-1/2"
       >
-        <MagneticButton
-          href="#about"
-          aria-label="Scroll to About section"
-          className="flex flex-col items-center gap-2"
-        >
-          <ScrollIndicator />
-        </MagneticButton>
+        <ScrollIndicator />
       </div>
     </section>
   );
