@@ -39,11 +39,9 @@ Agents should follow the distilled system prompt, coding style, and prohibitions
 
 ## Required Reading
 
-Before touching any file, read these in order:
-
-1. `docs/architecture.md` — folder structure + state
-2. `docs/design-motion.md` — visual + animation specs
-3. `docs/decision.md` — do not reverse these decisions
+1. `docs/architecture.md` — understand folder rules and z-index ladder
+2. `docs/design-motion.md` — get color tokens and animation durations before writing any CSS
+3. `docs/decision.md` — check this before proposing any structural change
 
 ---
 
