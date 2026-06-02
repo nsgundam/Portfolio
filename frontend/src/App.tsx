@@ -1,5 +1,4 @@
 import { useLenis } from "./hooks/useLenis";
-import AmbientBackground from "./components/AmbientBackground";
 import CustomCursor from "./components/cursor/CustomCursor";
 import ScrollProgress from "./components/ui/ScrollProgress";
 import Preloader from "./components/preloader/Preloader";
@@ -51,9 +50,6 @@ export default function App() {
       >
         Skip to content
       </a>
-
-      {/* Background layer — fixed, behind everything */}
-      <AmbientBackground />
 
       {/* Global overlays */}
       <CustomCursor />

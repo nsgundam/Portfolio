@@ -1,47 +1,12 @@
 import { useEffect, useRef } from 'react';
 
-interface NeuralNoiseProps {
-  color?: [number, number, number];
-  opacity?: number;
-  speed?: number;
-}
 
-export function NeuralNoise({
-  color = [0.9, 0.2, 0.4],
-  opacity = 0.95,
-  speed = 0.001,
-}: NeuralNoiseProps) {
+export function NeuralNoise() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pointerRef = useRef({ x: 0, y: 0, tX: 0, tY: 0 });
   const glRef = useRef<WebGLRenderingContext | null>(null);
   const uniformsRef = useRef<Record<string, WebGLUniformLocation>>({});
-  const animationFrameRef = useRef<number>();
-
-  useEffect(() => {
-    const devicePixelRatio = Math.min(window.devicePixelRatio, 2);
-    const gl = initShader();
-    if (!gl) return;
-
-    glRef.current = gl;
-    const cleanupEvents = setupEvents();
-    resizeCanvas();
-
-    const resizeListener = () => resizeCanvas();
-    window.addEventListener('resize', resizeListener);
-
-    gl.uniform3f(uniformsRef.current.u_color, color[0], color[1], color[2]);
-    gl.uniform1f(uniformsRef.current.u_speed, speed);
-
-    render();
-
-    return () => {
-      window.removeEventListener('resize', resizeListener);
-      cleanupEvents();
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
-    };
-  }, [color, speed]);
+  const animationFrameRef = useRef<number | null>(null);
 
   function initShader(): WebGLRenderingContext | null {
     const vsSource = `
@@ -263,6 +228,31 @@ export function NeuralNoise({
     };
   }
 
+  useEffect(() => {
+    const gl = initShader();
+    if (!gl) return;
+
+    glRef.current = gl;
+    const cleanupEvents = setupEvents();
+    resizeCanvas();
+
+    const resizeListener = () => resizeCanvas();
+    window.addEventListener('resize', resizeListener);
+
+    gl.uniform3f(uniformsRef.current.u_color, 0.9, 0.2, 0.4);
+    gl.uniform1f(uniformsRef.current.u_speed, 0.001);
+
+    render();
+
+    return () => {
+      window.removeEventListener('resize', resizeListener);
+      cleanupEvents();
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, []);
+
   return (
     <canvas
       ref={canvasRef}
@@ -273,7 +263,7 @@ export function NeuralNoise({
         width: '100%',
         height: '100%',
         pointerEvents: 'none',
-        opacity,
+        opacity: 0.95,
       }}
     />
   );

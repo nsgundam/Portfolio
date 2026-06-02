@@ -141,7 +141,7 @@ export default function Hero({
       className="top-0 z-0 flex h-screen flex-col items-center justify-center overflow-hidden px-5 text-center sm:px-8"
     >
       {/* Background with neural noise effect */}
-      <NeuralNoise color={[0.9, 0.2, 0.4]} opacity={0.95} speed={0.001} />
+      <NeuralNoise />
 
       <span
         ref={labelRef}
