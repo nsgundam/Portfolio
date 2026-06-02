@@ -4,6 +4,7 @@ import Splitting from "splitting";
 import { gsap, Flip } from "../../lib/gsap";
 import { prefersReducedMotion } from "../../lib/motion";
 import { ScrollIndicator } from "../ui/ScrollIndicator";
+import { NeuralNoise } from "../backgrounds/NeuralNoise";
 
 interface HeroProps {
   preloaderDone: boolean;
@@ -15,7 +16,6 @@ export default function Hero({
   onTransitionComplete,
 }: HeroProps) {
   const sectionRef = useRef<HTMLElement>(null);
-  const bgRef = useRef<HTMLDivElement>(null);
   const labelRef = useRef<HTMLParagraphElement>(null);
   const nameRef = useRef<HTMLHeadingElement>(null);
   const taglineRef = useRef<HTMLParagraphElement>(null);
@@ -134,59 +134,14 @@ export default function Hero({
     return () => ctx.revert();
   }, [isCentered, preloaderDone, onTransitionComplete]);
 
-  // Background fade effect on scroll
-  useEffect(() => {
-    if (!preloaderDone) return;
-
-    const section = sectionRef.current;
-    const bg = bgRef.current;
-    if (!section || !bg) return;
-
-    if (prefersReducedMotion()) {
-      return;
-    }
-
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        bg,
-        { opacity: 1 },
-        {
-          opacity: 0.1,
-          ease: "none",
-          scrollTrigger: {
-            trigger: section,
-            start: "top top",
-            end: "bottom top",
-            scrub: true,
-            onEnter: () => {
-              gsap.set(bg, { opacity: 1 });
-            },
-          },
-        },
-      );
-    }, section);
-
-    return () => ctx.revert();
-  }, [preloaderDone]);
-
   return (
     <section
       ref={sectionRef}
       id="hero"
       className="top-0 z-0 flex h-screen flex-col items-center justify-center overflow-hidden px-5 text-center sm:px-8"
     >
-      {/* Enhanced Background */}
-      <div
-        ref={bgRef}
-        className="pointer-events-none absolute inset-0 -z-10 opacity-100 transition-opacity duration-300"
-        style={{
-          background: `
-            radial-gradient(circle at 30% 50%, rgba(164, 22, 26, 0.15) 0%, transparent 50%),
-            radial-gradient(circle at 70% 30%, rgba(164, 22, 26, 0.08) 0%, transparent 40%),
-            linear-gradient(135deg, rgba(11, 9, 10, 1) 0%, rgba(22, 26, 29, 0.5) 100%)
-          `,
-        }}
-      />
+      {/* Background with neural noise effect */}
+      <NeuralNoise color={[0.9, 0.2, 0.4]} opacity={0.95} speed={0.001} />
 
       <span
         ref={labelRef}
