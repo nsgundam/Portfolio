@@ -4,6 +4,7 @@ import Splitting from "splitting";
 import { gsap, Flip } from "../../lib/gsap";
 import { prefersReducedMotion } from "../../lib/motion";
 import { ScrollIndicator } from "../ui/ScrollIndicator";
+import { MagneticButton } from "../ui/MagneticButton";
 import { NeuralNoise } from "../backgrounds/NeuralNoise";
 
 interface HeroProps {
@@ -16,13 +17,13 @@ export default function Hero({
   onTransitionComplete,
 }: HeroProps) {
   const sectionRef = useRef<HTMLElement>(null);
-  const labelRef = useRef<HTMLParagraphElement>(null);
   const nameRef = useRef<HTMLHeadingElement>(null);
   const taglineRef = useRef<HTMLParagraphElement>(null);
+  const buttonsRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const [isCentered, setIsCentered] = useState(() => !prefersReducedMotion());
-  const flipStateRef = useRef<any>(null);
+  const flipStateRef = useRef<Flip.FlipState | null>(null);
 
   // Setup and hide elements initially to avoid FOUC
   useEffect(() => {
@@ -31,9 +32,9 @@ export default function Hero({
 
     gsap.set(
       [
-        labelRef.current,
         nameRef.current!.querySelectorAll(".char"),
         taglineRef.current!.querySelectorAll(".word"),
+        buttonsRef.current,
         scrollRef.current,
       ],
       { opacity: 0 },
@@ -45,7 +46,6 @@ export default function Hero({
     if (!preloaderDone) return;
 
     if (prefersReducedMotion()) {
-      gsap.set(labelRef.current, { opacity: 1, y: 0 });
       gsap.set(nameRef.current!.querySelectorAll(".char"), {
         opacity: 1,
         filter: "blur(0px)",
@@ -54,6 +54,7 @@ export default function Hero({
         opacity: 1,
         y: "0%",
       });
+      gsap.set(buttonsRef.current, { opacity: 1 });
       gsap.set(scrollRef.current, { opacity: 1 });
       onTransitionComplete();
       return;
@@ -95,15 +96,6 @@ export default function Hero({
 
         const tl = gsap.timeline();
 
-        // Label fade in
-        tl.to(labelRef.current, {
-          opacity: 1,
-          y: 0,
-          startAt: { y: 20 },
-          duration: 1.0,
-          ease: "power4.out",
-        });
-
         // Tagline word reveal
         tl.to(
           taglineRef.current!.querySelectorAll(".word"),
@@ -118,6 +110,19 @@ export default function Hero({
           "-=0.7",
         );
 
+        // Buttons fade in
+        tl.to(
+          buttonsRef.current,
+          {
+            opacity: 1,
+            y: 0,
+            startAt: { y: 20 },
+            duration: 0.8,
+            ease: "power4.out",
+          },
+          "-=0.6",
+        );
+
         // Scroll indicator fade in
         tl.to(
           scrollRef.current,
@@ -126,13 +131,20 @@ export default function Hero({
             duration: 0.8,
             ease: "power4.out",
           },
-          "-=0.9",
+          "-=0.5",
         );
       }
     }, sectionRef);
 
     return () => ctx.revert();
   }, [isCentered, preloaderDone, onTransitionComplete]);
+
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   return (
     <section
@@ -143,21 +155,14 @@ export default function Hero({
       {/* Background with neural noise effect */}
       <NeuralNoise />
 
-      <span
-        ref={labelRef}
-        className="font-body text-text-primary mb-6 text-xs tracking-[0.3em] uppercase"
-      >
-        Full Stack Developer
-      </span>
-
       {/* aria-label gives screen readers clean text; Splitting.js char-spans are decorative */}
       <h1
         ref={nameRef}
         aria-label="Narunat Sutthibut"
         className={
           isCentered
-            ? "fixed left-0 right-0 top-1/2 -translate-y-1/2 z-30 font-heading text-text-primary leading-none tracking-tight select-none pointer-events-none text-center px-5 sm:px-8 w-full"
-            : "relative font-heading text-text-primary mb-6 leading-none tracking-tight text-center"
+            ? "fixed left-0 right-0 top-1/2 -translate-y-1/2 z-30 font-display text-text-primary leading-none tracking-tight select-none pointer-events-none text-center px-5 sm:px-8 w-full"
+            : "relative font-display text-text-primary mb-4 leading-none tracking-tight text-center"
         }
         style={{ fontSize: "clamp(48px, 8vw, 120px)" }}
       >
@@ -167,10 +172,31 @@ export default function Hero({
       <p
         ref={taglineRef}
         aria-label="Aiming high, building what matters."
-        className="font-body text-text-primary max-w-md text-sm leading-relaxed"
+        className="font-body text-text-primary max-w-md text-sm leading-relaxed mb-8"
       >
-        Aiming high, building what matters.
+        Aiming high, building what <em>matters.</em>
       </p>
+
+      {/* CTA Buttons */}
+      <div
+        ref={buttonsRef}
+        className="flex gap-4 flex-wrap justify-center mb-12"
+      >
+        <MagneticButton
+          onClick={() => scrollToSection("contact")}
+          className="px-6 py-2 font-label text-text-primary border border-accent text-xs tracking-wider uppercase hover:bg-accent hover:text-bg transition-colors duration-300"
+          aria-label="Navigate to Contact section"
+        >
+          Contact
+        </MagneticButton>
+        <MagneticButton
+          onClick={() => scrollToSection("projects")}
+          className="px-6 py-2 font-label text-text-primary border border-accent text-xs tracking-wider uppercase hover:bg-accent hover:text-bg transition-colors duration-300"
+          aria-label="Navigate to Explore Work section"
+        >
+          Explore Work
+        </MagneticButton>
+      </div>
 
       <div
         ref={scrollRef}

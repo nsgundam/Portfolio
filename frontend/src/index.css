@@ -6,18 +6,21 @@
 ─────────────────────────────────────────────────── */
 @theme {
   /* Colors */
-  --color-bg: #0b090a;
-  --color-surface: #161a1d;
-  --color-border: #2a2d30;
-  --color-brand: #a4161a;
-  --color-accent: #a4161a;
-  --color-brand-light: #e5383b;
-  --color-text-primary: #f5f3f4;
-  --color-text-secondary: #6b7280;
-  --color-text-disabled: #3d4147;
+  --color-bg: #080706;
+  --color-surface: #161310;
+  --color-surface-2: #1E1C18;
+  --color-border: #2A2519;
+  --color-border-light: #3A3732;
+  --color-accent: #C4A97D;
+  --color-accent-light: #D4BC9A;
+  --color-accent-dark: #8A7450;
+  --color-text-primary: #EDE6D6;
+  --color-text-secondary: #7A776E;
+  --color-text-disabled: #3A3834;
 
   /* Fonts */
-  --font-heading: "Space Mono", monospace;
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-label: "Space Mono", monospace;
   --font-body: "IBM Plex Mono", monospace;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
@@ -65,7 +68,7 @@
   h4,
   h5,
   h6 {
-    font-family: var(--font-heading);
+    font-family: var(--font-display);
     line-height: 1.2;
   }
 
