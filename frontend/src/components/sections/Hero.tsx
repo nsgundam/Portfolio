@@ -161,7 +161,7 @@ export default function Hero({
         aria-label="Narunat Sutthibut"
         className={
           isCentered
-            ? "fixed left-0 right-0 top-1/2 -translate-y-1/2 z-30 font-display text-text-primary leading-none tracking-tight select-none pointer-events-none text-center px-5 sm:px-8 w-full"
+            ? "fixed z-30 font-display text-text-primary leading-none tracking-tight select-none pointer-events-none text-center px-5 sm:px-8 w-full"
             : "relative font-display text-text-primary mb-4 leading-none tracking-tight text-center"
         }
         style={{ fontSize: "clamp(48px, 8vw, 120px)" }}
