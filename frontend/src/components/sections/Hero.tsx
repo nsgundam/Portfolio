@@ -164,7 +164,7 @@ export default function Hero({
             ? "fixed z-30 font-display text-text-primary leading-none tracking-tight select-none pointer-events-none text-center px-5 sm:px-8 w-full"
             : "relative font-display text-text-primary mb-4 leading-none tracking-tight text-center"
         }
-        style={{ fontSize: "clamp(48px, 8vw, 120px)" }}
+        style={{ fontSize: "clamp(56px, 10vw, 140px)", fontWeight: 300 }}
       >
         Narunat Sutthibut
       </h1>
@@ -174,7 +174,10 @@ export default function Hero({
         aria-label="Aiming high, building what matters."
         className="font-body text-text-primary max-w-md text-sm leading-relaxed mb-8"
       >
-        Aiming high, building what <em>matters.</em>
+        Aiming high, building what{" "}
+        <em style={{ fontStyle: "italic", color: "var(--color-accent)" }}>
+          matters.
+        </em>
       </p>
 
       {/* CTA Buttons */}

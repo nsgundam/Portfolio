@@ -62,16 +62,16 @@ Blocker:  ไม่มี
 
 ### Step 03 — Hero pin upgrade
 
-- [ ] Replace time-based useEffect timeline → `usePinnedTimeline(preloaderDone, { pinDistance: 500 })`
-- [ ] Update name typography: `font-display`, Display XL, fontWeight 300
-- [ ] Add italic to "matters." in tagline
-- [ ] Verify preloader → hero handoff still works
+- [x] Replace time-based useEffect timeline → `usePinnedTimeline(preloaderDone, { pinDistance: 500 })`
+- [x] Update name typography: `font-display`, Display XL, fontWeight 300
+- [x] Add italic to "matters." in tagline
+- [x] Verify preloader → hero handoff still works
 
 ### Step 04 — About full rewrite
 
 - [ ] Remove three-column grid
 - [ ] Remove photo placeholder
-- [ ] New DOM structure (see interaction-spac.md §8)
+- [ ] New DOM structure
 - [ ] Add individual refs for bio line stagger
 - [ ] Attach `usePinnedTimeline(preloaderDone, { pinDistance: 900 })`
 - [ ] Wire scrubbed timeline: label → heading depthReveal → lines → facts
@@ -79,9 +79,9 @@ Blocker:  ไม่มี
 ### Step 05 — Projects full rewrite
 
 - [ ] Delete `ProjectWindow.tsx`
-- [ ] Create `src/components/ui/ProjectPanel.tsx` (see interaction-spac.md §9)
+- [ ] Create `src/components/ui/ProjectPanel.tsx`
 - [ ] Rewrite `Projects.tsx` as container that maps → `<ProjectPanel>`
-- [ ] Update PROJECTS data with new copy (see project-brief.md §07)
+- [ ] Update PROJECTS data with new copy
 - [ ] Each panel: `usePinnedTimeline(preloaderDone, { pinDistance: 700 })`
 - [ ] Add giant faint background number
 
