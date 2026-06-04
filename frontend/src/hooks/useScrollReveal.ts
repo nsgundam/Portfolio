@@ -3,9 +3,6 @@ import { useEffect, useRef } from "react";
 import { gsap } from "../lib/gsap";
 import { prefersReducedMotion } from "../lib/motion";
 
-// enabled defaults to true so sections that don't need gating still work.
-// Pass preloaderDone from App to respect the "all ScrollTriggers wait for
-// preloaderDone" rule documented in Agent.md.
 export function useScrollReveal<T extends HTMLElement>(
   enabled: boolean = true,
 ) {

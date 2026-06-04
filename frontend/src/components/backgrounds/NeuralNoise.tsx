@@ -263,7 +263,7 @@ export function NeuralNoise() {
         colorObj.current.r = 1.0 - 0.97 * p;
         colorObj.current.g = 1.0 - 0.98 * p;
         colorObj.current.b = 1.0 - 0.98 * p;
-        colorObj.current.speed = 0.0001 * (1 - p);
+        // Keep the speed constant, only fade colors
       }
     });
 
