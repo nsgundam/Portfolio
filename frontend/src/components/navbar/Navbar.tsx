@@ -15,7 +15,7 @@ const NAV_LINKS = [
 
 // ── Design tokens ──────────────────────────────────
 const THRESHOLD = 30;
-const SCROLLED_BG = "rgba(22, 26, 29, 0.65)";
+const SCROLLED_BG = "rgba(22, 20, 17, 0.65)";
 const DEFAULT_BG = "rgba(22, 26, 29, 0)";
 const BLUR = "20px";
 const SATURATE = "180%";
@@ -132,7 +132,7 @@ export default function Navbar({ preloaderDone, heroTransitionComplete }: Navbar
         <a
           href="#hero"
           id="navbar-logo"
-          className="font-heading text-text-primary text-lg tracking-wider origin-left"
+          className="font-label text-text-primary text-lg tracking-wider origin-left"
           style={{
             transform: applyScrolledPill ? `scale(${LOGO_SCALE})` : "scale(1)",
             transition: `transform ${DURATION} ${EASE}`,
@@ -205,7 +205,7 @@ export default function Navbar({ preloaderDone, heroTransitionComplete }: Navbar
               key={href}
               href={href}
               onClick={closeMenu}
-              className="font-heading text-text-primary tracking-wider uppercase hover:text-brand flex items-baseline gap-4"
+              className="font-label text-text-primary tracking-wider uppercase hover:text-accent flex items-baseline gap-4"
               style={{
                 fontSize: "clamp(2rem, 8vw, 3.5rem)",
                 opacity: menuOpen ? 1 : 0,
@@ -216,7 +216,7 @@ export default function Navbar({ preloaderDone, heroTransitionComplete }: Navbar
                   : `opacity 0.2s, transform 0.2s, color 0.3s`,
               }}
             >
-              <span className="font-body text-brand text-xs tracking-[0.2em]">
+              <span className="font-body text-accent text-xs tracking-[0.2em]">
                 {number}
               </span>
               {label}
@@ -251,7 +251,7 @@ function NavLink({ label, href }: { label: string; href: string }) {
     >
       <div className="nav-rolling-inner flex flex-col transition-transform duration-300 ease-in-out group-hover:-translate-y-1/2">
         <span className="h-[1.2em] flex items-center">{label}</span>
-        <span className="h-[1.2em] flex items-center text-brand">{label}</span>
+        <span className="h-[1.2em] flex items-center text-accent">{label}</span>
       </div>
     </a>
   );

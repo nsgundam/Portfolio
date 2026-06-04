@@ -86,13 +86,13 @@ export default function Contact({ preloaderDone }: ContactProps) {
       id="contact"
       className="px-5 sm:px-8 py-20 md:py-32 max-w-5xl mx-auto"
     >
-      <p className="font-body text-brand text-xs tracking-[0.3em] uppercase mb-4">
+      <p className="font-body text-accent text-xs tracking-[0.3em] uppercase mb-4">
         04 / Contact
       </p>
 
       <BlurReveal enabled={preloaderDone} className="mb-16">
         <h2
-          className="font-heading text-text-primary leading-tight"
+          className="font-display text-text-primary leading-tight"
           style={{ fontSize: "clamp(32px, 4vw, 64px)" }}
         >
           Let's
@@ -103,7 +103,7 @@ export default function Contact({ preloaderDone }: ContactProps) {
 
       <MagneticButton
         href="mailto:snarunat.99@gmail.com"
-        className="font-heading text-text-primary mb-16 block leading-none hover:text-brand"
+        className="font-display text-text-primary mb-16 block leading-none hover:text-accent"
         style={{ fontSize: "clamp(20px, 3vw, 42px)", transition: "color 0.3s" }}
       >
         snarunat.99@gmail.com
@@ -151,9 +151,9 @@ export default function Contact({ preloaderDone }: ContactProps) {
                 target={href.startsWith("http") ? "_blank" : undefined}
                 rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
                 aria-label={`${command}: ${value}${href.startsWith("http") ? " (opens in new tab)" : ""}`}
-                className="group flex items-center border-l-2 border-transparent py-2 pl-2 transition-all duration-200 hover:border-brand hover:bg-white/5"
+                className="group flex items-center border-l-2 border-transparent py-2 pl-2 transition-all duration-200 hover:border-accent hover:bg-white/5"
               >
-                <span className="text-sm text-brand">$</span>
+                <span className="text-sm text-accent">$</span>
                 <span className="mr-4 ml-2 min-w-20 text-sm text-text-primary">
                   {command}
                 </span>
@@ -164,7 +164,7 @@ export default function Contact({ preloaderDone }: ContactProps) {
               </a>
             ))}
             <p className="pt-2 text-sm text-text-secondary">
-              <span className="text-brand" aria-hidden="true">
+              <span className="text-accent" aria-hidden="true">
                 █
               </span>
               <span className="terminal-cursor" aria-hidden="true">

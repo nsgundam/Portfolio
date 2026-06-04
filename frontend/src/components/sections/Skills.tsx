@@ -110,13 +110,13 @@ export default function Skills({ preloaderDone }: SkillsProps) {
       id="skills"
       className="px-5 sm:px-8 py-20 md:py-32 max-w-5xl mx-auto"
     >
-      <p className="font-body text-brand text-xs tracking-[0.3em] uppercase mb-4">
+      <p className="font-body text-accent text-xs tracking-[0.3em] uppercase mb-4">
         03 / Skills
       </p>
 
       <BlurReveal enabled={preloaderDone} className="mb-16">
         <h2
-          className="font-heading text-text-primary leading-tight"
+          className="font-display text-text-primary leading-tight"
           style={{ fontSize: "clamp(32px, 4vw, 64px)" }}
         >
           Tech
@@ -135,7 +135,7 @@ export default function Skills({ preloaderDone }: SkillsProps) {
             className="relative overflow-hidden rounded-2xl border border-border bg-[rgba(22,26,29,0.6)] p-6 transition-all duration-300 hover:border-[rgba(164,22,26,0.3)] hover:shadow-[0_8px_32px_rgba(164,22,26,0.08)]"
           >
             <div className="mb-4 flex items-center justify-between">
-              <span className="font-heading text-lg text-brand">{group.icon}</span>
+              <span className="font-label text-lg text-accent">{group.icon}</span>
               <span className="font-body text-xs tracking-widest text-text-disabled uppercase">
                 {group.category}
               </span>

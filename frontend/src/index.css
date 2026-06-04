@@ -2,7 +2,7 @@
 
 /* ──────────────────────────────────────────────────
    Tailwind v4 theme tokens  (replaces tailwind.config.js)
-   These become utility classes: bg-brand, text-brand, etc.
+   These become utility classes: bg-accent, text-accent, etc.
 ─────────────────────────────────────────────────── */
 @theme {
   /* Colors */

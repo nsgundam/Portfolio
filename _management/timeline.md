@@ -47,12 +47,12 @@ Blocker:  ไม่มี
 
 ### Step 01 — Tokens + Font (do first, unblocks everything)
 
-- [ ] Update `index.css` @theme — warm palette, new font tokens
-- [ ] Update `index.html` — add Cormorant Garamond to Google Fonts import
-- [ ] Global find-replace: `font-heading` → `font-label` or `font-display`
-- [ ] Global find-replace: `text-brand`, `border-brand`, `bg-brand` → `text-accent` etc.
-- [ ] Update Navbar warm tint: `rgba(22,26,29,0.65)` → `rgba(22,20,17,0.65)`
-- [ ] Verify Preloader still looks correct with new tokens
+- [x] Update `index.css` @theme — warm palette, new font tokens
+- [x] Update `index.html` — add Cormorant Garamond to Google Fonts import
+- [x] Global find-replace: `font-heading` → `font-label` or `font-display`
+- [x] Global find-replace: `text-brand`, `border-brand`, `bg-brand` → `text-accent` etc.
+- [x] Update Navbar warm tint: `rgba(22,26,29,0.65)` → `rgba(22,20,17,0.65)`
+- [x] Verify Preloader still looks correct with new tokens
 
 ### Step 02 — New Hook + lib/gsap export
 

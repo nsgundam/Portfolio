@@ -58,13 +58,13 @@ export default function Projects({ preloaderDone }: ProjectsProps) {
     >
       {/* Sticky Heading */}
       <div className="top-0 z-20 backdrop-blur-md pb-8 pt-4 -mx-5 sm:-mx-8 px-5 sm:px-8">
-        <p className="font-body text-brand text-xs tracking-[0.3em] uppercase mb-4">
+        <p className="font-body text-accent text-xs tracking-[0.3em] uppercase mb-4">
           02 / Projects
         </p>
 
         <BlurReveal enabled={preloaderDone} className="mb-0">
           <h2
-            className="font-heading text-text-primary leading-tight"
+            className="font-display text-text-primary leading-tight"
             style={{ fontSize: "clamp(32px, 4vw, 64px)" }}
           >
             Showcase

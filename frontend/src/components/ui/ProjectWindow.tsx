@@ -94,7 +94,7 @@ export function ProjectWindow({
             disabled={isAnimating}
             className={`px-4 py-3 text-xs font-body whitespace-nowrap border-r border-border/50 transition-colors duration-300 ${
               activeIndex === index
-                ? "bg-surface text-text-primary border-b-2 border-brand"
+                ? "bg-surface text-text-primary border-b-2 border-accent"
                 : "bg-surface/50 text-text-secondary hover:bg-surface/75 hover:text-text-primary"
             } disabled:cursor-not-allowed`}
           >
@@ -116,10 +116,10 @@ export function ProjectWindow({
               <span className="font-body text-text-disabled text-xs tracking-widest uppercase block mb-2">
                 {activeProject.number}
               </span>
-              <h3 className="font-heading text-text-primary text-2xl md:text-3xl mb-2">
+              <h3 className="font-display text-text-primary text-2xl md:text-3xl mb-2">
                 {activeProject.title}
               </h3>
-              <p className="font-heading text-text-secondary text-xl md:text-2xl mb-6">
+              <p className="font-display text-text-secondary text-xl md:text-2xl mb-6">
                 {activeProject.subtitle}
               </p>
               <p className="font-body text-text-secondary text-sm leading-relaxed mb-8">
@@ -136,7 +136,7 @@ export function ProjectWindow({
                 {activeProject.stack.map((tech) => (
                   <span
                     key={tech}
-                    className="font-body text-text-secondary text-xs border border-border px-3 py-1 rounded hover:border-brand transition-colors"
+                    className="font-body text-text-secondary text-xs border border-border px-3 py-1 rounded hover:border-accent transition-colors"
                   >
                     {tech}
                   </span>
@@ -149,7 +149,7 @@ export function ProjectWindow({
               href={activeProject.link}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 font-body text-brand text-xs tracking-widest uppercase hover:text-red-400 transition-colors"
+              className="inline-flex items-center gap-2 font-body text-accent text-xs tracking-widest uppercase hover:text-red-400 transition-colors"
             >
               {activeProject.type}
               <span className="inline-block transition-transform group-hover:translate-x-1">
@@ -167,7 +167,7 @@ export function ProjectWindow({
               }}
             >
               <div className="text-center">
-                <div className="font-heading text-text-secondary text-6xl opacity-20 mb-4">
+                <div className="font-label text-text-secondary text-6xl opacity-20 mb-4">
                   {activeProject.number}
                 </div>
                 <p className="font-body text-text-secondary text-sm">
