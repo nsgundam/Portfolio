@@ -24,19 +24,6 @@ export function ScrollIndicator({ className }: ScrollIndicatorProps) {
       return;
     }
 
-    // Bounce animation for the wheel outer circle
-    gsap.fromTo(
-      wheel,
-      { y: 0 },
-      {
-        y: 8,
-        duration: 1.2,
-        ease: "sine.inOut",
-        repeat: -1,
-        yoyo: true,
-      },
-    );
-
     // Scroll indicator dot moves inside wheel
     gsap.fromTo(
       dot,

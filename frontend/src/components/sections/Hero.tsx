@@ -187,18 +187,18 @@ export default function Hero({
       >
         <MagneticButton
           onClick={() => scrollToSection("contact")}
-          className="px-6 py-2 font-label text-text-primary border border-accent text-xs tracking-wider uppercase hover:bg-accent hover:text-bg transition-colors duration-300"
+          className="px-6 py-2 font-label bg-accent text-bg border border-accent rounded-full text-xs tracking-small uppercase hover:bg-transparent hover:text-text-primary transition-colors duration-300"
           aria-label="Navigate to Contact section"
         >
           Contact
         </MagneticButton>
-        <MagneticButton
+        <button
           onClick={() => scrollToSection("projects")}
-          className="px-6 py-2 font-label text-text-primary border border-accent text-xs tracking-wider uppercase hover:bg-accent hover:text-bg transition-colors duration-300"
+          className="px-6 py-2 font-label text-text-primary border border-accent rounded-full text-xs uppercase hover:bg-accent hover:text-bg transition-colors duration-300"
           aria-label="Navigate to Explore Work section"
         >
           Explore Work
-        </MagneticButton>
+        </button>
       </div>
 
       <div
