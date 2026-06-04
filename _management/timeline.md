@@ -56,9 +56,9 @@ Blocker:  ไม่มี
 
 ### Step 02 — New Hook + lib/gsap export
 
-- [ ] Build `src/hooks/usePinnedTimeline.ts` (see interaction-spac.md §6)
-- [ ] Add `depthReveal()` and `depthRevealVars` export to `src/lib/gsap.ts`
-- [ ] Test hook in isolation before attaching to any section
+- [x] Build `src/hooks/usePinnedTimeline.ts` (see interaction-spac.md §6)
+- [x] Add `depthReveal()` and `depthRevealVars` export to `src/lib/gsap.ts`
+- [x] Test hook in isolation before attaching to any section
 
 ### Step 03 — Hero pin upgrade
 

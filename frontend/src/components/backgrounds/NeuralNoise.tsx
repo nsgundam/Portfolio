@@ -1,8 +1,9 @@
 import { useEffect, useRef } from 'react';
-
+import { ScrollTrigger } from '../../lib/gsap';
 
 export function NeuralNoise() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const colorObj = useRef({ r: 1.0, g: 1.0, b: 1.0, speed: 0.0004 });
   const pointerRef = useRef({ x: 0, y: 0, tX: 0, tY: 0 });
   const glRef = useRef<WebGLRenderingContext | null>(null);
   const uniformsRef = useRef<Record<string, WebGLUniformLocation>>({});
@@ -40,7 +41,7 @@ export function NeuralNoise() {
           uv = rotate(uv, 1.0);
           sine_acc = rotate(sine_acc, 1.0);
           vec2 layer = uv * scale + float(j) + sine_acc - t;
-          sine_acc += sin(layer) + 2.4 * p;
+          sine_acc += sin(layer) + 3.0 * p;
           res += (0.5 + 0.5 * cos(layer)) / scale;
           scale *= 1.2;
         }
@@ -57,11 +58,21 @@ export function NeuralNoise() {
         float t = u_speed * u_time;
         vec3 col = vec3(0.0);
         float noise = neuro_shape(uv, t, p);
-        noise = 1.2 * pow(noise, 3.0);
-        noise += pow(noise, 10.0);
-        noise = max(0.0, noise - 0.5);
+        noise = 1.2 * pow(noise, 2.0);
+        noise += pow(noise, 5.0);
+        noise = max(0.0, noise - 0.3);
         noise *= (1.0 - length(vUv - 0.5));
-        col = u_color * noise;
+
+        vec3 color1 = vec3(0.0, 0.91, 0.48);
+        vec3 color2 = vec3(0.48, 0.31, 0.75);
+        vec3 color3 = vec3(0.31, 0.76, 0.97);
+        vec3 color4 = vec3(1.0, 0.24, 0.43);
+        
+        vec3 mixColor = mix(color1, color2, vUv.x + 0.2 * sin(t));
+        mixColor = mix(mixColor, color3, vUv.y + 0.2 * cos(t));
+        mixColor = mix(mixColor, color4, smoothstep(0.5, 1.5, noise));
+        
+        col = mixColor * noise * u_color;
         gl_FragColor = vec4(col, noise);
       }
     `;
@@ -178,6 +189,8 @@ export function NeuralNoise() {
       pointer.x / window.innerWidth,
       1 - pointer.y / window.innerHeight
     );
+    gl.uniform3f(uniforms.u_color, colorObj.current.r, colorObj.current.g, colorObj.current.b);
+    gl.uniform1f(uniforms.u_speed, colorObj.current.speed);
 
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
@@ -239,8 +252,20 @@ export function NeuralNoise() {
     const resizeListener = () => resizeCanvas();
     window.addEventListener('resize', resizeListener);
 
-    gl.uniform3f(uniformsRef.current.u_color, 0.9, 0.2, 0.4);
-    gl.uniform1f(uniformsRef.current.u_speed, 0.001);
+    const st = ScrollTrigger.create({
+      id: "neural-noise-st",
+      trigger: "#hero",
+      start: "bottom bottom",
+      end: "bottom top",
+      scrub: true,
+      onUpdate: (self) => {
+        const p = self.progress;
+        colorObj.current.r = 1.0 - 0.97 * p;
+        colorObj.current.g = 1.0 - 0.98 * p;
+        colorObj.current.b = 1.0 - 0.98 * p;
+        colorObj.current.speed = 0.0001 * (1 - p);
+      }
+    });
 
     render();
 
@@ -250,6 +275,7 @@ export function NeuralNoise() {
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
+      st.kill();
     };
   }, []);
 
