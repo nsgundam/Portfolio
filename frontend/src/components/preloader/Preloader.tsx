@@ -26,8 +26,8 @@ export default function Preloader({ onComplete }: PreloaderProps) {
     // 1. นับ 0 → 100
     tl.to(countObj.current, {
       val: 100,
-      duration: 1.5,
-      ease: "power2.in",
+      duration: 1,
+      ease: "power2.out",
       snap: { val: 1 },
       onUpdate: () => {
         counter.textContent = String(Math.round(countObj.current.val));
@@ -40,7 +40,7 @@ export default function Preloader({ onComplete }: PreloaderProps) {
     // 3. Exit overlay — ปรับ style จาก Playground
     tl.to(overlay, {
       yPercent: -100, 
-      duration: 1.8,
+      duration: 1,
       ease: "power4.in",
       onStart: () => {
         onComplete(); // บอก App ว่า preloader กำลัง exit ให้ Hero เริ่มเล่นได้เลย

@@ -65,11 +65,10 @@ export default function Hero({
         opacity: 1,
         filter: "blur(0px)",
         startAt: { filter: "blur(10px)" },
-        duration: 1.2,
+        duration: 1,
         ease: "power2.out",
-        stagger: { each: 0.03, from: "edges" },
+        stagger: { each: 0.1, from: "edges" },
         onComplete: () => {
-          // Capture the layout state of name element at the center
           const state = Flip.getState(nameRef.current);
           flipStateRef.current = state;
           setIsCentered(false);
@@ -86,15 +85,14 @@ export default function Hero({
 
     const ctx = gsap.context(() => {
       if (flipStateRef.current) {
-        // Signal transition complete to App.tsx immediately to fade in Navbar/ScrollProgress simultaneously
         onTransitionComplete();
 
         Flip.from(flipStateRef.current, {
-          duration: 1.5,
-          ease: "power4.inOut",
+          duration: 1,
+          ease: "power4.out",
         });
 
-        const tl = gsap.timeline();
+        const tl = gsap.timeline({ delay: 1 });
 
         // Tagline word reveal
         tl.to(
@@ -102,12 +100,10 @@ export default function Hero({
           {
             opacity: 1,
             y: "0%",
-            startAt: { y: "100%" },
-            duration: 1.2,
+            startAt: { y: 120 },
+            duration: 1,
             ease: "power4.out",
-            stagger: 0.02,
           },
-          "-=0.7",
         );
 
         // Buttons fade in
@@ -116,11 +112,11 @@ export default function Hero({
           {
             opacity: 1,
             y: 0,
-            startAt: { y: 20 },
+            startAt: { y: 120 },
             duration: 0.8,
             ease: "power4.out",
           },
-          "-=0.6",
+          "<"
         );
 
         // Scroll indicator fade in
@@ -131,7 +127,7 @@ export default function Hero({
             duration: 0.8,
             ease: "power4.out",
           },
-          "-=0.5",
+          "<",
         );
       }
     }, sectionRef);

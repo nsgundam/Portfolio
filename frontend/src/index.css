@@ -9,14 +9,17 @@
   --color-bg: #080706;
   --color-surface: #161310;
   --color-surface-2: #1E1C18;
+  
   --color-border: #2A2519;
   --color-border-light: #3A3732;
+  
   --color-accent: #C4A97D;
   --color-accent-light: #D4BC9A;
   --color-accent-dark: #8A7450;
+  
   --color-text-primary: #EDE6D6;
-  --color-text-secondary: #EDE6D6;
-  --color-text-disabled: #3A3834;
+  --color-text-secondary: #BAAFA1;
+  --color-text-disabled: #544D42;
 
   /* Fonts */
   --font-display: "Cormorant Garamond", Georgia, serif;
