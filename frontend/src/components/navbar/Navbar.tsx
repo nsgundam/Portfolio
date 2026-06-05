@@ -15,10 +15,10 @@ const NAV_LINKS = [
 
 // ── Design tokens ──────────────────────────────────
 const THRESHOLD = 30;
-const SCROLLED_BG = "rgba(22, 20, 17, 0.65)";
+const SCROLLED_BG = "rgba(22, 20, 17, 0.01)";
 const DEFAULT_BG = "rgba(22, 26, 29, 0)";
-const BLUR = "20px";
-const SATURATE = "180%";
+const BLUR = "10px";
+const SATURATE = "200%";
 const LOGO_SCALE = 0.85;
 const DURATION = "0.7s";
 const EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
