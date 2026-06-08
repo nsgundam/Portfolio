@@ -1,8 +1,6 @@
-// src/components/sections/About.tsx
 import { useEffect, useRef } from "react";
 import { gsap, ScrollTrigger } from "../../lib/gsap";
 import { prefersReducedMotion } from "../../lib/motion";
-import { CometScene } from "../backgrounds/CometScene";
 
 interface AboutProps {
   preloaderDone: boolean;
@@ -10,14 +8,11 @@ interface AboutProps {
 
 export default function About({ preloaderDone }: AboutProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const panelRef = useRef<HTMLElement>(null);
-  const labelRef = useRef<HTMLParagraphElement>(null);
+  const panelRef   = useRef<HTMLElement>(null);
+  const labelRef   = useRef<HTMLParagraphElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
-  const bioRef = useRef<HTMLDivElement>(null);
-  const infoRef = useRef<HTMLDivElement>(null);
-
-  // Scroll progress for the CometScene (shared via ref for no re-renders)
-  const cometProgressRef = useRef<number>(0);
+  const bioRef     = useRef<HTMLDivElement>(null);
+  const infoRef    = useRef<HTMLDivElement>(null);
 
   // ── Panel slide-up + comet + content reveal (pinned scrub) ──
   useEffect(() => {
@@ -57,7 +52,6 @@ export default function About({ preloaderDone }: AboutProps) {
 
     const ctx = gsap.context(() => {
       // ── Phase A: Panel slides up from below (covers Hero) ──
-      // This is a separate ScrollTrigger, not pinned — it drives the "approach"
       ScrollTrigger.create({
         trigger: wrapper,
         start: "top bottom",
@@ -66,44 +60,22 @@ export default function About({ preloaderDone }: AboutProps) {
         onUpdate: (self) => {
           // Panel rises from below
           gsap.set(panel, { y: (1 - self.progress) * window.innerHeight });
-          // Feed comet scene: phase A maps to progress 0 → 0.5
-          cometProgressRef.current = self.progress * 0.5;
         },
       });
 
-      // ── Phase B: Pinned — comet impact + content reveal ──
+      // ── Phase B: Pinned — atmospheric pause then content reveal ──
       const pinDistance = 900 * factor;
       const tl = gsap.timeline();
 
-      // Comet flash zone (0.5 → 0.7 of comet progress)
-      tl.to(
-        {},
-        {
-          duration: 0.35,
-          onUpdate: function (this: gsap.core.Tween) {
-            cometProgressRef.current = 0.5 + this.progress() * 0.3;
-          },
-        },
-      );
+      // Brief cinematic pause before content reveals
+      // SpaceScene handles the asteroid drama during this beat
+      tl.to({}, { duration: 0.35 });
 
-      // Content reveal zone (0.8 → 1.0 of comet progress)
       // Label
       tl.fromTo(
         labelRef.current,
-        { opacity: 0, filter: "blur(8px)" },
-        { opacity: 1, filter: "blur(0px)", duration: 0.1, ease: "power4.out" },
-      );
-
-      // Drive comet to final state while content reveals
-      tl.to(
-        {},
-        {
-          duration: 0.05,
-          onUpdate: function (this: gsap.core.Tween) {
-            cometProgressRef.current = 0.8 + this.progress() * 0.2;
-          },
-        },
-        "<",
+        { opacity: 0, filter: 'blur(8px)' },
+        { opacity: 1, filter: 'blur(0px)', duration: 0.1, ease: 'power4.out' },
       );
 
       // Heading
@@ -161,13 +133,9 @@ export default function About({ preloaderDone }: AboutProps) {
       <section
         id="about"
         ref={panelRef}
-        className="about-panel relative min-h-screen overflow-hidden px-5 py-20 shadow-[0_-20px_60px_rgba(0,0,0,0.5)] sm:px-8 md:py-32"
-        style={{ background: "var(--color-bg)" }}
+        className="about-panel relative min-h-screen overflow-hidden px-5 py-20 sm:px-8 md:py-32"
       >
-        {/* Three.js Comet Background */}
-        <CometScene progressRef={cometProgressRef} />
 
-        {/* Content layer — sits above the canvas */}
         <div className="relative z-10 mx-auto max-w-5xl">
           <p
             ref={labelRef}

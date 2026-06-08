@@ -5,7 +5,7 @@ import { gsap, Flip } from "../../lib/gsap";
 import { prefersReducedMotion } from "../../lib/motion";
 import { ScrollIndicator } from "../ui/ScrollIndicator";
 import { MagneticButton } from "../ui/MagneticButton";
-import { NeuralNoise } from "../backgrounds/NeuralNoise";
+
 
 interface HeroProps {
   preloaderDone: boolean;
@@ -148,10 +148,6 @@ export default function Hero({
       id="hero"
       className="top-0 z-0 flex h-screen flex-col items-center justify-center overflow-hidden px-5 text-center sm:px-8"
     >
-      {/* Background with neural noise effect */}
-      <NeuralNoise />
-
-      {/* aria-label gives screen readers clean text; Splitting.js char-spans are decorative */}
       <h1
         ref={nameRef}
         aria-label="Narunat Sutthibut"

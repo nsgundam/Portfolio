@@ -8,6 +8,7 @@ import About from "./components/sections/About";
 import Projects from "./components/sections/Projects";
 import Skills from "./components/sections/Skills";
 import Contact from "./components/sections/Contact";
+import { SpaceScene } from "./components/backgrounds/SpaceScene";
 import { useState, useCallback, useEffect } from "react";
 import { ScrollTrigger } from "./lib/gsap";
 import { prefersReducedMotion } from "./lib/motion";
@@ -50,6 +51,9 @@ export default function App() {
       >
         Skip to content
       </a>
+
+      {/* Fixed background — z-index -1, spans Hero → About narrative arc */}
+      <SpaceScene preloaderDone={preloaderDone} />
 
       {/* Global overlays */}
       <CustomCursor />
