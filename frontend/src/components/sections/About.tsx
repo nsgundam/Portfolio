@@ -67,9 +67,8 @@ export default function About({ preloaderDone }: AboutProps) {
       const pinDistance = 900 * factor;
       const tl = gsap.timeline();
 
-      // Brief cinematic pause before content reveals
       // SpaceScene handles the asteroid drama during this beat
-      tl.to({}, { duration: 0.35 });
+      // tl.to({}, { duration: 0.35 });
 
       // Label
       tl.fromTo(
@@ -129,7 +128,7 @@ export default function About({ preloaderDone }: AboutProps) {
   }, [preloaderDone]);
 
   return (
-    <div ref={wrapperRef} className="about-wrapper relative z-10">
+    <div ref={wrapperRef} className="about-wrapper relative z-10 -mt-[20vh]">
       <section
         id="about"
         ref={panelRef}

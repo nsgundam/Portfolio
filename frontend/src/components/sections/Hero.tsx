@@ -1,11 +1,10 @@
-// src/components/sections/Hero.tsx
 import { useEffect, useLayoutEffect, useState, useRef } from "react";
 import Splitting from "splitting";
 import { gsap, Flip } from "../../lib/gsap";
 import { prefersReducedMotion } from "../../lib/motion";
+import { usePinnedTimeline } from "../../hooks/usePinnedTimeline";
 import { ScrollIndicator } from "../ui/ScrollIndicator";
 import { MagneticButton } from "../ui/MagneticButton";
-
 
 interface HeroProps {
   preloaderDone: boolean;
@@ -16,145 +15,182 @@ export default function Hero({
   preloaderDone,
   onTransitionComplete,
 }: HeroProps) {
-  const sectionRef = useRef<HTMLElement>(null);
-  const nameRef = useRef<HTMLHeadingElement>(null);
+  // pinRef doubles as sectionRef — passed to both <section> and gsap.context()
+  const { ref: pinRef, tl } = usePinnedTimeline<HTMLElement>(preloaderDone, {
+    pinDistance: 1400,
+  });
+
+  const nameRef    = useRef<HTMLHeadingElement>(null);
   const taglineRef = useRef<HTMLParagraphElement>(null);
   const buttonsRef = useRef<HTMLDivElement>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const scrollRef  = useRef<HTMLDivElement>(null);
 
   const [isCentered, setIsCentered] = useState(() => !prefersReducedMotion());
   const flipStateRef = useRef<Flip.FlipState | null>(null);
 
-  // Setup and hide elements initially to avoid FOUC
   useEffect(() => {
-    Splitting({ target: nameRef.current!, by: "chars" });
+    Splitting({ target: nameRef.current!,    by: "words" });
     Splitting({ target: taglineRef.current!, by: "words" });
 
-    gsap.set(
-      [
-        nameRef.current!.querySelectorAll(".char"),
-        taglineRef.current!.querySelectorAll(".word"),
-        buttonsRef.current,
-        scrollRef.current,
-      ],
-      { opacity: 0 },
-    );
+    // Hide everything until the reveal animation runs
+    gsap.set(nameRef.current!.querySelectorAll(".word"), { opacity: 0 });
+    gsap.set(taglineRef.current!.querySelectorAll(".word"), { opacity: 0 });
+    gsap.set([buttonsRef.current, scrollRef.current], { opacity: 0 });
   }, []);
 
-  // 1. Reveal name characters at the center
+  // ── Phase A-1: word blur reveal (time-based) ──────────────────────────────
   useEffect(() => {
     if (!preloaderDone) return;
 
     if (prefersReducedMotion()) {
-      gsap.set(nameRef.current!.querySelectorAll(".char"), {
-        opacity: 1,
-        filter: "blur(0px)",
-      });
-      gsap.set(taglineRef.current!.querySelectorAll(".word"), {
-        opacity: 1,
-        y: "0%",
-      });
-      gsap.set(buttonsRef.current, { opacity: 1 });
-      gsap.set(scrollRef.current, { opacity: 1 });
+      // Instant reveal — no animation
+      gsap.set(nameRef.current!.querySelectorAll(".word"), { opacity: 1 });
+      gsap.set(taglineRef.current!.querySelectorAll(".word"), { opacity: 1, y: 0 });
+      gsap.set([buttonsRef.current, scrollRef.current], { opacity: 1 });
       onTransitionComplete();
       return;
     }
 
     const ctx = gsap.context(() => {
-      gsap.to(nameRef.current!.querySelectorAll(".char"), {
+      // Words bloom from blur, staggered from center outward
+      gsap.to(nameRef.current!.querySelectorAll(".word"), {
         opacity: 1,
-        filter: "blur(0px)",
-        startAt: { filter: "blur(10px)" },
+        filter:  "blur(0px)",
+        startAt: { filter: "blur(16px)" },
         duration: 1,
-        ease: "power2.out",
-        stagger: { each: 0.1, from: "edges" },
+        ease:    "power2.out",
+        stagger: { each: 1, from: "edges" },
         onComplete: () => {
-          const state = Flip.getState(nameRef.current);
+          const state = Flip.getState(nameRef.current!);
           flipStateRef.current = state;
           setIsCentered(false);
         },
       });
-    }, sectionRef);
+    }, pinRef);
 
     return () => ctx.revert();
-  }, [preloaderDone, onTransitionComplete]);
+  }, [preloaderDone, onTransitionComplete, pinRef]);
 
-  // 2. Perform the layout transition to natural flow position and reveal the rest of UI
+  // ── Phase A-2: Flip to natural position + reveal rest of UI ──────────────
   useLayoutEffect(() => {
     if (isCentered || !preloaderDone || prefersReducedMotion()) return;
 
     const ctx = gsap.context(() => {
       if (flipStateRef.current) {
-        onTransitionComplete();
-
         Flip.from(flipStateRef.current, {
-          duration: 1,
-          ease: "power4.out",
+          duration: 1.0,
+          ease:     "power4.out",
         });
 
-        const tl = gsap.timeline({ delay: 1 });
+        // Tagline, buttons, scroll indicator appear after name settles
+        const reveal = gsap.timeline({ 
+          delay: 0.8,
+          onComplete: onTransitionComplete // unlock scroll only when fully done
+        });
 
-        // Tagline word reveal
-        tl.to(
-          taglineRef.current!.querySelectorAll(".word"),
-          {
-            opacity: 1,
-            y: "0%",
-            startAt: { y: 120 },
-            duration: 1,
-            ease: "power4.out",
-          },
-        );
+        reveal.to(taglineRef.current!.querySelectorAll(".word"), {
+          opacity: 1,
+          y:       "0%",
+          startAt: { y: "120%" },
+          duration: 1,
+          ease:    "power4.out",
+        });
 
-        // Buttons fade in
-        tl.to(
+        reveal.to(
           buttonsRef.current,
-          {
-            opacity: 1,
-            y: 0,
-            startAt: { y: 120 },
-            duration: 0.8,
-            ease: "power4.out",
-          },
-          "<"
-        );
-
-        // Scroll indicator fade in
-        tl.to(
-          scrollRef.current,
-          {
-            opacity: 1,
-            duration: 0.8,
-            ease: "power4.out",
-          },
+          { opacity: 1, y: 0, startAt: { y: "120%" }, duration: 1, ease: "power4.out" },
           "<",
         );
+
+        reveal.to(
+          scrollRef.current,
+          { opacity: 1, duration: 0.6, ease: "power2.out" },
+          "<+0.2",
+        );
       }
-    }, sectionRef);
+    }, pinRef);
 
     return () => ctx.revert();
-  }, [isCentered, preloaderDone, onTransitionComplete]);
+  }, [isCentered, preloaderDone, onTransitionComplete, pinRef]);
 
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+  useEffect(() => {
+    if (!tl) return;
+    const nameEl    = nameRef.current;
+    const taglineEl = taglineRef.current;
+    const buttonsEl = buttonsRef.current;
+    const scrollEl  = scrollRef.current;
+    if (!nameEl || !taglineEl || !buttonsEl || !scrollEl) return;
+
+    const words    = nameEl.querySelectorAll<HTMLElement>(".word");
+    const leftWord  = words[0] ?? null;
+    const rightWord = words[1] ?? null;
+
+    const halfVW = window.innerWidth * 0.55;
+
+    tl.to(
+      [taglineEl, buttonsEl, scrollEl],
+      { opacity: 0, y: -30, filter: "blur(8px)", duration: 0.2, ease: "power2.in" },
+      0,
+    );
+
+    tl.to(
+      nameEl,
+      {
+        fontSize:      "clamp(80px, 14vw, 220px)",
+        letterSpacing: "-0.02em",
+        duration:      0.4,
+        ease:          "power3.inOut",
+      },
+      0,
+    );
+
+    // ─ Beat 0.40 → 0.75 ─  name halves split apart ───────────────────────
+    if (leftWord) {
+      tl.to(
+        leftWord,
+        { x: -halfVW, opacity: 0, filter: "blur(6px)", duration: 0.35, ease: "power3.in" },
+        0.2,
+      );
     }
+    if (rightWord) {
+      tl.to(
+        rightWord,
+        { x: halfVW, opacity: 0, filter: "blur(6px)", duration: 0.35, ease: "power3.in" },
+        0.2,
+      );
+    }
+
+    // ─ Beat 0.90 → 1.0 ─  clear hero, hand off to About ─────────────────
+    tl.to(
+      nameEl,
+      { opacity: 0, duration: 0.1, ease: "none" },
+      0.9,
+    );
+
+    // Restore x/opacity on revert (reverse scroll)
+    // GSAP handles this automatically when `scrub: 1.5` is set.
+  }, [tl]);
+
+  const scrollToSection = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
     <section
-      ref={sectionRef}
+      ref={pinRef}
       id="hero"
       className="top-0 z-0 flex h-screen flex-col items-center justify-center overflow-hidden px-5 text-center sm:px-8"
     >
+      {/* Background: SpaceScene fixed canvas renders behind (z-index -1, App.tsx) */}
+
+      {/* aria-label gives screen readers the clean string; Splitting word-spans are decorative */}
       <h1
         ref={nameRef}
         aria-label="Narunat Sutthibut"
         className={
           isCentered
-            ? "fixed z-30 font-display text-text-primary leading-none tracking-tight select-none pointer-events-none text-center px-5 sm:px-8 w-full"
-            : "relative font-display text-text-primary mb-4 leading-none tracking-tight text-center"
+            ? "fixed z-30 font-display text-text-primary leading-none tracking-tight select-none pointer-events-none text-center px-5 sm:px-8 w-full whitespace-nowrap"
+            : "relative font-display text-text-primary mb-4 leading-none tracking-tight text-center whitespace-nowrap"
         }
         style={{ fontSize: "clamp(56px, 10vw, 140px)", fontWeight: 300 }}
       >
@@ -172,7 +208,7 @@ export default function Hero({
         </em>
       </p>
 
-      {/* CTA Buttons */}
+      {/* CTA buttons */}
       <div
         ref={buttonsRef}
         className="flex gap-4 flex-wrap justify-center mb-12"

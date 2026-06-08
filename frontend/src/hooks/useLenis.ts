@@ -1,9 +1,11 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import Lenis from "lenis"
 import { gsap, ScrollTrigger } from "../lib/gsap"
 import { prefersReducedMotion } from "../lib/motion"
 
-export function useLenis() {
+export function useLenis(isLocked: boolean = false) {
+  const [lenis, setLenis] = useState<Lenis | null>(null);
+
   useEffect(() => {
     // ป้องกัน Browser จำตำแหน่ง Scroll และบังคับกลับไปบนสุดทุกครั้งที่ Refresh
     if ("scrollRestoration" in window.history) {
@@ -17,20 +19,33 @@ export function useLenis() {
       return () => window.removeEventListener("scroll", onScroll)
     }
 
-    const lenis = new Lenis({
+    const lenisInstance = new Lenis({
       duration: 1.2,
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     })
 
-    lenis.on("scroll", ScrollTrigger.update)
+    lenisInstance.on("scroll", ScrollTrigger.update)
 
-    const ticker = (time: number) => lenis.raf(time * 1000)
+    const ticker = (time: number) => lenisInstance.raf(time * 1000)
     gsap.ticker.add(ticker)
     gsap.ticker.lagSmoothing(0)
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setLenis(lenisInstance)
+
     return () => {
-      lenis.destroy()
+      lenisInstance.destroy()
       gsap.ticker.remove(ticker)
+      setLenis(null)
     }
   }, [])
+
+  useEffect(() => {
+    if (!lenis) return;
+    if (isLocked) {
+      lenis.stop();
+    } else {
+      lenis.start();
+    }
+  }, [lenis, isLocked]);
 }

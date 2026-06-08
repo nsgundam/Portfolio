@@ -14,9 +14,11 @@ import { ScrollTrigger } from "./lib/gsap";
 import { prefersReducedMotion } from "./lib/motion";
 
 export default function App() {
-  useLenis();
   const [preloaderDone, setPreloaderDone] = useState(false);
   const [heroTransitionComplete, setHeroTransitionComplete] = useState(() => prefersReducedMotion());
+
+  // Lock Lenis scroll until Hero animation finishes
+  useLenis(!heroTransitionComplete);
 
   const handlePreloaderComplete = useCallback(() => setPreloaderDone(true), []);
   const handleHeroTransitionComplete = useCallback(() => setHeroTransitionComplete(true), []);
@@ -52,7 +54,6 @@ export default function App() {
         Skip to content
       </a>
 
-      {/* Fixed background — z-index -1, spans Hero → About narrative arc */}
       <SpaceScene preloaderDone={preloaderDone} />
 
       {/* Global overlays */}
