@@ -128,7 +128,7 @@ export default function About({ preloaderDone }: AboutProps) {
   }, [preloaderDone]);
 
   return (
-    <div ref={wrapperRef} className="about-wrapper relative z-10 -mt-[20vh]">
+    <div ref={wrapperRef} className="about-wrapper relative z-10 mt-[20vh]">
       <section
         id="about"
         ref={panelRef}

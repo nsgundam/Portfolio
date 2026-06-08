@@ -101,7 +101,7 @@
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-brand);
+  background: var(--color-accent);
 }
 
 /* Project card — featured ambient glow on hover */

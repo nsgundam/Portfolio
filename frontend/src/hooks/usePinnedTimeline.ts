@@ -1,4 +1,3 @@
-// src/hooks/usePinnedTimeline.ts
 import { useEffect, useRef, useState } from "react";
 import { gsap, ScrollTrigger } from "../lib/gsap";
 import { prefersReducedMotion } from "../lib/motion";
