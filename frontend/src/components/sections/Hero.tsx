@@ -17,7 +17,7 @@ export default function Hero({
 }: HeroProps) {
   // pinRef doubles as sectionRef — passed to both <section> and gsap.context()
   const { ref: pinRef, tl } = usePinnedTimeline<HTMLElement>(preloaderDone, {
-    pinDistance: 1400,
+    pinDistance: 1200,
   });
 
   const nameRef    = useRef<HTMLHeadingElement>(null);

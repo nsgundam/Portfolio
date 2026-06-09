@@ -462,7 +462,7 @@ export function SpaceScene({ preloaderDone }: SpaceSceneProps) {
         id:      "space-scene",
         trigger: "#hero",
         start:   "top top",
-        end:     "+=1400",   // must match Hero's pinDistance
+        end:     "+=1200",   // must match Hero's pinDistance
         scrub:   1.5,
         onUpdate: (self) => {
           scrollRef.current = self.progress;
