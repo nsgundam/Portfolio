@@ -67,7 +67,7 @@ export default function About({ preloaderDone }: AboutProps) {
       const pinDistance = 900 * factor;
       const tl = gsap.timeline();
 
-      // SpaceScene handles the asteroid drama during this beat
+      // SpaceScene handles the spaceship flyby during this beat
       // tl.to({}, { duration: 0.35 });
 
       // Label

@@ -26,7 +26,6 @@ type MouseRef = MutableRefObject<MouseState>;
 function buildStarPositions(count: number): Float32Array {
   const arr = new Float32Array(count * 3);
   for (let i = 0; i < count; i++) {
-    // 75% of stars form the dense Milky Way band
     const isBand = Math.random() < 1;
     let x, y, z;
 
@@ -78,7 +77,7 @@ function StarField({ scrollRef, isMobile }: StarFieldProps) {
 
     // Fade IN as aurora fades out (0 → 0.30 progress)
     (pts.material as THREE.PointsMaterial).opacity =
-      Math.min(scrollRef.current / 0.3, 1.0);
+      Math.min(scrollRef.current / 0.5, 1.0);
 
     // Subtle field drift
     pts.rotation.y += 0.00005 * delta * 60;
@@ -244,10 +243,10 @@ function CameraController({ scrollRef }: CameraControllerProps) {
     let targetX = 0;
 
     if (p > 0.5 && p <= 0.75) {
-      // Ease camera right as asteroid surges past
+      // Ease camera right as ship sweeps past
       targetX = lerp(0, 2, (p - 0.5) / 0.25);
     } else if (p > 0.75 && p <= 0.9) {
-      // Continue drifting as asteroid exits
+      // Continue drifting as ship exits
       targetX = lerp(2, 2.5, (p - 0.75) / 0.15);
     } else if (p > 0.9) {
       targetX = 2.5;
@@ -260,70 +259,80 @@ function CameraController({ scrollRef }: CameraControllerProps) {
   return null;
 }
 
-// ─── Layer 4: Asteroid Model ──────────────────────────────────────────────────
+// ─── Layer 4: Spaceship Model ─────────────────────────────────────────────────
 
-interface AsteroidModelProps {
+interface SpaceshipModelProps {
   scrollRef:   ScrollRef;
-  mouseRef:    MouseRef;
   positionRef: MutableRefObject<THREE.Vector3>;
 }
 
-function AsteroidModel({ scrollRef, mouseRef, positionRef }: AsteroidModelProps) {
-  const { scene } = useGLTF("/3D/asteroid.glb");
+function SpaceshipModel({ scrollRef, positionRef }: SpaceshipModelProps) {
+  const { scene } = useGLTF("/3D/lego_ship.glb");
   const groupRef  = useRef<THREE.Group>(null!);
-
-  // Apply surface material settings once GLTF loads
-  useEffect(() => {
-    scene.traverse((child) => {
-      if (!(child as THREE.Mesh).isMesh) return;
-      const mesh = child as THREE.Mesh;
-      const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-      mats.forEach((mat) => {
-        if (mat instanceof THREE.MeshStandardMaterial) {
-          mat.roughness   = 0.8;
-          mat.metalness   = 0.3;
-          mat.needsUpdate = true;
-        }
-      });
-    });
-  }, [scene]);
 
   useFrame((_state, delta) => {
     const p     = scrollRef.current;
     const group = groupRef.current;
     if (!group) return;
 
-    group.visible = p <= 0.9;
+    group.visible = p >= 0.07;
 
-    // ── Beat 0 → 0.25 ─ barely visible, approaching from deep space ──────
+    // Ship faces its travel direction — nose-forward orientation
+    // Smooth easing via lerp to avoid abrupt snaps
+    const dt = Math.min(delta * 60, 2); // cap frame-rate independence
+
+    // ── Beat 0 → 0.25 ─ distant approach, a faint glint in deep space ────
     if (p <= 0.25) {
       const bp = p / 0.25;
-      group.position.set(0, 0, lerp(-80, -20, bp));
-      group.scale.setScalar(lerp(0.05, 0.15, bp));
-      group.rotation.y += 0.001 * delta * 60;
+      group.position.set(
+        lerp(2, 0.5, bp),           // drifts from right toward center
+        lerp(-0.5, 0, bp),          // subtle vertical rise
+        lerp(-80, -18, bp),         // approaching from far away
+      );
+      group.scale.setScalar(lerp(0.05, 0.18, bp));
+      // Gentle yaw — ship is angled slightly as it approaches
+      group.rotation.y = lerp(-0.3, -0.1, bp);
+      group.rotation.x = lerp(0.05, 0.02, bp);  // slight pitch
+      group.rotation.z = 0;
     }
-    // ── Beat 0.25 → 0.50 ─ approaches, clearly visible ───────────────────
+    // ── Beat 0.25 → 0.50 ─ glides closer, clearly visible ────────────────
     else if (p <= 0.5) {
       const bp = (p - 0.25) / 0.25;
-      group.position.set(0, 0, lerp(-20, -3, bp));
-      group.scale.setScalar(lerp(0.15, 0.5, bp));
-      group.rotation.y += 0.002 * delta * 60;
+      group.position.set(
+        lerp(0.5, -0.3, bp),        // drifts slightly left
+        lerp(0, 0.2, bp),           // gentle ascent
+        lerp(-18, -3, bp),          // closing distance
+      );
+      group.scale.setScalar(lerp(0.18, 0.5, bp));
+      group.rotation.y = lerp(-0.1, 0, bp);     // straightens heading
+      group.rotation.x = lerp(0.02, 0, bp);     // levels pitch
+      group.rotation.z = lerp(0, -0.03, bp);    // micro bank
     }
-    // ── Beat 0.50 → 0.75 ─ surges past camera, mouse parallax ────────────
+    // ── Beat 0.50 → 0.75 ─ sweeps past camera on a smooth arc ────────────
     else if (p <= 0.75) {
       const bp = (p - 0.5) / 0.25;
-      group.position.set(0, 0, lerp(-3, 12, bp));
+      group.position.set(
+        lerp(-0.3, -1.5, bp),       // arcs to the left
+        lerp(0.2, 0.8, bp),         // rises slightly
+        lerp(-3, 10, bp),           // passes behind camera
+      );
       group.scale.setScalar(lerp(0.5, 0.55, bp));
-      // Mouse parallax — asteroid rotates toward cursor
-      group.rotation.y += mouseRef.current.dx * 0.001;
-      group.rotation.y += 0.003 * delta * 60; // base spin
+      group.rotation.y = lerp(0, 0.4, bp);      // yaw into the arc
+      group.rotation.x = lerp(0, -0.08, bp);    // nose-up
+      group.rotation.z = lerp(-0.03, -0.15, bp); // banks into turn
     }
-    // ── Beat 0.75 → 0.90 ─ exit upper-right, trail active ────────────────
+    // ── Beat 0.75 → 0.90 ─ exit upper-right with a banking turn ──────────
     else if (p <= 0.9) {
       const bp = (p - 0.75) / 0.15;
-      group.position.set(lerp(0, 4, bp), lerp(0, 1, bp), lerp(12, 22, bp));
-      group.scale.setScalar(0.55);
-      group.rotation.y += 0.002 * delta * 60;
+      group.position.set(
+        lerp(-1.5, 3.5, bp),        // sweeps right for exit
+        lerp(0.8, 2.0, bp),         // climbs away
+        lerp(10, 24, bp),           // accelerates into distance
+      );
+      group.scale.setScalar(lerp(0.55, 0.35, bp)); // shrinks as it departs
+      group.rotation.y = lerp(0.4, 1.0, bp);      // continues yaw
+      group.rotation.x = lerp(-0.08, -0.2, bp);   // pitches up to exit
+      group.rotation.z = lerp(-0.15, -0.3, bp);   // deeper bank
     }
 
     // Share position with GhostTrail and CometTail
@@ -337,22 +346,20 @@ function AsteroidModel({ scrollRef, mouseRef, positionRef }: AsteroidModelProps)
   );
 }
 
-// ─── Asteroid Group (GLTF Suspense boundary) ──────────────────────────────────
+// ─── Spaceship Group (GLTF Suspense boundary) ─────────────────────────────────
 
-interface AsteroidGroupProps {
+interface SpaceshipGroupProps {
   scrollRef: ScrollRef;
-  mouseRef:  MouseRef;
 }
 
-function AsteroidGroup({ scrollRef, mouseRef }: AsteroidGroupProps) {
-  const asteroidPosRef = useRef(new THREE.Vector3(0, 0, -80));
+function SpaceshipGroup({ scrollRef }: SpaceshipGroupProps) {
+  const shipPosRef = useRef(new THREE.Vector3(0, 0, -80));
 
   return (
     <>
-      <AsteroidModel
+      <SpaceshipModel
         scrollRef={scrollRef}
-        mouseRef={mouseRef}
-        positionRef={asteroidPosRef}
+        positionRef={shipPosRef}
       />
     </>
   );
@@ -383,9 +390,9 @@ function SceneContents({ scrollRef, mouseRef, isMobile }: SceneContentsProps) {
       <AuroraPlane scrollRef={scrollRef} mouseRef={mouseRef} isMobile={isMobile} />
       <StarField   scrollRef={scrollRef} isMobile={isMobile} />
 
-      {/* Asteroid loads async — Suspense prevents canvas stall */}
+      {/* Spaceship loads async — Suspense prevents canvas stall */}
       <Suspense fallback={null}>
-        <AsteroidGroup scrollRef={scrollRef} mouseRef={mouseRef} />
+        <SpaceshipGroup scrollRef={scrollRef} />
       </Suspense>
     </>
   );
@@ -518,4 +525,4 @@ export function SpaceScene({ preloaderDone }: SpaceSceneProps) {
   );
 }
 
-useGLTF.preload("/3D/asteroid.glb");
+useGLTF.preload("/3D/lego_ship.glb");
