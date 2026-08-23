@@ -1,138 +1,118 @@
-# AGENTS Guidelines for This Repository
+# Repository Instructions for Agents
 
-This repository contains a Vite-powered React application located in `frontend/`.
-Agents should follow the distilled system prompt, coding style, and prohibitions below.
+This repository contains a React + Vite single-page portfolio in `frontend/`.
+The site is an experience-first portfolio for startup recruiters, with clarity and
+accessibility taking priority over spectacle.
 
-> Last updated: June 2026 — Sprint 5 cosmic redesign
-> If this file conflicts with docs/, this file wins for agent behavior rules.
-> docs/ wins for design values and technical specs.
+> Updated: 24 August 2026
 
----
+## Source of truth
 
-## System Prompt
+Read these files before changing the project:
 
-- You are a senior frontend engineer and interaction designer building a premium cinematic portfolio website.
-- Goal: create a recruiter-memorable experience for startups.
-- The website must feel sophisticated, technical, cinematic, intentional, polished, and exciting but not flashy.
-- Reference aesthetic: Interstellar × Inception × 3 Body Problem — warm, editorial, cosmic. NOT neon sci-fi.
+1. `AGENTS.md` — implementation rules and prohibitions
+2. `PRODUCT.md` — audience, positioning, confirmed content, and open facts
+3. `DESIGN.md` — visual system, narrative, motion, and responsive behavior
+4. `ROADMAP.md` — current state, next work, and blockers
 
----
+Do not create additional planning documents unless the owner explicitly requests
+one. Update the relevant source-of-truth file instead.
 
-## Visual Narrative (read before touching any section)
+Priority when information conflicts:
 
-The portfolio tells a single journey: **Earth → Deep Space → Event Horizon**.
-Every section has a specific cosmic environment. Do not break this narrative order.
+1. `AGENTS.md` for agent behavior
+2. `PRODUCT.md` for factual claims and content
+3. `DESIGN.md` for design and interaction decisions
+4. `ROADMAP.md` for delivery status
+5. Current source code for observed implementation state
 
----
+## Working role
 
-## Coding Style
+- Act as a senior frontend engineer and interaction designer.
+- Build a premium, recruiter-memorable portfolio that feels sophisticated,
+  technical, cinematic, warm, and intentional.
+- Preserve the narrative **Earth → Deep Space → Event Horizon**.
+- Prefer precise restraint over extra effects.
+- Never invent project outcomes, metrics, roles, stacks, or links. Project 03 and
+  04 have confirmed names only; see `PRODUCT.md`.
 
-- Prefer TypeScript (`.tsx` / `.ts`) for all new components and utilities.
-- Follow the existing `frontend/src/` architecture: `components/`, `hooks/`, `lib/`, `types/`.
-- Reuse existing hooks, animation utilities, and UI primitives.
-- Use composition over monolithic components; avoid duplicate section copies.
+## Code architecture
 
-### GSAP Rules
+- Use TypeScript for new code.
+- Follow `frontend/src/`: `components/`, `hooks/`, `lib/`, and `types/`.
+- Compose small components; refactor in place instead of creating `V2`, `New`, or
+  `Refactored` copies.
+- Define prop interfaces and avoid `any` unless the reason is documented.
+- Reuse existing hooks, motion utilities, tokens, and UI primitives.
+- Preserve unrelated working-tree changes.
 
-- Always import GSAP through `src/lib/gsap.ts` — never import `gsap` directly.
-- Always use `gsap.context()` and return `ctx.revert()` on unmount.
-- Use `depthReveal()` exported from `src/lib/gsap.ts` for all major section entrances — not plain `fromTo opacity+y`.
-- Use `usePinnedTimeline` hook for all pinned sections (Hero, About, Projects, Skills).
-- Never apply `scrub` to Preloader, Cursor, or Navbar — those are time-based only.
-- `anticipatePin: 1` is required on every pinned ScrollTrigger.
-- Clean up all GSAP timelines and listeners on unmount.
-- Prefer transform and opacity for motion; avoid layout thrashing.
+## GSAP and scrolling
 
-### Font Rules (Sprint 5 — DEC-012)
+- Import `gsap` and `ScrollTrigger` only through `src/lib/gsap.ts`.
+- Initialize no ScrollTrigger before `preloaderDone === true`.
+- Wrap component animation in `gsap.context()` and call `ctx.revert()` on cleanup.
+- Clean up timelines, triggers, media listeners, pointer listeners, and ticker work.
+- Use `depthReveal()` for major entrances when a depth entrance is appropriate.
+- Every pinned trigger requires `anticipatePin: 1`.
+- Do not mix scrubbed and time-based animation in the same sequence.
+- Preloader, cursor, and navbar are time-based; never scrub them.
+- Prefer transforms, opacity, bounded filters, and shader uniforms over layout
+  properties.
+- Section navigation must use the shared helper in `src/lib/navigation.ts` so Lenis,
+  hashes, and pin spacers remain synchronized.
 
-Three font roles exist. Use each only for its role:
+## Three.js scene
 
-```bash
-font-display  →  Cormorant Garamond — H1, H2, section headings, hero name
-font-label    →  Space Mono         — section numbers, metadata, labels, nav
-font-body     →  IBM Plex Mono      — body copy, terminal, descriptions
-```
+- `SpaceScene.tsx` is the single continuous React Three Fiber canvas.
+- Do not add a second section canvas without a new documented decision.
+- The Hero ship must continue along its current travel vector when departing. After
+  the close pass, its screen-space X direction must not reverse to re-enter the frame.
+- The About environment continues the warm deep-space star field inside the same
+  canvas. Do not add a comet or another foreground celestial object to this section.
+- Use CSS design tokens to construct Three.js colors; do not hardcode scene colors.
+- Keep effects behind content, outside reading zones, and subordinate to typography.
+- Reduce particle counts and pixel ratio on mobile.
+- Respect `prefers-reduced-motion` with a stable, readable fallback.
 
-- `font-heading` no longer exists — it was renamed to `font-label`.
-- Do not use `font-display` for anything smaller than 24px; it breaks at small sizes.
-- `font-display` italic (`<em>`) is the signature move of this aesthetic — use on final words of headings.
+## Responsive behavior
 
-### Token Rules (Sprint 5 — DEC-011)
+| Viewport | Required behavior |
+| --- | --- |
+| `< 768px` | Natural scrolling, no long section pins, no custom cursor, one-column content, simplified scene |
+| `768–1024px` | Two-column layouts where useful, pin distances at 60% of desktop |
+| `> 1024px` | Full bounded cinematic sequence and desktop pins |
 
-Use CSS variables only. Never hardcode hex values. Current token names:
+All breakpoints must keep content readable, keyboard accessible, and free from
+horizontal overflow.
 
-```css
-/* Backgrounds */
---color-bg          /* #080706  event horizon black    */
---color-surface     /* #161310  deep surface           */
---color-border      /* #2A2519  warm dark border       */
+## Design constraints
 
-/* Accent — warm gold, NOT red */
---color-accent      /* #C4A97D  primary accent         */
---color-accent-light /* #D4BC9A hover state            */
---color-accent-dark  /* #8A7450 pressed / subdued      */
+- Use the token and font roles in `DESIGN.md` and `frontend/src/index.css`.
+- Never hardcode hex colors in components.
+- Never use `--color-brand`, `text-brand`, `border-brand`, or `bg-brand`.
+- No Framer Motion; GSAP is the only motion library.
+- No neon/cyan sci-fi treatment, gradient text, lens flares, planet illustrations,
+  or astronaut SVGs.
+- Do not add random, chaotic, or continuously distracting motion.
+- Do not hide essential content by default when a failed script would leave it
+  inaccessible.
+- Do not sacrifice navigation, reading, focus, or reduced-motion behavior for an
+  effect.
 
-/* Text */
---color-text-primary    /* #EDE6D6 starlight cream  */
---color-text-secondary  /* #7A6E5A dust warm gray   */
---color-text-disabled   /* #3A3530 very dark        */
-```
+## Current project-component rule
 
-**`--color-brand` has been removed.** If you see `text-brand`, `border-brand`, or `bg-brand`
-anywhere in the codebase, replace with `text-accent`, `border-accent`, `bg-accent`.
+`ProjectWindow.tsx` is deprecated but still used by the current Projects section.
+Do not extend it. Phase 3 replaces it with one reusable `ProjectPanel.tsx`, verifies
+the replacement, and only then deletes `ProjectWindow.tsx`.
 
-### Component Rules
+## Commands
 
-- Define props interfaces for every component; avoid `any` unless justified.
-- No `V2`, `New`, `Refactored` suffixes — refactor in place.
-- `ProjectWindow.tsx` is **scheduled for deletion** in Sprint 5 Step 05. Do not add code to it.
-- `ProjectPanel.tsx` is the replacement — one full-screen panel per project.
-
----
-
-## Responsive Behavior
-
-| Breakpoint          | Behavior                                                                              |
-| ------------------- | ------------------------------------------------------------------------------------- |
-| Mobile `< 768px`    | No custom cursor, simplified hover, hamburger nav, single-column, pin distances × 0.5 |
-| Tablet `768–1024px` | 2-column grids, pin distances × 0.6                                                   |
-| Desktop `> 1024px`  | Full cinematic experience, all pins active                                            |
-
----
-
-## Prohibitions
-
-- **Do not run `npm run build`** during interactive agent sessions.
-- **Do not use Framer Motion** — GSAP only.
-- **Do not create duplicate or experimental copies** — no `HeroNew.tsx`, `HeroV2.tsx`, etc.
-- **Do not introduce random, chaotic, or flashy motion** — restraint is the design.
-- **Do not hardcode hex colors** — CSS variables only.
-- **Do not use cyan `#00F0FF` or neon blue** — wrong aesthetic reference.
-- **Do not add lens flares, planet illustrations, or astronaut SVGs** — the aesthetic is typographic and restrained.
-- **Do not sacrifice usability for animation.**
-- **Do not add code to `ProjectWindow.tsx`** — it is deprecated.
-- **Do not produce placeholder-quality code.**
-- **Do not mix scrubbed + time-based animations** in the same section.
-- **Do not initialize any ScrollTrigger before `preloaderDone === true`.**
-
----
-
-## Required Reading (in this order)
-
-1. `AGENTS.md` — this file, agent behavior rules ← you are here
-2. `CONTEXT.md` — full project state snapshot, what is done / in progress / pending
-3. `docs/architecture.md` — folder rules, z-index ladder, component hierarchy
-4. `docs/design-motion.md` — color tokens, animation durations, easing tokens
-5. `docs/decision.md` — DEC-001 through DEC-017, check before any structural change
-6. `_management/timeline.md` — sprint progress, what is checked off vs pending
-7. `_management/project-brief.md` — copy, identity, project descriptions
-
----
-
-## Key Commands
+Run commands from `frontend/`:
 
 ```bash
-cd frontend && npm run dev     # start dev server
-npm run lint                   # ESLint check
-npm run optimize-images        # regenerate WebP assets
+npm run dev
+npm run lint
+npm run optimize-images
 ```
+
+Do **not** run `npm run build` during an interactive agent session.

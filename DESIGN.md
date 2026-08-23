@@ -1,138 +1,183 @@
-# Design
+---
+name: Narunat Sutthibut Portfolio
+description: A warm editorial journey through full-stack and real-time systems work.
+colors:
+  event-horizon: "#080706"
+  deep-surface: "#161310"
+  raised-surface: "#1E1C18"
+  warm-border: "#2A2519"
+  light-border: "#3A3732"
+  gravity-gold: "#C4A97D"
+  gravity-gold-light: "#D4BC9A"
+  gravity-gold-dark: "#8A7450"
+  starlight: "#EDE6D6"
+  warm-copy: "#BAAFA1"
+  muted-dust: "#544D42"
+typography:
+  display:
+    fontFamily: "Cormorant Garamond, Georgia, serif"
+    fontSize: "clamp(2rem, 4vw, 4rem)"
+    fontWeight: 300
+    lineHeight: 1.2
+  body:
+    fontFamily: "IBM Plex Mono, monospace"
+    fontSize: "0.875rem"
+    fontWeight: 400
+    lineHeight: 1.7
+  label:
+    fontFamily: "Space Mono, monospace"
+    fontSize: "0.6875rem"
+    fontWeight: 400
+    lineHeight: 1.4
+    letterSpacing: "0.25em"
+---
 
-## Visual Identity
+# Design System: Dust, Gravity, and Time
 
-The portfolio is a dark editorial brand with a warm, cinematic color palette and a restrained typographic hierarchy. The aesthetic is intentionally not neon or cyberpunk; it is warm, tactile, and technical, with carefully controlled motion and a strong sense of spatial depth.
+## Overview
 
-### Brand character
+**Creative North Star: "Dust, Gravity, and Time"**
 
-- Warm, confident, and composed
-- Technical without appearing flashy
-- Cinematic, yet readable and anchorable
-- Precise motion that supports meaning rather than distracts
+The portfolio is a warm, dark editorial journey inspired by the scale and restraint
+of *Interstellar*, *Inception*, and *3 Body Problem*. Its signature is one continuous
+spatial transition rather than a collection of unrelated effects. Typography carries
+the authority; the cosmic scene supplies depth and continuity.
 
-## Color Palette
+The narrative order is binding:
 
-### Surface
+```text
+Earth / Aurora → Deep Space / Star Field → Solar Passage
+→ Nebula Field → Event Horizon
+```
 
-- `--color-bg`: #080706
-- `--color-surface`: #161310
-- `--color-surface-2`: #1E1C18
-- `--color-border`: #2A2519
-- `--color-border-light`: #3A3732
+The first two environments are implemented. Later environments remain directional
+requirements for their roadmap phases.
 
-### Accent
+**Key Characteristics:**
 
-- `--color-accent`: #C4A97D
-- `--color-accent-light`: #D4BC9A
-- `--color-accent-dark`: #8A7450
+- Warm near-black surfaces and sparse gravity-gold accents
+- Editorial serif display type against precise mono copy
+- One continuous Three.js world behind readable HTML content
+- Motion that preserves direction and explains the journey
+- Calm negative space; no decorative sci-fi interface language
 
-### Text
+## Colors
 
-- `--color-text-primary`: #EDE6D6
-- `--color-text-secondary`: #7A776E
-- `--color-text-disabled`: #3A3834
+The frontmatter is the normative palette and mirrors `frontend/src/index.css`.
 
-### Usage
+- **Gravity Gold** is the only primary accent. Use it sparingly for metadata,
+  interactive emphasis, and restrained celestial material.
+- **Starlight** carries primary text and the brightest star-field particles.
+- **Warm Copy** is the body-text neutral; **Muted Dust** is reserved for secondary
+  metadata that still passes its intended contrast context.
+- Surfaces progress from **Deep Surface** to **Event Horizon**, never toward blue-black.
 
-- Backgrounds are anchored in deep charcoal and near-black values.
-- Accent color is a warm gold used sparingly for borders, buttons, and metadata.
-- Primary text is high-contrast cream; secondary text is a soft warm gray.
-- Disabled or muted text is a low-contrast dark warm gray.
+**The Rare Accent Rule.** Gold should feel discovered, not applied to every element.
 
 ## Typography
 
-### Font stack
+- **Display:** Cormorant Garamond, minimum 24px, used for H1/H2 and project titles.
+- **Body:** IBM Plex Mono for prose and technical descriptions.
+- **Label:** Space Mono for navigation, metadata, and meaningful sequence markers.
 
-- `--font-display`: "Cormorant Garamond", Georgia, serif
-- `--font-label`: "Space Mono", monospace
-- `--font-body`: "IBM Plex Mono", monospace
+Italic Cormorant on the final word of a major heading is the signature type move.
+Large headings should balance naturally; body copy should remain within roughly
+65–75 characters per line where layout permits.
 
-### Scale
+**The Three Roles Rule.** Never substitute one font role for another merely to add
+variation. `font-heading` no longer exists.
 
-- Display XL: `clamp(72px, 12vw, 160px)` — hero name, major headings
-- Display LG: `clamp(48px, 7vw, 96px)` — section headings, prominent titles
-- Display MD: `clamp(32px, 4vw, 56px)` — subheads and project titles
-- Body LG: `16px / 1.8` — primary paragraphs
-- Body SM: `14px / 1.7` — supporting text, descriptions
-- Label: `11px`, uppercase tracking, monospace — navigation labels, metadata, section IDs
+## Layout
 
-### Rules
+The application is one page in this order: Hero, About, Projects, Skills, Contact.
+Text sections use generous vertical rhythm and a readable central container. Visual
+atmosphere may extend edge-to-edge, but content alignment remains stable.
 
-- Display type is reserved for section hero text and major headings.
-- Body copy uses mono text for a technical, editorial tone.
-- Labels are monospace, uppercase, and small; use them sparingly.
-- Use `text-wrap: balance` on large headings and `text-wrap: pretty` on long prose when needed.
+| Viewport | Layout and motion |
+| --- | --- |
+| `< 768px` | One column, natural scrolling, no long pins, simplified scene, native cursor |
+| `768–1024px` | Up to two columns, bounded pins at 60% of desktop distance |
+| `> 1024px` | Full cinematic pins with content kept inside readable zones |
 
-## Layout and Spacing
+Transparent section surfaces may reveal `SpaceScene`, but each text area needs a
+restrained token-based scrim when scene contrast would impair reading. A scrim is not
+a replacement illustration and must not hide the environment.
 
-### Structure
+## Elevation & Depth
 
-- Single-page scroll narrative with sections: Hero, About, Projects, Skills, Contact.
-- Each section is visually distinct but shares the same warm, dark editorial fabric.
-- Use generous horizontal padding and ample vertical rhythm.
+Depth comes from the fixed Three.js world, tonal surface changes, bounded blur, scale,
+and occlusion—not glowing card shadows. `SpaceScene.tsx` is the only continuous canvas.
 
-### Spacing
+### Section environments
 
-- Section padding: `clamp(24px, 6vw, 120px)` horizontal and generous vertical spacing.
-- Content width: `max-width: 900px` for text sections, up to `1100px` for projects.
-- Space headings and body copy to create clear beats and avoid dense walls of text.
+- **Hero — Aurora and ship approach:** warm token-derived aurora gives way to a star
+  field as the ship approaches and crosses the frame.
+- **About — Deep-space continuation:** the warm star field remains inside the same
+  Three.js canvas after the ship exits. No comet or separate foreground celestial
+  object competes with the copy; a restrained token-based scrim protects readability.
+- **Projects — Solar Passage:** planned; must remain warm, typographic, and subordinate
+  to project evidence.
+- **Skills — Nebula Field:** planned; ambient depth only, never decorative floating
+  cards.
+- **Contact — Event Horizon:** planned final environment; the contact action remains
+  readable without animation.
 
-## Motion and Interaction
+No section may introduce an independent canvas until a documented performance and
+continuity reason supersedes the single-scene decision.
 
-### Motion principles
+## Shapes
 
-- Motion is meaningful and purposeful: reveal, transition, and interaction support the narrative.
-- Use `gsap.context()` and `ScrollTrigger` for section reveals and pinned scroll timelines.
-- Provide reduced-motion alternatives through `prefers-reduced-motion`.
-- Avoid layout motion except where it is essential to the feeling of depth.
-
-### Key motion patterns
-
-- Depth reveal: opacity + scale + blur transitions for text and UI entrances.
-- Scroll pinning: sections earn scroll, holding content for a cinematic beat.
-- Magnetic hover on CTA buttons: subtle pointer attraction for interactivity.
-- Custom cursor: only on fine pointer devices, disabled for reduced-motion.
+Most content remains unboxed. Thin warm borders separate factual groups. Rounded pills
+are limited to compact controls and the navigation shell; they are not the default
+content container. Celestial geometry is soft and particulate, never a literal planet
+illustration or HUD diagram.
 
 ## Components
 
-### Navbar
+### SpaceScene
 
-- Warm glass pill navigation with soft border and subtle blur.
-- Hidden until hero transition completes, then appears at top.
-- Contains skip link for accessibility.
+- Fixed behind the document and driven by one master scroll range.
+- Reads every color from CSS variables before creating Three.js materials.
+- Hero progress controls aurora, stars, camera, and ship.
+- About progress keeps the star field continuous and controls the scene exit.
+- Canvas opacity stays at 1 while About enters and throughout its pinned beat, then
+  fades only as About releases toward Projects.
 
-### Hero
+**Ship trajectory invariant:** after the close pass ends at approximately
+`(-1.5, 0.8, -4)`, departure continues toward more-negative X and higher Y until the
+ship leaves the same edge it is already approaching. It must never reverse X to loop
+back toward the upper-right. Damping must be frame-rate independent and reverse scroll
+must restore a coherent state.
 
-- Full-screen cinematic opening.
-- Animated hero name built with Splitting.js for text bloom.
-- Tagline and CTA buttons appear after the main reveal.
-- Scroll indicator anchors the next action.
+### Section motion
 
-### Buttons
+- Desktop/tablet major sections use one scrubbed timeline per pinned section.
+- Mobile and reduced-motion users receive visible, stable content without long pins.
+- Major identities must be legible as their section arrives; do not create an empty
+  full-screen surface that waits for additional scroll.
+- Time-based overlays—preloader, cursor, and navbar—never share a scrubbed sequence.
 
-- `MagneticButton` uses `useMagneticHover`.
-- Primary CTAs are small uppercase buttons with accent border and hover fill.
-- Buttons use clear verb-object labels like `Contact` and `Explore Work`.
+### Navigation
 
-### Content sections
+The warm navigation pill stays fixed above content. Navbar links, Hero CTAs, hashes,
+and skip navigation share `src/lib/navigation.ts`; native jumps must not bypass Lenis
+and ScrollTrigger geometry.
 
-- About: editorial bio with a simple vertical structure and a facts row.
-- Projects: stacked full-screen panels with project number, title, one-liner, stacks, and link.
-- Skills: grouped technology lists with “Shipped with” and “Learning with” sections.
-- Contact: direct CTA and clean, high-contrast affordances.
+## Do's and Don'ts
 
-## Accessibility
+### Do
 
-- Skip link present at the top of the page.
-- Focus styles visible and keyboard-friendly.
-- Contrast ratio targeted for WCAG AA on primary text and controls.
-- Motion reduced via `prefers-reduced-motion`.
-- Semantic headings, buttons, and landmarks are used throughout.
+- **Do** let typography remain the primary information layer.
+- **Do** use CSS tokens for every UI and Three.js color.
+- **Do** preserve motion direction and spatial continuity.
+- **Do** keep all essential content readable with animation disabled.
+- **Do** test desktop and 375px mobile together after scene or pin changes.
 
-## System rules
+### Don't
 
-- No gradient text.
-- No neon or cyan sci-fi palette.
-- No glassmorphism as the default surface style; glass effects are reserved for surface overlays only.
-- Keep background textures subtle and anchored to the warm editorial palette.
+- **Don't** use neon cyan, magenta plasma, cyberpunk HUDs, or gradient text.
+- **Don't** add lens flares, planet illustrations, astronaut SVGs, or generic space art.
+- **Don't** let the ship, star field, or scrim impair important copy.
+- **Don't** create repeated card grids when a sparse editorial structure communicates
+  the content more directly.
+- **Don't** add motion merely because a section is static.

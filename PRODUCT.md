@@ -1,34 +1,99 @@
 # Product
 
-## Register
+<!-- impeccable:product-schema 1 -->
 
-brand
+## Platform
+
+web
 
 ## Users
 
-Startup recruiters, hiring managers, and technical founders scanning a portfolio for a developer who can ship real-time, product-focused systems. They arrive with limited time and want a clear signal of craft, reliability, and product sense.
+The primary users are startup recruiters, hiring managers, and technical founders
+reviewing candidates with limited time. They need to understand Narunat Sutthibut's
+engineering strengths, evidence of shipped work, and contact path without decoding
+the visual experience.
 
 ## Product Purpose
 
-Present Narunat Sutthibut’s portfolio as a polished, cinematic showcase of full-stack engineering work, especially real-time systems and production-level projects. The site should make it easy for decision-makers to understand his strengths, feel confidence in his execution, and reach out.
+Present Narunat's work as a focused single-page portfolio and make his full-stack,
+backend, and real-time systems strengths understandable and memorable. Success means
+a visitor can identify his positioning, compare credible project evidence, and reach
+him directly.
 
-## Brand Personality
+## Positioning
 
-Sophisticated, cinematic, grounded.
-The voice should be thoughtful and precise, not flashy or generic.
+Narunat is positioned as a **Full-stack Engineer with backend and real-time systems
+strength** who also cares about how software feels to use.
 
-## Anti-references
+Internal identity line:
 
-No neon sci-fi, cyberpunk, or glowing UI clichés. No hero-metric marketing page layouts. No glassmorphism as a default surface style. No gradient text, no generic SaaS dashboard visuals, and no startup landing page language that feels hollow or overhyped.
+> I build real-time systems that feel good to use.
 
-## Design Principles
+Use this as a decision filter, not as a repeated marketing slogan on the page.
 
-- Guide the visitor through a deliberate visual journey with calm, cinematic transitions.
-- Convey technical craft through specific work and polished typographic detail, not buzzwords.
-- Keep the interface dark, warm, and editorial, with strong contrast and clear hierarchy.
-- Reserve motion for meaningful moments and provide accessible reduced-motion alternatives.
-- Structure content simply: hero, about, projects, skills, contact, with each section feeling distinct and purposeful.
+## Operating Context
+
+- One continuous page: Hero, About, Projects, Skills, and Contact.
+- Visitors may arrive on desktop or mobile and may jump directly to a section.
+- Recruiter comprehension governs the experience: motion may guide attention but
+  cannot delay access to factual content.
+- The portfolio is intended for startup internship and early-career opportunities.
+
+## Capabilities and Constraints
+
+- React + Vite client-side SPA with semantic section hashes; no router.
+- Four portfolio projects are planned.
+- Project claims must be backed by owner-confirmed facts or repository evidence.
+- Dark mode only.
+- Contact channels: email, GitHub, and LinkedIn. Fastwork is intentionally excluded.
+- Deployment remains pending until production QA is complete.
+
+## Brand Commitments
+
+- Name: **Narunat Sutthibut**
+- Role language: **Software Engineer / Full-stack Developer**
+- Tagline: **Aiming high, building what matters.**
+- Voice: thoughtful, precise, technically honest, and quietly confident
+- The experience may be cinematic, but it must never feel flashy, generic, or
+  overclaimed.
+
+## Evidence on Hand
+
+### Project 01 — Boardgame Online: Exploding Kittens
+
+- Configured live link: <https://exploding-kittens-beta.vercel.app/>
+- Repository copy describes a real-time multiplayer card game.
+- Any concurrency or latency number must be re-confirmed before final publication.
+
+### Project 02 — TramTracking System
+
+- Configured repository link: <https://github.com/nsgundam/TramTrackingSystem>
+- Repository copy describes real-time shuttle tracking with WebSocket and PostGIS.
+- Any latency or accuracy number must be re-confirmed before final publication.
+
+### Project 03 — Mini Appointment App
+
+- Name confirmed by the owner on 24 August 2026.
+- Outcome, role, system challenge, backend evidence, stack, and links are open.
+
+### Project 04 — Backend Line LIFF Baanchangsom
+
+- Name confirmed by the owner on 24 August 2026.
+- Outcome, role, system challenge, backend evidence, stack, and links are open.
+
+No testimonials, employer endorsements, production usage counts, or independent
+benchmarks are currently available. Future work must not fabricate them.
+
+## Product Principles
+
+- Lead with specific work rather than buzzwords.
+- Make backend contribution understandable in under 30 seconds.
+- Treat technical honesty as part of the product quality.
+- Let motion strengthen continuity without controlling the visitor.
+- Keep one direct, accessible path to contact.
 
 ## Accessibility & Inclusion
 
-WCAG AA contrast standards for text and controls, visible keyboard focus states, keyboard navigation support, a skip link, and reduced-motion support. Avoid motion-only information and ensure semantic structure for screen readers.
+Target WCAG AA text and control contrast, visible keyboard focus, semantic landmarks,
+keyboard-operable navigation, a skip link, and `prefers-reduced-motion`. No information
+may be available only through animation or pointer hover.
