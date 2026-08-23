@@ -12,6 +12,7 @@ import { SpaceScene } from "./components/backgrounds/SpaceScene";
 import { useState, useCallback, useEffect } from "react";
 import { ScrollTrigger } from "./lib/gsap";
 import { prefersReducedMotion } from "./lib/motion";
+import { handleSectionNav } from "./lib/navigation";
 
 export default function App() {
   const [preloaderDone, setPreloaderDone] = useState(false);
@@ -47,6 +48,7 @@ export default function App() {
     <>
       <a
         href="#hero"
+        onClick={(e) => handleSectionNav(e, "#hero")}
         className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-100
                    focus:px-4 focus:py-2 focus:bg-surface focus:text-text-primary focus:border
                    focus:border-accent font-body text-sm"

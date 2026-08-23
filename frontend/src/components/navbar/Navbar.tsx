@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap, ScrollTrigger } from "../../lib/gsap";
+import { handleSectionNav } from "../../lib/navigation";
 
 interface NavbarProps {
   preloaderDone: boolean;
@@ -132,6 +133,7 @@ export default function Navbar({ preloaderDone, heroTransitionComplete }: Navbar
         <a
           href="#hero"
           id="navbar-logo"
+          onClick={(e) => handleSectionNav(e, "#hero")}
           className="font-label text-text-primary text-lg tracking-wider origin-left"
           style={{
             transform: applyScrolledPill ? `scale(${LOGO_SCALE})` : "scale(1)",
@@ -144,7 +146,12 @@ export default function Navbar({ preloaderDone, heroTransitionComplete }: Navbar
         {/* Desktop nav links — hidden on mobile */}
         <nav className="hidden md:flex items-center gap-8">
           {NAV_LINKS.map((link) => (
-            <NavLink key={link.href} label={link.label} href={link.href} />
+            <NavLink
+              key={link.href}
+              label={link.label}
+              href={link.href}
+              onClick={(e) => handleSectionNav(e, link.href)}
+            />
           ))}
         </nav>
 
@@ -191,12 +198,14 @@ export default function Navbar({ preloaderDone, heroTransitionComplete }: Navbar
         role="dialog"
         aria-modal="true"
         aria-label="Navigation menu"
+        aria-hidden={!menuOpen}
         className="fixed inset-0 z-39 flex flex-col items-center justify-center md:hidden"
         style={{
           backgroundColor: "var(--color-bg)",
           opacity: menuOpen ? 1 : 0,
+          visibility: menuOpen ? "visible" : "hidden",
           pointerEvents: menuOpen ? "auto" : "none",
-          transition: `opacity 0.45s ${EASE}`,
+          transition: `opacity 0.45s ${EASE}, visibility 0.45s ${EASE}`,
         }}
       >
         <nav className="flex flex-col items-center gap-8 sm:gap-10">
@@ -204,7 +213,10 @@ export default function Navbar({ preloaderDone, heroTransitionComplete }: Navbar
             <a
               key={href}
               href={href}
-              onClick={closeMenu}
+              onClick={(e) => {
+                closeMenu();
+                handleSectionNav(e, href);
+              }}
               className="font-label text-text-primary tracking-wider uppercase hover:text-accent flex items-baseline gap-4"
               style={{
                 fontSize: "clamp(2rem, 8vw, 3.5rem)",
@@ -242,10 +254,19 @@ export default function Navbar({ preloaderDone, heroTransitionComplete }: Navbar
 }
 
 // ── Desktop NavLink — Rolling Text hover ────────────────────────────────
-function NavLink({ label, href }: { label: string; href: string }) {
+function NavLink({
+  label,
+  href,
+  onClick,
+}: {
+  label: string;
+  href: string;
+  onClick: (e: React.MouseEvent<HTMLAnchorElement>) => void;
+}) {
   return (
     <a
       href={href}
+      onClick={onClick}
       className="group font-body text-text-secondary text-sm tracking-widest uppercase relative overflow-hidden block"
       style={{ height: "1.2em" }}
     >

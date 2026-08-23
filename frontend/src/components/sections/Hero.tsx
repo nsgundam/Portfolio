@@ -5,6 +5,7 @@ import { prefersReducedMotion } from "../../lib/motion";
 import { usePinnedTimeline } from "../../hooks/usePinnedTimeline";
 import { ScrollIndicator } from "../ui/ScrollIndicator";
 import { MagneticButton } from "../ui/MagneticButton";
+import { scrollToSection } from "../../lib/navigation";
 
 interface HeroProps {
   preloaderDone: boolean;
@@ -17,7 +18,7 @@ export default function Hero({
 }: HeroProps) {
   // pinRef doubles as sectionRef — passed to both <section> and gsap.context()
   const { ref: pinRef, tl } = usePinnedTimeline<HTMLElement>(preloaderDone, {
-    pinDistance: 1200,
+    pinDistance: 1700,
   });
 
   const nameRef    = useRef<HTMLHeadingElement>(null);
@@ -171,10 +172,6 @@ export default function Hero({
     // GSAP handles this automatically when `scrub: 1.5` is set.
   }, [tl]);
 
-  const scrollToSection = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-  };
-
   return (
     <section
       ref={pinRef}
@@ -189,10 +186,10 @@ export default function Hero({
         aria-label="Narunat Sutthibut"
         className={
           isCentered
-            ? "fixed z-30 font-display text-text-primary leading-none tracking-tight select-none pointer-events-none text-center px-5 sm:px-8 w-full whitespace-nowrap"
-            : "relative font-display text-text-primary mb-4 leading-none tracking-tight text-center whitespace-nowrap"
+            ? "fixed z-30 font-display text-text-primary leading-none tracking-tight select-none pointer-events-none text-center px-5 sm:px-8 w-full"
+            : "relative font-display text-text-primary mb-4 leading-none tracking-tight text-center"
         }
-        style={{ fontSize: "clamp(56px, 10vw, 140px)", fontWeight: 300 }}
+        style={{ fontSize: "clamp(36px, 8.5vw, 140px)", fontWeight: 300 }}
       >
         Narunat Sutthibut
       </h1>
@@ -200,7 +197,7 @@ export default function Hero({
       <p
         ref={taglineRef}
         aria-label="Aiming high, building what matters."
-        className="font-body text-text-primary max-w-md text-sm leading-relaxed mb-8"
+        className="font-body text-text-primary max-w-md text-xs sm:text-sm leading-relaxed mb-6 sm:mb-8"
       >
         Aiming high, building what{" "}
         <em style={{ fontStyle: "italic", color: "var(--color-accent)" }}>
@@ -211,7 +208,7 @@ export default function Hero({
       {/* CTA buttons */}
       <div
         ref={buttonsRef}
-        className="flex gap-4 flex-wrap justify-center mb-12"
+        className="flex gap-4 flex-wrap justify-center mb-6 sm:mb-12"
       >
         <MagneticButton
           onClick={() => scrollToSection("contact")}
@@ -231,7 +228,7 @@ export default function Hero({
 
       <div
         ref={scrollRef}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2"
+        className="absolute bottom-4 sm:bottom-10 left-1/2 -translate-x-1/2"
       >
         <ScrollIndicator />
       </div>

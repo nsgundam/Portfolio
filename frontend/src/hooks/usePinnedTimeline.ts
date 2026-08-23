@@ -21,32 +21,57 @@ export function usePinnedTimeline<T extends HTMLElement>(
     if (!el || !enabled) return;
     if (prefersReducedMotion()) return;
 
-    const isMobile = window.matchMedia("(max-width: 767px)").matches;
-    const isTablet = window.matchMedia(
+    const mobileMedia = window.matchMedia("(max-width: 767px)");
+    const tabletMedia = window.matchMedia(
       "(min-width: 768px) and (max-width: 1024px)",
-    ).matches;
-    const factor = isMobile ? 0.5 : isTablet ? 0.6 : 1;
-    const pinDistance = options.pinDistance * factor;
+    );
 
-    const newTl = gsap.timeline({ paused: true });
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setTl(newTl);
+    let ctx: gsap.Context | null = null;
 
-    const ctx = gsap.context(() => {
-      ScrollTrigger.create({
-        trigger: el,
-        start: options.start ?? "top top",
-        end: `+=${pinDistance}`,
-        pin: true,
-        scrub: options.scrub ?? 1.5,
-        anticipatePin: 1,
-        animation: newTl,
-        onLeave: options.onComplete,
-      });
-    }, el);
+    const setup = () => {
+      if (ctx) {
+        ctx.revert();
+        ctx = null;
+      }
+
+      if (mobileMedia.matches || prefersReducedMotion()) {
+        setTl(null);
+        return;
+      }
+
+      const factor = tabletMedia.matches ? 0.6 : 1;
+      const pinDistance = options.pinDistance * factor;
+
+      const newTl = gsap.timeline({ paused: true });
+      setTl(newTl);
+
+      ctx = gsap.context(() => {
+        ScrollTrigger.create({
+          trigger: el,
+          start: options.start ?? "top top",
+          end: `+=${pinDistance}`,
+          pin: true,
+          scrub: options.scrub ?? 1.5,
+          anticipatePin: 1,
+          animation: newTl,
+          onLeave: options.onComplete,
+        });
+      }, el);
+    };
+
+    setup();
+
+    const handleMediaChange = () => {
+      setup();
+    };
+
+    mobileMedia.addEventListener("change", handleMediaChange);
+    tabletMedia.addEventListener("change", handleMediaChange);
 
     return () => {
-      ctx.revert();
+      mobileMedia.removeEventListener("change", handleMediaChange);
+      tabletMedia.removeEventListener("change", handleMediaChange);
+      if (ctx) ctx.revert();
       setTl(null);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps

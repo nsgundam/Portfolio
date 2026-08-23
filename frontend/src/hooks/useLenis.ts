@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import Lenis from "lenis"
 import { gsap, ScrollTrigger } from "../lib/gsap"
 import { prefersReducedMotion } from "../lib/motion"
+import { setGlobalLenis } from "../lib/navigation"
 
 export function useLenis(isLocked: boolean = false) {
   const [lenis, setLenis] = useState<Lenis | null>(null);
@@ -30,10 +31,12 @@ export function useLenis(isLocked: boolean = false) {
     gsap.ticker.add(ticker)
     gsap.ticker.lagSmoothing(0)
 
+    setGlobalLenis(lenisInstance)
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setLenis(lenisInstance)
 
     return () => {
+      setGlobalLenis(null)
       lenisInstance.destroy()
       gsap.ticker.remove(ticker)
       setLenis(null)
