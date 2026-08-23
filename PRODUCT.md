@@ -42,7 +42,8 @@ Use this as a decision filter, not as a repeated marketing slogan on the page.
 ## Capabilities and Constraints
 
 - React + Vite client-side SPA with semantic section hashes; no router.
-- Four portfolio projects are planned.
+- Four portfolio project slots are implemented; two are published and two await
+  owner-confirmed evidence.
 - Project claims must be backed by owner-confirmed facts or repository evidence.
 - Dark mode only.
 - Contact channels: email, GitHub, and LinkedIn. Fastwork is intentionally excluded.
@@ -76,7 +77,7 @@ Use this as a decision filter, not as a repeated marketing slogan on the page.
 - Name confirmed by the owner on 24 August 2026.
 - Outcome, role, system challenge, backend evidence, stack, and links are open.
 
-### Project 04 — Backend Line LIFF Baanchangsom
+### Project 04 — Backend LINE LIFF Baanchangsom
 
 - Name confirmed by the owner on 24 August 2026.
 - Outcome, role, system challenge, backend evidence, stack, and links are open.

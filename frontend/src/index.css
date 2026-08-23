@@ -104,11 +104,6 @@
   background: var(--color-accent);
 }
 
-/* Project card — featured ambient glow on hover */
-article:hover .featured-glow {
-  opacity: 0.8 !important;
-}
-
 /* Terminal cursor blink */
 @keyframes blink {
   0%,

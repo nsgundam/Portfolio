@@ -49,11 +49,10 @@ export default function About({ preloaderDone }: AboutProps) {
         // stable final static state with no pin, no pin-spacer, no y transform, and no hidden content
         gsap.set(content, { clearProps: "transform,y", y: 0 });
         gsap.set(contentTargets, {
-          clearProps: "opacity,transform,y,scale,filter",
+          clearProps: "opacity,transform,y,scale",
           opacity: 1,
           y: 0,
           scale: 1,
-          filter: "blur(0px)",
         });
         ScrollTrigger.refresh();
         return;
@@ -77,18 +76,17 @@ export default function About({ preloaderDone }: AboutProps) {
         // 2. Section label is visibly legible at progress 0 and settles into resting position
         tl.fromTo(
           labelRef.current,
-          { opacity: 0.9, y: 8, filter: "blur(0px)" },
-          { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.2, ease: "power2.out" },
+          { opacity: 0.9, y: 8 },
+          { opacity: 1, y: 0, duration: 0.2, ease: "power2.out" },
           0,
         );
 
         // 3. Main heading is clearly perceptible and legible at progress 0 with restrained depth settle
         tl.fromTo(
           headingRef.current,
-          { opacity: 0.8, y: 12, scale: 0.98, filter: "blur(0px)" },
+          { opacity: 0.8, y: 12, scale: 0.98 },
           {
             opacity: 1,
-            filter: "blur(0px)",
             y: 0,
             scale: 1,
             duration: 0.25,
@@ -100,10 +98,9 @@ export default function About({ preloaderDone }: AboutProps) {
         // 4. Bio text reveals in the second beat
         tl.fromTo(
           bioRef.current,
-          { opacity: 0, filter: "blur(6px)", y: 16 },
+          { opacity: 0, y: 16 },
           {
             opacity: 1,
-            filter: "blur(0px)",
             y: 0,
             duration: 0.25,
             ease: "power4.out",
@@ -114,8 +111,8 @@ export default function About({ preloaderDone }: AboutProps) {
         // 5. Info grid reveals in the third beat
         tl.fromTo(
           infoRef.current,
-          { opacity: 0, filter: "blur(6px)", y: 16 },
-          { opacity: 1, filter: "blur(0px)", y: 0, duration: 0.25, ease: "power4.out" },
+          { opacity: 0, y: 16 },
+          { opacity: 1, y: 0, duration: 0.25, ease: "power4.out" },
           0.50,
         );
 
@@ -127,7 +124,8 @@ export default function About({ preloaderDone }: AboutProps) {
           start: "top top",
           end: `+=${pinDistance}`,
           pin: true,
-          scrub: 1.5,
+          scrub: 0.8,
+          fastScrollEnd: true,
           anticipatePin: 1,
           animation: tl,
         });

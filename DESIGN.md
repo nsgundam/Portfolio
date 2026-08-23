@@ -156,12 +156,28 @@ must restore a coherent state.
 - Major identities must be legible as their section arrives; do not create an empty
   full-screen surface that waits for additional scroll.
 - Time-based overlays—preloader, cursor, and navbar—never share a scrubbed sequence.
+- Do not scrub blur or layout properties on large text. Keep scroll response bounded,
+  and stop invisible shader work once its scene contribution reaches zero.
 
 ### Navigation
 
 The warm navigation pill stays fixed above content. Navbar links, Hero CTAs, hashes,
 and skip navigation share `src/lib/navigation.ts`; native jumps must not bypass Lenis
 and ScrollTrigger geometry.
+
+### ProjectCarousel
+
+- The active case study is the primary reading path; adjacent panels communicate
+  sequence and depth without becoming competing reading surfaces.
+- Desktop uses restrained perspective, scale, and horizontal displacement. Mobile
+  keeps one complete readable panel with a narrow next-panel cue.
+- The sequence is finite and visitor-controlled: direct 01–04 selectors, previous and
+  next controls, arrow keys, and horizontal swipe are equivalent paths.
+- Do not autoplay, loop from end to start, capture the vertical wheel, or pin the
+  visitor inside the carousel.
+- Pending projects show an honest preparation state until owner-confirmed evidence is
+  available. Their cards must not invent stacks, outcomes, roles, or links.
+- Reduced motion removes the cover-flow travel and presents only the selected panel.
 
 ## Do's and Don'ts
 

@@ -55,9 +55,13 @@ new sprint snapshots or duplicate specifications.
 - Navigation, mobile natural scroll, warm Three.js palette, the translation-first
   ship departure, and the continuous Hero-to-About star-field transition are
   implemented.
-- Projects currently render two entries.
-- Project 03 is **Mini Appointment App**.
-- Project 04 is **Backend Line LIFF Baanchangsom**.
-- Detailed evidence for Projects 03/04 is still required before implementation.
+- The Projects section renders a finite four-item cover-flow carousel with direct
+  controls, keyboard arrows, and mobile swipe.
+- Project 01 and 02 have published evidence; Project 03 is **Mini Appointment App**
+  and Project 04 is **Backend LINE LIFF Baanchangsom**.
+- Projects 03/04 deliberately show an in-preparation state until their detailed
+  evidence is owner-confirmed.
+- Fast-scroll response around Hero and About has been tuned to reduce stacked
+  catch-up and unnecessary shader work.
 
 See `ROADMAP.md` for the active delivery plan.

@@ -56,8 +56,8 @@ Priority when information conflicts:
 - Every pinned trigger requires `anticipatePin: 1`.
 - Do not mix scrubbed and time-based animation in the same sequence.
 - Preloader, cursor, and navbar are time-based; never scrub them.
-- Prefer transforms, opacity, bounded filters, and shader uniforms over layout
-  properties.
+- Prefer transforms, opacity, and shader uniforms over layout properties. Blur may be
+  used for a short time-based entrance, but never scrubbed across large text.
 - Section navigation must use the shared helper in `src/lib/navigation.ts` so Lenis,
   hashes, and pin spacers remain synchronized.
 
@@ -72,6 +72,7 @@ Priority when information conflicts:
 - Use CSS design tokens to construct Three.js colors; do not hardcode scene colors.
 - Keep effects behind content, outside reading zones, and subordinate to typography.
 - Reduce particle counts and pixel ratio on mobile.
+- Stop shader updates for effects after they become fully hidden.
 - Respect `prefers-reduced-motion` with a stable, readable fallback.
 
 ## Responsive behavior
@@ -99,11 +100,13 @@ horizontal overflow.
 - Do not sacrifice navigation, reading, focus, or reduced-motion behavior for an
   effect.
 
-## Current project-component rule
+## Project showcase rule
 
-`ProjectWindow.tsx` is deprecated but still used by the current Projects section.
-Do not extend it. Phase 3 replaces it with one reusable `ProjectPanel.tsx`, verifies
-the replacement, and only then deletes `ProjectWindow.tsx`.
+`ProjectCarousel.tsx` owns selection, gestures, keyboard navigation, and cover-flow
+transforms. `ProjectPanel.tsx` is the single reusable project presentation component.
+Do not create alternate project-card copies or restore the deleted `ProjectWindow`.
+Keep navigation finite: no autoplay, infinite loop, scroll-wheel capture, or fabricated
+content for pending projects.
 
 ## Commands
 

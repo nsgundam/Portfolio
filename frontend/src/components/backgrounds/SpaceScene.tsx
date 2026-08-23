@@ -101,7 +101,6 @@ interface StarFieldProps {
 function StarField({ scrollRef, aboutScrollRef, isMobile, color }: StarFieldProps) {
   const pointsRef = useRef<THREE.Points>(null!);
   const positions = isMobile ? STAR_POSITIONS_MOBILE : STAR_POSITIONS_DESKTOP;
-  const count     = positions.length / 3;
   const timeAccRef = useRef(0);
 
   useFrame((_state, delta) => {
@@ -130,9 +129,7 @@ function StarField({ scrollRef, aboutScrollRef, isMobile, color }: StarFieldProp
       <bufferGeometry>
         <bufferAttribute
           attach="attributes-position"
-          count={count}
-          array={positions}
-          itemSize={3}
+          args={[positions, 3]}
         />
       </bufferGeometry>
       <pointsMaterial
@@ -223,6 +220,7 @@ interface AuroraPlaneProps {
 
 function AuroraPlane({ scrollRef, mouseRef, isMobile, palette }: AuroraPlaneProps) {
   const { viewport, size } = useThree();
+  const meshRef = useRef<THREE.Mesh>(null!);
   const matRef = useRef<THREE.ShaderMaterial>(null!);
   const timeAccRef = useRef(0);
 
@@ -248,10 +246,27 @@ function AuroraPlane({ scrollRef, mouseRef, isMobile, palette }: AuroraPlaneProp
   );
 
   useFrame((_state, delta) => {
-    const mat = matRef.current;
-    if (!mat) return;
-    timeAccRef.current += delta;
     const p = scrollRef.current;
+    const mesh = meshRef.current;
+    const mat = matRef.current;
+    if (!mesh || !mat) return;
+
+    // Fully faded out once Hero progress reaches 0.25 (uFade = 1.0 -> alpha = 0.0)
+    const isFaded = p >= 0.25;
+
+    if (isFaded) {
+      if (mesh.visible) {
+        mat.uniforms.uFade.value = 1.0;
+        mesh.visible = false;
+      }
+      return; // Skip time accumulation and all uniform work once fade is complete
+    }
+
+    if (!mesh.visible) {
+      mesh.visible = true;
+    }
+
+    timeAccRef.current += delta;
     mat.uniforms.uTime.value    = timeAccRef.current * 1000;
     mat.uniforms.uFade.value    = Math.min(p / 0.25, 1.0);
     mat.uniforms.uRatio.value   = size.width / size.height;
@@ -259,7 +274,7 @@ function AuroraPlane({ scrollRef, mouseRef, isMobile, palette }: AuroraPlaneProp
   });
 
   return (
-    <mesh position={[0, 0, 0]} key={`aurora-${size.width}-${size.height}`}>
+    <mesh ref={meshRef} position={[0, 0, 0]} key={`aurora-${size.width}-${size.height}`}>
       {/* 1.05x safety scale ensures no black borders from viewport rounding or perspective */}
       <planeGeometry args={[viewport.width * 1.05, viewport.height * 1.05]} />
       <shaderMaterial
@@ -581,7 +596,8 @@ export function SpaceScene({ preloaderDone }: SpaceSceneProps) {
           return `+=${heroPin + window.innerHeight + aboutPin + window.innerHeight}`;
         },
         invalidateOnRefresh: true,
-        scrub:   1.5,
+        scrub:   0.8,
+        fastScrollEnd: true,
         onUpdate: (self) => {
           const scrollY = self.scroll();
           const H = window.innerHeight;

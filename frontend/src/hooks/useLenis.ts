@@ -21,7 +21,7 @@ export function useLenis(isLocked: boolean = false) {
     }
 
     const lenisInstance = new Lenis({
-      duration: 1.2,
+      duration: 0.85,
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     })
 

@@ -130,17 +130,16 @@ export default function Hero({
 
     tl.to(
       [taglineEl, buttonsEl, scrollEl],
-      { opacity: 0, y: -30, filter: "blur(8px)", duration: 0.2, ease: "power2.in" },
+      { opacity: 0, y: -30, duration: 0.2, ease: "power2.in" },
       0,
     );
 
     tl.to(
       nameEl,
       {
-        fontSize:      "clamp(80px, 14vw, 220px)",
-        letterSpacing: "-0.02em",
-        duration:      0.4,
-        ease:          "power3.inOut",
+        scale:    1.55,
+        duration: 0.4,
+        ease:     "power3.inOut",
       },
       0,
     );
@@ -149,14 +148,14 @@ export default function Hero({
     if (leftWord) {
       tl.to(
         leftWord,
-        { x: -halfVW, opacity: 0, filter: "blur(6px)", duration: 0.35, ease: "power3.in" },
+        { x: -halfVW, opacity: 0, duration: 0.35, ease: "power3.in" },
         0.2,
       );
     }
     if (rightWord) {
       tl.to(
         rightWord,
-        { x: halfVW, opacity: 0, filter: "blur(6px)", duration: 0.35, ease: "power3.in" },
+        { x: halfVW, opacity: 0, duration: 0.35, ease: "power3.in" },
         0.2,
       );
     }
@@ -169,7 +168,7 @@ export default function Hero({
     );
 
     // Restore x/opacity on revert (reverse scroll)
-    // GSAP handles this automatically when `scrub: 1.5` is set.
+    // GSAP handles this automatically when scrub is set.
   }, [tl]);
 
   return (
