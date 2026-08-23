@@ -59,29 +59,70 @@ function buildStarPositions(count: number): Float32Array {
 const STAR_POSITIONS_DESKTOP = buildStarPositions(12000);
 const STAR_POSITIONS_MOBILE  = buildStarPositions(4000);
 
+// ─── Token Palette Helper ──────────────────────────────────────────────────
+
+interface ThemePalette {
+  bg:          THREE.Color;
+  accent:      THREE.Color;
+  accentLight: THREE.Color;
+  accentDark:  THREE.Color;
+  textPrimary: THREE.Color;
+}
+
+function getCssColor(varName: string): THREE.Color {
+  if (typeof window !== "undefined") {
+    const val = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+    if (val) {
+      return new THREE.Color(val);
+    }
+  }
+  return new THREE.Color();
+}
+
+function readThemePalette(): ThemePalette {
+  return {
+    bg:          getCssColor("--color-bg"),
+    accent:      getCssColor("--color-accent"),
+    accentLight: getCssColor("--color-accent-light"),
+    accentDark:  getCssColor("--color-accent-dark"),
+    textPrimary: getCssColor("--color-text-primary"),
+  };
+}
+
 // ─── Layer 1: Star Field ──────────────────────────────────────────────────────
 
 interface StarFieldProps {
-  scrollRef: ScrollRef;
-  isMobile:  boolean;
+  scrollRef:      ScrollRef;
+  aboutScrollRef: ScrollRef;
+  isMobile:       boolean;
+  color:          THREE.Color;
 }
 
-function StarField({ scrollRef, isMobile }: StarFieldProps) {
+function StarField({ scrollRef, aboutScrollRef, isMobile, color }: StarFieldProps) {
   const pointsRef = useRef<THREE.Points>(null!);
   const positions = isMobile ? STAR_POSITIONS_MOBILE : STAR_POSITIONS_DESKTOP;
   const count     = positions.length / 3;
+  const timeAccRef = useRef(0);
 
-  useFrame(({ clock }, delta) => {
+  useFrame((_state, delta) => {
     const pts = pointsRef.current;
     if (!pts) return;
 
-    // Fade IN as aurora fades out (0 → 0.30 progress)
-    (pts.material as THREE.PointsMaterial).opacity =
-      Math.min(scrollRef.current / 0.5, 1.0);
+    timeAccRef.current += delta;
+
+    // Fade IN as aurora fades out (0 → 0.30 Hero progress), remains active across About, fades as About leaves
+    const heroP = scrollRef.current;
+    const aboutP = aboutScrollRef.current;
+    let starOpacity = Math.min(heroP / 0.3, 1.0);
+    if (aboutP > 0.77) {
+      starOpacity = Math.max(0, 1 - (aboutP - 0.77) / 0.23);
+    }
+
+    (pts.material as THREE.PointsMaterial).opacity = starOpacity;
 
     // Subtle field drift
     pts.rotation.y += 0.00005 * delta * 60;
-    pts.rotation.x  = Math.sin(clock.elapsedTime * 0.02) * 0.005;
+    pts.rotation.x  = Math.sin(timeAccRef.current * 0.02) * 0.005;
   });
 
   return (
@@ -95,7 +136,7 @@ function StarField({ scrollRef, isMobile }: StarFieldProps) {
         />
       </bufferGeometry>
       <pointsMaterial
-        color="#EDE6D6"
+        color={color}
         size={0.5}
         sizeAttenuation
         transparent
@@ -123,9 +164,12 @@ function buildAuroraFS(iterations: number): string {
     uniform float uTime;
     uniform float uRatio;
     uniform vec2  uPointer;
-    uniform vec3  uColor;
     uniform float uSpeed;
     uniform float uFade;
+    uniform vec3  uAccent;
+    uniform vec3  uAccentLight;
+    uniform vec3  uAccentDark;
+    uniform vec3  uTextPrimary;
 
     vec2 rot2d(vec2 v, float th) {
       return mat2(cos(th), sin(th), -sin(th), cos(th)) * v;
@@ -139,7 +183,7 @@ function buildAuroraFS(iterations: number): string {
         uv       = rot2d(uv,      1.0);
         sineAcc  = rot2d(sineAcc, 1.0);
         vec2 layer = uv * scale + float(j) + sineAcc - t;
-        sineAcc   += sin(layer) + 3.0 * p;
+        sineAcc   += sin(layer) + 0.8 * p;
         res       += (0.5 + 0.5 * cos(layer)) / scale;
         scale     *= 1.2;
       }
@@ -152,25 +196,20 @@ function buildAuroraFS(iterations: number): string {
       vec2  ptr = vUv - uPointer;
       ptr.x    *= uRatio;
       float p   = clamp(length(ptr), 0.0, 1.0);
-      p         = 0.5 * pow(1.0 - p, 2.0);
+      p         = 0.3 * pow(1.0 - p, 2.0);
 
       float t     = uSpeed * uTime;
       float noise = neuroShape(uv, t, p);
-      noise = 1.2 * pow(noise, 2.0);
-      noise += pow(noise, 5.0);
-      noise = max(0.0, noise - 0.3);
+      noise = smoothstep(0.2, 1.1, noise);
+      noise = max(0.0, noise - 0.15);
       noise *= (1.0 - length(vUv - 0.5));
 
-      vec3 c1 = vec3(0.0,  0.91, 0.48);
-      vec3 c2 = vec3(0.48, 0.31, 0.75);
-      vec3 c3 = vec3(0.31, 0.76, 0.97);
-      vec3 c4 = vec3(1.0,  0.24, 0.43);
-      vec3 col = mix(c1, c2, vUv.x + 0.2 * sin(t));
-      col      = mix(col, c3, vUv.y + 0.2 * cos(t));
-      col      = mix(col, c4, smoothstep(0.5, 1.5, noise));
-      col     *= noise * uColor;
+      vec3 col = mix(uAccentDark, uAccent, vUv.x + 0.2 * sin(t));
+      col      = mix(col, uAccentLight, vUv.y + 0.2 * cos(t));
+      col      = mix(col, uTextPrimary, smoothstep(0.4, 1.0, noise));
+      col     *= noise;
 
-      gl_FragColor = vec4(col, noise * (1.0 - uFade));
+      gl_FragColor = vec4(col, noise * 0.45 * (1.0 - uFade));
     }
   `;
 }
@@ -179,23 +218,28 @@ interface AuroraPlaneProps {
   scrollRef: ScrollRef;
   mouseRef:  MouseRef;
   isMobile:  boolean;
+  palette:   ThemePalette;
 }
 
-function AuroraPlane({ scrollRef, mouseRef, isMobile }: AuroraPlaneProps) {
+function AuroraPlane({ scrollRef, mouseRef, isMobile, palette }: AuroraPlaneProps) {
   const { viewport, size } = useThree();
   const matRef = useRef<THREE.ShaderMaterial>(null!);
+  const timeAccRef = useRef(0);
 
   const uniforms = useMemo(
     () => ({
-      uTime:    { value: 0 },
-      uRatio:   { value: size.width / size.height },
-      uPointer: { value: new THREE.Vector2(0.5, 0.5) },
-      uColor:   { value: new THREE.Vector3(1, 1, 1) },
-      uSpeed:   { value: 0.0004 },
-      uFade:    { value: 0 },
+      uTime:        { value: 0 },
+      uRatio:       { value: size.width / size.height },
+      uPointer:     { value: new THREE.Vector2(0.5, 0.5) },
+      uSpeed:       { value: 0.0004 },
+      uFade:        { value: 0 },
+      uAccent:      { value: palette.accent },
+      uAccentLight: { value: palette.accentLight },
+      uAccentDark:  { value: palette.accentDark },
+      uTextPrimary: { value: palette.textPrimary },
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+    [palette],
   );
 
   const fragmentShader = useMemo(
@@ -203,11 +247,12 @@ function AuroraPlane({ scrollRef, mouseRef, isMobile }: AuroraPlaneProps) {
     [isMobile],
   );
 
-  useFrame(({ clock }) => {
+  useFrame((_state, delta) => {
     const mat = matRef.current;
     if (!mat) return;
+    timeAccRef.current += delta;
     const p = scrollRef.current;
-    mat.uniforms.uTime.value    = clock.elapsedTime * 1000;
+    mat.uniforms.uTime.value    = timeAccRef.current * 1000;
     mat.uniforms.uFade.value    = Math.min(p / 0.25, 1.0);
     mat.uniforms.uRatio.value   = size.width / size.height;
     mat.uniforms.uPointer.value.set(mouseRef.current.x, mouseRef.current.y);
@@ -230,7 +275,7 @@ function AuroraPlane({ scrollRef, mouseRef, isMobile }: AuroraPlaneProps) {
 }
 
 // ─── Layer 3: Camera Controller ───────────────────────────────────────────────
-// Tweens camera.position.x during beat 0.50–0.75 for the side-angle reveal.
+// Tweens camera.position.x during beat 0.50–0.98 for the side-angle reveal and departure.
 // Returns null — purely a side-effect component.
 
 interface CameraControllerProps {
@@ -238,22 +283,26 @@ interface CameraControllerProps {
 }
 
 function CameraController({ scrollRef }: CameraControllerProps) {
-  useFrame(({ camera }) => {
+  useFrame(({ camera }, delta) => {
     const p = scrollRef.current;
     let targetX = 0;
 
     if (p > 0.5 && p <= 0.75) {
-      // Ease camera right as ship sweeps past
-      targetX = lerp(0, 2, (p - 0.5) / 0.25);
-    } else if (p > 0.75 && p <= 0.9) {
-      // Continue drifting as ship exits
-      targetX = lerp(2, 2.5, (p - 0.75) / 0.15);
-    } else if (p > 0.9) {
-      targetX = 2.5;
+      // Subtle camera ease right as ship sweeps left
+      targetX = lerp(0, 0.5, (p - 0.5) / 0.25);
+    } else if (p > 0.75 && p <= 0.93) {
+      // Hold targetX=0.5 while ship departs upper-left so camera doesn't recenter against flight
+      targetX = 0.5;
+    } else if (p > 0.93 && p <= 0.99) {
+      // Smoothly recenter camera after ship is physically offscreen
+      targetX = lerp(0.5, 0, (p - 0.93) / 0.06);
+    } else if (p > 0.99) {
+      targetX = 0;
     }
 
-    // Smooth easing — avoid abrupt snap when reversing scroll
-    camera.position.x += (targetX - camera.position.x) * 0.06;
+    // Frame-rate-independent smooth damping toward targetX
+    const clampedDelta = Math.min(delta, 0.1);
+    camera.position.x = THREE.MathUtils.damp(camera.position.x, targetX, 5, clampedDelta);
   });
 
   return null;
@@ -270,77 +319,118 @@ function SpaceshipModel({ scrollRef, positionRef }: SpaceshipModelProps) {
   const { scene } = useGLTF("/3D/lego_ship.glb");
   const groupRef  = useRef<THREE.Group>(null!);
 
+  // Target vectors to avoid GC allocation per frame
+  const targetPos = useMemo(() => new THREE.Vector3(2, -0.5, -120), []);
+  const targetRot = useMemo(() => new THREE.Euler(0.05, -0.3, 0), []);
+  const targetScaleRef = useRef(0.02);
+
   useFrame((_state, delta) => {
     const p     = scrollRef.current;
     const group = groupRef.current;
     if (!group) return;
 
+    // Visibility: visible from early hero approach onwards; physical frustum exit handles departure
     group.visible = p >= 0.07;
+    if (!group.visible && p < 0.05) return;
 
     // Ship faces its travel direction — nose-forward orientation
-    // Smooth easing via lerp to avoid abrupt snaps
-    const dt = Math.min(delta * 60, 2); // cap frame-rate independence
+    // ── Easing Functions ──────────────────────────────────────────────────────
+    const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+    const easeInOutQuad = (t: number) => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
 
     // ── Beat 0 → 0.25 ─ distant approach, a faint glint in deep space ────
     if (p <= 0.25) {
-      const bp = p / 0.25;
-      group.position.set(
-        lerp(2, 0.5, bp),           // drifts from right toward center
-        lerp(-0.5, 0, bp),          // subtle vertical rise
-        lerp(-80, -18, bp),         // approaching from far away
+      const bp = Math.max(0, p / 0.25);
+      const easedBp = easeOutCubic(bp);
+
+      targetPos.set(
+        lerp(2, 0.5, bp),
+        lerp(-0.5, 0, bp),
+        lerp(-120, -30, bp),
       );
-      group.scale.setScalar(lerp(0.05, 0.18, bp));
-      // Gentle yaw — ship is angled slightly as it approaches
-      group.rotation.y = lerp(-0.3, -0.1, bp);
-      group.rotation.x = lerp(0.05, 0.02, bp);  // slight pitch
-      group.rotation.z = 0;
+      targetScaleRef.current = lerp(0.02, 0.12, easedBp);
+
+      targetRot.set(
+        lerp(0.05, 0.02, bp),
+        lerp(-0.3, -0.1, bp),
+        0,
+      );
     }
     // ── Beat 0.25 → 0.50 ─ glides closer, clearly visible ────────────────
     else if (p <= 0.5) {
       const bp = (p - 0.25) / 0.25;
-      group.position.set(
-        lerp(0.5, -0.3, bp),        // drifts slightly left
-        lerp(0, 0.2, bp),           // gentle ascent
-        lerp(-18, -3, bp),          // closing distance
+      const easedBp = easeInOutQuad(bp);
+
+      targetPos.set(
+        lerp(0.5, -0.3, bp),
+        lerp(0, 0.2, bp),
+        lerp(-30, -10, bp),
       );
-      group.scale.setScalar(lerp(0.18, 0.5, bp));
-      group.rotation.y = lerp(-0.1, 0, bp);     // straightens heading
-      group.rotation.x = lerp(0.02, 0, bp);     // levels pitch
-      group.rotation.z = lerp(0, -0.03, bp);    // micro bank
+      targetScaleRef.current = lerp(0.12, 0.35, easedBp);
+
+      targetRot.set(
+        lerp(0.02, 0, bp),
+        lerp(-0.1, 0, bp),
+        lerp(0, -0.03, bp),
+      );
     }
-    // ── Beat 0.50 → 0.75 ─ sweeps past camera on a smooth arc ────────────
+    // ── Beat 0.50 → 0.75 ─ sweeps past camera on a smooth arc (remains in front of camera) ──
     else if (p <= 0.75) {
       const bp = (p - 0.5) / 0.25;
-      group.position.set(
-        lerp(-0.3, -1.5, bp),       // arcs to the left
-        lerp(0.2, 0.8, bp),         // rises slightly
-        lerp(-3, 10, bp),           // passes behind camera
+
+      targetPos.set(
+        lerp(-0.3, -1.5, bp),
+        lerp(0.2, 0.8, bp),
+        lerp(-10, -4, bp),
       );
-      group.scale.setScalar(lerp(0.5, 0.55, bp));
-      group.rotation.y = lerp(0, 0.4, bp);      // yaw into the arc
-      group.rotation.x = lerp(0, -0.08, bp);    // nose-up
-      group.rotation.z = lerp(-0.03, -0.15, bp); // banks into turn
+      targetScaleRef.current = lerp(0.35, 0.55, bp);
+
+      targetRot.set(
+        lerp(0, -0.08, bp),
+        lerp(0, 0.4, bp),
+        lerp(-0.03, -0.15, bp),
+      );
     }
-    // ── Beat 0.75 → 0.90 ─ exit upper-right with a banking turn ──────────
-    else if (p <= 0.9) {
-      const bp = (p - 0.75) / 0.15;
-      group.position.set(
-        lerp(-1.5, 3.5, bp),        // sweeps right for exit
-        lerp(0.8, 2.0, bp),         // climbs away
-        lerp(10, 24, bp),           // accelerates into distance
+    // ── Beat 0.75 → 0.93+ ─ departure: decisive translation-first exit through upper-left ──
+    else {
+      // Map p=0.75 to p=0.93 into a mildly accelerating translation curve around power 1.25
+      const bp = Math.min(1, Math.max(0, (p - 0.75) / 0.18));
+      const accelBp = Math.pow(bp, 1.25);
+
+      targetPos.set(
+        lerp(-1.5, -24.0, accelBp),
+        lerp(0.8, 12.0, accelBp),
+        lerp(-4, -6.0, bp),
       );
-      group.scale.setScalar(lerp(0.55, 0.35, bp)); // shrinks as it departs
-      group.rotation.y = lerp(0.4, 1.0, bp);      // continues yaw
-      group.rotation.x = lerp(-0.08, -0.2, bp);   // pitches up to exit
-      group.rotation.z = lerp(-0.15, -0.3, bp);   // deeper bank
+      // Z and scale changes remain subordinate
+      targetScaleRef.current = lerp(0.55, 0.48, bp);
+
+      // Lock rotation exactly at close-pass orientation; do not interpolate rotation during departure
+      targetRot.set(-0.08, 0.40, -0.15);
     }
 
-    // Share position with GhostTrail and CometTail
+    // Frame-rate-independent damping toward target transforms (faster position lambda to follow scroll decisively)
+    const posLambda = 16;
+    const rotLambda = 10;
+    const clampedDelta = Math.min(delta, 0.1);
+
+    group.position.x = THREE.MathUtils.damp(group.position.x, targetPos.x, posLambda, clampedDelta);
+    group.position.y = THREE.MathUtils.damp(group.position.y, targetPos.y, posLambda, clampedDelta);
+    group.position.z = THREE.MathUtils.damp(group.position.z, targetPos.z, posLambda, clampedDelta);
+
+    const currentScale = group.scale.x;
+    const nextScale = THREE.MathUtils.damp(currentScale, targetScaleRef.current, posLambda, clampedDelta);
+    group.scale.setScalar(nextScale);
+
+    group.rotation.x = THREE.MathUtils.damp(group.rotation.x, targetRot.x, rotLambda, clampedDelta);
+    group.rotation.y = THREE.MathUtils.damp(group.rotation.y, targetRot.y, rotLambda, clampedDelta);
+    group.rotation.z = THREE.MathUtils.damp(group.rotation.z, targetRot.z, rotLambda, clampedDelta);
+
     positionRef.current.copy(group.position);
   });
 
   return (
-    <group ref={groupRef} position={[0, 0, -80]} scale={0.05}>
+    <group ref={groupRef} position={[2, -0.5, -120]} scale={0.02}>
       <primitive object={scene} />
     </group>
   );
@@ -353,7 +443,7 @@ interface SpaceshipGroupProps {
 }
 
 function SpaceshipGroup({ scrollRef }: SpaceshipGroupProps) {
-  const shipPosRef = useRef(new THREE.Vector3(0, 0, -80));
+  const shipPosRef = useRef(new THREE.Vector3(2, -0.5, -120));
 
   return (
     <>
@@ -368,27 +458,35 @@ function SpaceshipGroup({ scrollRef }: SpaceshipGroupProps) {
 // ─── Scene Contents (everything inside Canvas) ───────────────────────────────
 
 interface SceneContentsProps {
-  scrollRef: ScrollRef;
-  mouseRef:  MouseRef;
-  isMobile:  boolean;
+  scrollRef:      ScrollRef;
+  aboutScrollRef: ScrollRef;
+  mouseRef:       MouseRef;
+  isMobile:       boolean;
+  palette:        ThemePalette;
 }
 
-function SceneContents({ scrollRef, mouseRef, isMobile }: SceneContentsProps) {
+function SceneContents({
+  scrollRef,
+  aboutScrollRef,
+  mouseRef,
+  isMobile,
+  palette,
+}: SceneContentsProps) {
   return (
     <>
       {/* Warm deep-black scene background matching --color-bg */}
-      <color attach="background" args={[0x080706]} />
+      <color attach="background" args={[palette.bg]} />
 
-      {/* Warm accent lights — DEC-011 gold palette */}
-      <ambientLight     intensity={0.4}  color="#FFF0D0" />
-      <directionalLight position={[3, 5, 2]}   intensity={1.6}  color="#FFE8A0" />
-      <pointLight       position={[-4, -3, 3]}  intensity={0.25} color="#C4A97D" />
+      {/* Warm accent lights — token palette */}
+      <ambientLight     intensity={0.4}  color={palette.accentLight} />
+      <directionalLight position={[3, 5, 2]}   intensity={1.6}  color={palette.accentLight} />
+      <pointLight       position={[-4, -3, 3]}  intensity={0.25} color={palette.accentDark} />
 
       <CameraController scrollRef={scrollRef} />
 
-      {/* Render Aurora first, then Stars, so stars appear on top */}
-      <AuroraPlane scrollRef={scrollRef} mouseRef={mouseRef} isMobile={isMobile} />
-      <StarField   scrollRef={scrollRef} isMobile={isMobile} />
+      {/* Render Aurora first, then Stars, so stars appear on top across Hero and About */}
+      <AuroraPlane scrollRef={scrollRef} mouseRef={mouseRef} isMobile={isMobile} palette={palette} />
+      <StarField   scrollRef={scrollRef} aboutScrollRef={aboutScrollRef} isMobile={isMobile} color={palette.textPrimary} />
 
       {/* Spaceship loads async — Suspense prevents canvas stall */}
       <Suspense fallback={null}>
@@ -429,8 +527,9 @@ export interface SpaceSceneProps {
 }
 
 export function SpaceScene({ preloaderDone }: SpaceSceneProps) {
-  const scrollRef  = useRef(0);
-  const wrapperRef = useRef<HTMLDivElement>(null);
+  const scrollRef      = useRef(0);
+  const aboutScrollRef = useRef(0);
+  const wrapperRef     = useRef<HTMLDivElement>(null);
 
   // Richer mouse state: x, y (normalised), dx (raw delta pixels, decays per frame)
   const mouseRef = useRef<MouseState>({ x: 0.5, y: 0.5, dx: 0 });
@@ -439,6 +538,8 @@ export function SpaceScene({ preloaderDone }: SpaceSceneProps) {
     () => window.matchMedia("(max-width: 767px)").matches,
     [],
   );
+
+  const palette = useMemo(() => readThemePalette(), []);
 
   // ── Mouse tracking ──────────────────────────────────────────────────────
   useEffect(() => {
@@ -458,29 +559,67 @@ export function SpaceScene({ preloaderDone }: SpaceSceneProps) {
     return () => window.removeEventListener("pointermove", onMove);
   }, []);
 
-  // ── ScrollTrigger ────────────────────────────────────────────────────────
+  // ── Master ScrollTrigger ──────────────────────────────────────────────────
   // Lives OUTSIDE the Canvas — GSAP + R3F co-exist via refs, no dual RAF.
+  // Single master range derived from responsive Hero/About pin distances and viewport geometry.
   // Rule: never initialise before preloaderDone.
   useEffect(() => {
     if (!preloaderDone) return;
 
     const ctx = gsap.context(() => {
       ScrollTrigger.create({
-        id:      "space-scene",
+        id:      "space-scene-master",
         trigger: "#hero",
         start:   "top top",
-        end:     "+=1200",   // must match Hero's pinDistance
+        end: () => {
+          const isMobileViewport = window.matchMedia("(max-width: 767px)").matches;
+          const isTabletViewport = window.matchMedia(
+            "(min-width: 768px) and (max-width: 1024px)",
+          ).matches;
+          const heroPin = isMobileViewport ? 0 : isTabletViewport ? 1700 * 0.6 : 1700;
+          const aboutPin = isMobileViewport ? 0 : isTabletViewport ? 900 * 0.6 : 900;
+          return `+=${heroPin + window.innerHeight + aboutPin + window.innerHeight}`;
+        },
+        invalidateOnRefresh: true,
         scrub:   1.5,
         onUpdate: (self) => {
-          scrollRef.current = self.progress;
+          const scrollY = self.scroll();
+          const H = window.innerHeight;
+          const isMobileViewport = window.matchMedia("(max-width: 767px)").matches;
+          const isTabletViewport = window.matchMedia(
+            "(min-width: 768px) and (max-width: 1024px)",
+          ).matches;
+          const heroPin = isMobileViewport ? 0 : isTabletViewport ? 1700 * 0.6 : 1700;
+          const aboutPin = isMobileViewport ? 0 : isTabletViewport ? 900 * 0.6 : 900;
 
-          // Canvas wrapper opacity fade at beat 0.90 → 1.0
+          // 1. Hero progress (0 → 1.0 over scrollY: 0 → heroPin + H)
+          const heroRange = heroPin + H;
+          const heroProgress = Math.min(1, Math.max(0, scrollY / heroRange));
+          scrollRef.current = heroProgress;
+
+          // 2. About progress (0 → 1.0 over scrollY: heroPin → heroPin + H + aboutPin + 0.6 * H)
+          // 0.0: About begins rising into viewport as Hero unpins
+          // ~0.38: About reaches viewport top and pins
+          // ~0.77: About finishes pin
+          // 1.0: About released and faded before Projects
+          const aboutStart = heroPin;
+          const aboutTotal = H + aboutPin + 0.6 * H;
+          const aboutProgress = Math.min(1, Math.max(0, (scrollY - aboutStart) / aboutTotal));
+          aboutScrollRef.current = aboutProgress;
+
+          // 3. SpaceScene Wrapper Opacity:
+          // Remains 1.0 throughout Hero entrance and About pinned beat.
+          // Fades only as About unpins and releases toward Projects (scrollY > heroPin + H + aboutPin).
+          const aboutUnpinY = heroPin + H + aboutPin;
+          const fadeReleaseDist = 0.6 * H;
+
           if (wrapperRef.current) {
-            const p       = self.progress;
-            const opacity = p > 0.9
-              ? Math.max(0, 1 - (p - 0.9) / 0.1)
-              : 1;
-            wrapperRef.current.style.opacity = String(opacity);
+            if (scrollY <= aboutUnpinY) {
+              wrapperRef.current.style.opacity = "1";
+            } else {
+              const fade = Math.max(0, 1 - (scrollY - aboutUnpinY) / fadeReleaseDist);
+              wrapperRef.current.style.opacity = String(fade);
+            }
           }
 
           // Decay mouse dx so it doesn't accumulate between scroll ticks
@@ -517,8 +656,10 @@ export function SpaceScene({ preloaderDone }: SpaceSceneProps) {
       >
         <SceneContents
           scrollRef={scrollRef}
+          aboutScrollRef={aboutScrollRef}
           mouseRef={mouseRef}
           isMobile={isMobile}
+          palette={palette}
         />
       </Canvas>
     </div>

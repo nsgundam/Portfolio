@@ -7,200 +7,233 @@ interface AboutProps {
 }
 
 export default function About({ preloaderDone }: AboutProps) {
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const panelRef   = useRef<HTMLElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
   const labelRef   = useRef<HTMLParagraphElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const bioRef     = useRef<HTMLDivElement>(null);
   const infoRef    = useRef<HTMLDivElement>(null);
 
-  // ── Panel slide-up + comet + content reveal (pinned scrub) ──
+  // ── Unified pinned scrub timeline for desktop/tablet; static on mobile ──
   useEffect(() => {
     if (!preloaderDone) return;
-    const wrapper = wrapperRef.current;
-    const panel = panelRef.current;
-    if (!wrapper || !panel) return;
+    const section = sectionRef.current;
+    const content = contentRef.current;
+    if (!section || !content) return;
 
-    const isReducedMotion = prefersReducedMotion();
     const contentTargets = [
       labelRef.current,
       headingRef.current,
       bioRef.current,
       infoRef.current,
-    ];
+    ].filter(Boolean);
 
-    if (isReducedMotion) {
-      gsap.set(panel, { y: 0 });
-      gsap.set(contentTargets, {
-        opacity: 1,
-        y: 0,
-        filter: "blur(0px)",
-        scale: 1,
-      });
-      return;
-    }
-
-    // Hide content initially
-    gsap.set(panel, { y: window.innerHeight });
-    gsap.set(contentTargets, { opacity: 0 });
-
-    const isMobile = window.matchMedia("(max-width: 767px)").matches;
-    const isTablet = window.matchMedia(
+    const mobileMedia = window.matchMedia("(max-width: 767px)");
+    const tabletMedia = window.matchMedia(
       "(min-width: 768px) and (max-width: 1024px)",
-    ).matches;
-    const factor = isMobile ? 0.5 : isTablet ? 0.6 : 1;
+    );
 
-    const ctx = gsap.context(() => {
-      // ── Phase A: Panel slides up from below (covers Hero) ──
-      ScrollTrigger.create({
-        trigger: wrapper,
-        start: "top bottom",
-        end: "top top",
-        scrub: isMobile ? 0.5 : 1,
-        onUpdate: (self) => {
-          // Panel rises from below
-          gsap.set(panel, { y: (1 - self.progress) * window.innerHeight });
-        },
-      });
+    let ctx: gsap.Context | null = null;
 
-      // ── Phase B: Pinned — atmospheric pause then content reveal ──
-      const pinDistance = 900 * factor;
-      const tl = gsap.timeline();
+    const setup = () => {
+      if (ctx) {
+        ctx.revert();
+        ctx = null;
+      }
 
-      // SpaceScene handles the spaceship flyby during this beat
-      // tl.to({}, { duration: 0.35 });
+      const isMobile = mobileMedia.matches;
+      const isReduced = prefersReducedMotion();
 
-      // Label
-      tl.fromTo(
-        labelRef.current,
-        { opacity: 0, filter: 'blur(8px)' },
-        { opacity: 1, filter: 'blur(0px)', duration: 0.1, ease: 'power4.out' },
-      );
-
-      // Heading
-      tl.fromTo(
-        headingRef.current,
-        { opacity: 0, filter: "blur(12px)", y: 30, scale: 0.92 },
-        {
+      if (isMobile || isReduced) {
+        // Mobile below 768px and prefers-reduced-motion:
+        // stable final static state with no pin, no pin-spacer, no y transform, and no hidden content
+        gsap.set(content, { clearProps: "transform,y", y: 0 });
+        gsap.set(contentTargets, {
+          clearProps: "opacity,transform,y,scale,filter",
           opacity: 1,
-          filter: "blur(0px)",
           y: 0,
           scale: 1,
-          duration: 0.15,
-          ease: "power4.out",
-        },
-      );
-
-      // Bio
-      tl.fromTo(
-        bioRef.current,
-        { opacity: 0, filter: "blur(8px)", y: 20 },
-        {
-          opacity: 1,
           filter: "blur(0px)",
-          y: 0,
-          duration: 0.15,
-          ease: "power4.out",
-        },
-        "-=0.05",
-      );
+        });
+        ScrollTrigger.refresh();
+        return;
+      }
 
-      // Info
-      tl.fromTo(
-        infoRef.current,
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.15, ease: "power4.out" },
-        "-=0.05",
-      );
+      // Desktop / Tablet behavior: single coherent pinned scrub timeline
+      const factor = tabletMedia.matches ? 0.6 : 1;
+      const pinDistance = 900 * factor;
 
-      ScrollTrigger.create({
-        trigger: panel,
-        start: "top top",
-        end: `+=${pinDistance}`,
-        pin: true,
-        scrub: 1.5,
-        anticipatePin: 1,
-        animation: tl,
-      });
-    }, wrapper);
+      ctx = gsap.context(() => {
+        const tl = gsap.timeline();
 
-    return () => ctx.revert();
+        // 1. Content container starts close to resting position and settles
+        tl.fromTo(
+          content,
+          { y: "4vh" },
+          { y: 0, duration: 0.3, ease: "power2.out" },
+          0,
+        );
+
+        // 2. Section label is visibly legible at progress 0 and settles into resting position
+        tl.fromTo(
+          labelRef.current,
+          { opacity: 0.9, y: 8, filter: "blur(0px)" },
+          { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.2, ease: "power2.out" },
+          0,
+        );
+
+        // 3. Main heading is clearly perceptible and legible at progress 0 with restrained depth settle
+        tl.fromTo(
+          headingRef.current,
+          { opacity: 0.8, y: 12, scale: 0.98, filter: "blur(0px)" },
+          {
+            opacity: 1,
+            filter: "blur(0px)",
+            y: 0,
+            scale: 1,
+            duration: 0.25,
+            ease: "power3.out",
+          },
+          0,
+        );
+
+        // 4. Bio text reveals in the second beat
+        tl.fromTo(
+          bioRef.current,
+          { opacity: 0, filter: "blur(6px)", y: 16 },
+          {
+            opacity: 1,
+            filter: "blur(0px)",
+            y: 0,
+            duration: 0.25,
+            ease: "power4.out",
+          },
+          0.25,
+        );
+
+        // 5. Info grid reveals in the third beat
+        tl.fromTo(
+          infoRef.current,
+          { opacity: 0, filter: "blur(6px)", y: 16 },
+          { opacity: 1, filter: "blur(0px)", y: 0, duration: 0.25, ease: "power4.out" },
+          0.50,
+        );
+
+        // 6. Brief hold before releasing
+        tl.to({}, { duration: 0.2 }, 0.80);
+
+        ScrollTrigger.create({
+          trigger: section,
+          start: "top top",
+          end: `+=${pinDistance}`,
+          pin: true,
+          scrub: 1.5,
+          anticipatePin: 1,
+          animation: tl,
+        });
+      }, section);
+
+      ScrollTrigger.refresh();
+    };
+
+    setup();
+
+    const handleMediaChange = () => {
+      setup();
+    };
+
+    mobileMedia.addEventListener("change", handleMediaChange);
+    tabletMedia.addEventListener("change", handleMediaChange);
+
+    return () => {
+      mobileMedia.removeEventListener("change", handleMediaChange);
+      tabletMedia.removeEventListener("change", handleMediaChange);
+      if (ctx) ctx.revert();
+      ScrollTrigger.refresh();
+    };
   }, [preloaderDone]);
 
   return (
-    <div ref={wrapperRef} className="about-wrapper relative z-10 mt-[20vh]">
-      <section
-        id="about"
-        ref={panelRef}
-        className="about-panel relative min-h-screen overflow-hidden px-5 py-20 sm:px-8 md:py-32"
-      >
+    <section
+      id="about"
+      ref={sectionRef}
+      className="about-section relative z-10 min-h-screen overflow-hidden px-5 py-20 sm:px-8 md:py-32"
+    >
+      {/* Subtle token-based readability scrim over the continuous deep-space star field */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+        style={{
+          background:
+            "radial-gradient(ellipse 70% 65% at 25% 45%, color-mix(in srgb, var(--color-bg) 60%, transparent) 0%, transparent 80%)",
+        }}
+      />
 
-        <div className="relative z-10 mx-auto max-w-5xl">
-          <p
-            ref={labelRef}
-            aria-hidden="true"
-            className="mb-4 font-body text-xs tracking-[0.3em] text-accent uppercase"
+      <div ref={contentRef} className="relative z-10 mx-auto max-w-5xl">
+        <p
+          ref={labelRef}
+          aria-hidden="true"
+          className="mb-4 font-body text-xs tracking-[0.3em] text-accent uppercase"
+        >
+          01 / About
+        </p>
+
+        <h2
+          ref={headingRef}
+          className="mb-12 font-display leading-tight text-text-primary"
+          style={{ fontSize: "clamp(32px, 4vw, 64px)" }}
+        >
+          Agile Technical
+          <br />
+          <em
+            style={{ fontStyle: "italic", color: "var(--color-accent)" }}
           >
-            01 / About
-          </p>
+            Explorer
+          </em>
+        </h2>
 
-          <h2
-            ref={headingRef}
-            className="mb-12 font-display leading-tight text-text-primary"
-            style={{ fontSize: "clamp(32px, 4vw, 64px)" }}
-          >
-            Agile Technical
-            <br />
-            <em
-              style={{ fontStyle: "italic", color: "var(--color-accent)" }}
-            >
-              Explorer
-            </em>
-          </h2>
+        <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:gap-16">
+          {/* Bio Text */}
+          <div ref={bioRef} className="md:col-span-1">
+            <p className="mb-4 font-body text-sm leading-relaxed text-text-secondary">
+              I am a developer driven by curiosity and a problem-solving
+              mindset. In a fast-evolving tech landscape, I define myself as
+              an{" "}
+              <span className="text-text-primary">
+                Agile Technical Explorer
+              </span>
+              —always ready to leverage new tools to transform ideas into
+              reality.
+            </p>
+            <p className="font-body text-sm leading-relaxed text-text-secondary">
+              My focus lies in the intersection of efficient architecture and
+              sophisticated visuals, ensuring every project is built with
+              purpose and impact.
+            </p>
+          </div>
 
-          <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:gap-16">
-            {/* Bio Text */}
-            <div ref={bioRef} className="md:col-span-1">
-              <p className="mb-4 font-body text-sm leading-relaxed text-text-secondary">
-                I am a developer driven by curiosity and a problem-solving
-                mindset. In a fast-evolving tech landscape, I define myself as
-                an{" "}
-                <span className="text-text-primary">
-                  Agile Technical Explorer
+          {/* Info Grid */}
+          <div ref={infoRef} className="flex flex-col gap-4 md:col-span-1">
+            {[
+              { label: "Based in", value: "Thailand" },
+              { label: "Focus", value: "Software Engineer / Full-Stack" },
+              { label: "Available", value: "Internship 2026" },
+            ].map(({ label, value }) => (
+              <div
+                key={label}
+                className="flex flex-col gap-2 border-b border-border pb-4"
+              >
+                <span className="font-body text-xs tracking-widest text-text-disabled uppercase">
+                  {label}
                 </span>
-                —always ready to leverage new tools to transform ideas into
-                reality.
-              </p>
-              <p className="font-body text-sm leading-relaxed text-text-secondary">
-                My focus lies in the intersection of efficient architecture and
-                sophisticated visuals, ensuring every project is built with
-                purpose and impact.
-              </p>
-            </div>
-
-            {/* Info Grid */}
-            <div ref={infoRef} className="flex flex-col gap-4 md:col-span-1">
-              {[
-                { label: "Based in", value: "Thailand" },
-                { label: "Focus", value: "Software Engineer / Full-Stack" },
-                { label: "Available", value: "Internship 2026" },
-              ].map(({ label, value }) => (
-                <div
-                  key={label}
-                  className="flex flex-col gap-2 border-b border-border pb-4"
-                >
-                  <span className="font-body text-xs tracking-widest text-text-disabled uppercase">
-                    {label}
-                  </span>
-                  <span className="font-body text-xs text-text-primary">
-                    {value}
-                  </span>
-                </div>
-              ))}
-            </div>
+                <span className="font-body text-xs text-text-primary">
+                  {value}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
   );
 }
