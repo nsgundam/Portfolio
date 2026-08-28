@@ -1,60 +1,74 @@
-// src/components/ui/ScrollProgress.tsx
-import { useEffect, useRef } from "react"
-import { gsap } from "../../lib/gsap"
-import { prefersReducedMotion } from "../../lib/motion"
+import { useEffect, useRef, useSyncExternalStore } from "react";
+import { JOURNEY_SECTION_DEFINITIONS } from "../../lib/journey";
+import { handleSectionNav } from "../../lib/navigation";
+import type { JourneyController } from "../../types/journey";
 
 interface ScrollProgressProps {
+  journey: JourneyController;
   heroTransitionComplete?: boolean;
 }
 
-export default function ScrollProgress({ heroTransitionComplete }: ScrollProgressProps) {
-  const lineRef = useRef<HTMLDivElement>(null)
+export default function ScrollProgress({
+  journey,
+  heroTransitionComplete,
+}: ScrollProgressProps) {
+  const lineRef = useRef<HTMLDivElement>(null);
+  const activeSection = useSyncExternalStore(
+    journey.subscribe,
+    () => journey.stateRef.current.section,
+    () => "hero",
+  );
 
-  useEffect(() => {
-    const line = lineRef.current
-    if (!line) return
-
-    if (prefersReducedMotion()) {
-      const update = () => {
-        const max =
-          document.documentElement.scrollHeight - window.innerHeight
-        const progress = max > 0 ? window.scrollY / max : 0
-        gsap.set(line, { scaleX: progress })
+  useEffect(
+    () => journey.subscribe((state) => {
+      if (lineRef.current) {
+        lineRef.current.style.transform = `scaleY(${state.progress})`;
       }
-      update()
-      window.addEventListener("scroll", update, { passive: true })
-      return () => window.removeEventListener("scroll", update)
-    }
-
-    gsap.to(line, {
-      scaleX: 1,
-      ease: "none",
-      scrollTrigger: {
-        trigger: document.body,
-        start: "top top",
-        end: "bottom bottom",
-        scrub: true,
-      },
-    })
-  }, [])
+    }),
+    [journey],
+  );
 
   return (
-    <div
-      className="fixed left-0 bottom-0 z-30 h-0.5 bg-border transition-opacity duration-700"
+    <nav
+      aria-label="Journey progress"
+      className="journey-indicator"
       style={{
-        width: "100vw",
         opacity: heroTransitionComplete ? 1 : 0,
         pointerEvents: heroTransitionComplete ? "auto" : "none",
       }}
     >
-      <div
-        ref={lineRef}
-        className="h-full bg-accent origin-left"
-        style={{
-          width: "100%",
-          transform: "scaleX(0)",            // เริ่มจาก 0 แล้วโตตาม scroll
-        }}
-      />
-    </div>
-  )
+      <div className="journey-indicator__track" aria-hidden="true">
+        <div
+          ref={lineRef}
+          className="journey-indicator__progress"
+          style={{
+            transform: `scaleY(${journey.stateRef.current.progress})`,
+          }}
+        />
+      </div>
+
+      <ol className="journey-indicator__list">
+        {JOURNEY_SECTION_DEFINITIONS.map(({ id, number, label }) => {
+          const isActive = activeSection === id;
+
+          return (
+            <li key={id}>
+              <a
+                href={`#${id}`}
+                aria-current={isActive ? "location" : undefined}
+                aria-label={`${number} ${label}`}
+                className="journey-indicator__link"
+                onClick={(event) => handleSectionNav(event, `#${id}`)}
+              >
+                <span className="journey-indicator__label" aria-hidden="true">
+                  {number}
+                </span>
+                <span className="journey-indicator__dot" aria-hidden="true" />
+              </a>
+            </li>
+          );
+        })}
+      </ol>
+    </nav>
+  );
 }

@@ -32,6 +32,7 @@ export function usePinnedTimeline<T extends HTMLElement>(
       if (ctx) {
         ctx.revert();
         ctx = null;
+        setTl(null);
       }
 
       if (mobileMedia.matches || prefersReducedMotion()) {
@@ -42,10 +43,9 @@ export function usePinnedTimeline<T extends HTMLElement>(
       const factor = tabletMedia.matches ? 0.6 : 1;
       const pinDistance = options.pinDistance * factor;
 
-      const newTl = gsap.timeline({ paused: true });
-      setTl(newTl);
-
+      let newTl: gsap.core.Timeline | null = null;
       ctx = gsap.context(() => {
+        newTl = gsap.timeline({ paused: true });
         ScrollTrigger.create({
           trigger: el,
           start: options.start ?? "top top",
@@ -58,6 +58,7 @@ export function usePinnedTimeline<T extends HTMLElement>(
           onLeave: options.onComplete,
         });
       }, el);
+      setTl(newTl);
     };
 
     setup();

@@ -1,4 +1,5 @@
 import { useLenis } from "./hooks/useLenis";
+import { useJourneyState } from "./hooks/useJourneyState";
 import CustomCursor from "./components/cursor/CustomCursor";
 import ScrollProgress from "./components/ui/ScrollProgress";
 import Preloader from "./components/preloader/Preloader";
@@ -9,26 +10,23 @@ import Projects from "./components/sections/Projects";
 import Skills from "./components/sections/Skills";
 import Contact from "./components/sections/Contact";
 import { SpaceScene } from "./components/backgrounds/SpaceScene";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { ScrollTrigger } from "./lib/gsap";
 import { prefersReducedMotion } from "./lib/motion";
-import { handleSectionNav } from "./lib/navigation";
+import { handleSectionNav, scrollToSection } from "./lib/navigation";
+import { JOURNEY_SECTIONS } from "./types/journey";
 
 export default function App() {
   const [preloaderDone, setPreloaderDone] = useState(false);
   const [heroTransitionComplete, setHeroTransitionComplete] = useState(() => prefersReducedMotion());
+  const initialHashHandledRef = useRef(false);
+  const journey = useJourneyState(preloaderDone);
 
   // Lock Lenis scroll until Hero animation finishes
   useLenis(!heroTransitionComplete);
 
   const handlePreloaderComplete = useCallback(() => setPreloaderDone(true), []);
   const handleHeroTransitionComplete = useCallback(() => setHeroTransitionComplete(true), []);
-
-  useEffect(() => {
-    if (preloaderDone) {
-      ScrollTrigger.refresh();
-    }
-  }, [preloaderDone]);
 
   useEffect(() => {
     if (!heroTransitionComplete) {
@@ -44,6 +42,19 @@ export default function App() {
     };
   }, [heroTransitionComplete]);
 
+  useEffect(() => {
+    if (!heroTransitionComplete || initialHashHandledRef.current) return;
+    initialHashHandledRef.current = true;
+
+    const target = window.location.hash.replace(/^#/, "");
+    if (!JOURNEY_SECTIONS.includes(target as (typeof JOURNEY_SECTIONS)[number])) {
+      return;
+    }
+
+    ScrollTrigger.refresh();
+    scrollToSection(target, { updateHash: false, immediate: true });
+  }, [heroTransitionComplete]);
+
   return (
     <>
       <a
@@ -56,11 +67,14 @@ export default function App() {
         Skip to content
       </a>
 
-      <SpaceScene preloaderDone={preloaderDone} />
+      <SpaceScene journey={journey} />
 
       {/* Global overlays */}
       <CustomCursor />
-      <ScrollProgress heroTransitionComplete={heroTransitionComplete} />
+      <ScrollProgress
+        journey={journey}
+        heroTransitionComplete={heroTransitionComplete}
+      />
 
       {/* Preloader — unmounts itself after exit */}
       <Preloader onComplete={handlePreloaderComplete} />

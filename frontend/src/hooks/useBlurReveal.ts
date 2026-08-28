@@ -23,17 +23,16 @@ export function useBlurReveal<T extends HTMLElement>(
 
     const blurStart = options?.blurStart ?? "20px";
 
-    if (prefersReducedMotion()) {
-      gsap.set(el, { opacity: 1, filter: "blur(0px)" });
-      return;
-    }
-
-    gsap.set(el, { opacity: 0, filter: `blur(${blurStart})` });
     const duration = options?.duration ?? 0.8;
     const delay = options?.delay ?? 0;
     const start = options?.start ?? "top 80%";
 
     const ctx = gsap.context(() => {
+      if (prefersReducedMotion()) {
+        gsap.set(el, { opacity: 1, filter: "blur(0px)" });
+        return;
+      }
+
       gsap.fromTo(
         el,
         {

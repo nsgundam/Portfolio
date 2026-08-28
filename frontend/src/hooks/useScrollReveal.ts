@@ -12,12 +12,12 @@ export function useScrollReveal<T extends HTMLElement>(
     const el = ref.current;
     if (!el || !enabled) return;
 
-    if (prefersReducedMotion()) {
-      gsap.set(el, { opacity: 1, y: 0 });
-      return;
-    }
-
     const ctx = gsap.context(() => {
+      if (prefersReducedMotion()) {
+        gsap.set(el, { opacity: 1, y: 0 });
+        return;
+      }
+
       gsap.fromTo(
         el,
         {

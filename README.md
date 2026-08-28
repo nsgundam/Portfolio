@@ -23,6 +23,18 @@ npm run optimize-images
 `npm run build` also optimizes images before compiling. It is reserved for release
 work; interactive agents are instructed not to run it.
 
+## Deploy to Vercel
+
+The root `vercel.json` makes the nested `frontend/` application deployable from the
+repository root. It installs from `frontend/package-lock.json`, runs the existing
+release build, publishes `frontend/dist`, and applies the repository's baseline
+security headers. No environment variables are currently required.
+
+After production QA is complete, link this repository to the intended Vercel project,
+inspect the resolved account/project, then create a preview deployment before
+promoting the verified result to production. The canonical URL and `og:url` must be
+added only after the owner confirms the final production domain.
+
 ## Repository map
 
 ```text
@@ -44,8 +56,8 @@ frontend/
 | `README.md` | Humans | Setup and repository orientation |
 | `AGENTS.md` | Agents | Implementation rules and prohibitions |
 | `PRODUCT.md` | Both | Audience, positioning, confirmed facts, open content |
-| `DESIGN.md` | Both | Visual system, narrative, architecture, and motion |
-| `ROADMAP.md` | Both | Current status, next phases, and blockers |
+| `DESIGN.md` | Both | Visual reference, design system, experience, scene, motion, assets, and decisions |
+| `ROADMAP.md` | Both | Current state, implementation phases, acceptance criteria, and blockers |
 
 These five files are the complete documentation set. Update them instead of creating
 new sprint snapshots or duplicate specifications.

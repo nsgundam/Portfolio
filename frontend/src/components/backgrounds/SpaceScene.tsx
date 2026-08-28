@@ -1,10 +1,18 @@
-import { Suspense, useEffect, useMemo, useRef } from "react";
-import type { MutableRefObject } from "react";
+import { Component, Suspense, useEffect, useMemo, useRef, useState } from "react";
+import type { MutableRefObject, ReactNode } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
-import { gsap, ScrollTrigger } from "../../lib/gsap";
 import { prefersReducedMotion } from "../../lib/motion";
+import { EarthHorizon } from "./EarthHorizon";
+import { EventHorizon } from "./EventHorizon";
+import { NebulaField } from "./NebulaField";
+import { SolarPassage } from "./SolarPassage";
+import type {
+  JourneyController,
+  JourneyEnvironmentProgress,
+  JourneySection,
+} from "../../types/journey";
 
 // ─── Utility ──────────────────────────────────────────────────────────────────
 
@@ -15,39 +23,122 @@ function lerp(a: number, b: number, t: number): number {
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 type ScrollRef = MutableRefObject<number>;
-
 interface MouseState {
   x:  number;   // normalised 0-1
   y:  number;   // normalised 0-1 (flipped for GLSL)
-  dx: number;   // raw client-space delta (pixels/frame, decays)
 }
 type MouseRef = MutableRefObject<MouseState>;
 
-function buildStarPositions(count: number): Float32Array {
-  const arr = new Float32Array(count * 3);
-  for (let i = 0; i < count; i++) {
-    const isBand = Math.random() < 1;
-    let x, y, z;
+interface DecorativeAssetBoundaryProps {
+  children: ReactNode;
+}
 
-    if (isBand) {
-      // Spread widely across X
-      x = (Math.random() - 0.5) * 4000;
-      
-      // Gaussian-like distribution for Y to cluster them tightly in the middle but fade out smoothly
-      const gy = (Math.random() + Math.random() + Math.random() + Math.random() - 2) / 2; 
-      
-      // Band angles slightly upwards (slope 0.25)
-      y = gy * 500 + (x * 0.25); 
-      
-      // Z spread also clustered, pushed back slightly
-      const gz = (Math.random() + Math.random() + Math.random() + Math.random() - 2) / 2;
-      z = gz * 800 - 200;
-    } else {
-      // Remaining 25% scattered randomly
-      x = (Math.random() - 0.5) * 4000;
-      y = (Math.random() - 0.5) * 2500;
-      z = (Math.random() - 0.5) * 1500;
-    }
+interface DecorativeAssetBoundaryState {
+  hasError: boolean;
+}
+
+class DecorativeAssetBoundary extends Component<
+  DecorativeAssetBoundaryProps,
+  DecorativeAssetBoundaryState
+> {
+  state: DecorativeAssetBoundaryState = { hasError: false };
+
+  static getDerivedStateFromError(): DecorativeAssetBoundaryState {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) return null;
+    return this.props.children;
+  }
+}
+
+type StarLayerName = "far" | "mid" | "near";
+
+interface StarLayerConfig {
+  name: StarLayerName;
+  desktopCount: number;
+  mobileCount: number;
+  xySpread: number;
+  ySpread: number;
+  depthNear: number;
+  depthFar: number;
+  size: number;
+  opacity: number;
+  parallax: number;
+  travel: number;
+  seed: number;
+}
+
+const STAR_LAYER_CONFIGS: readonly StarLayerConfig[] = [
+  {
+    name: "far",
+    desktopCount: 6500,
+    mobileCount: 2200,
+    xySpread: 4200,
+    ySpread: 720,
+    depthNear: 420,
+    depthFar: 1700,
+    size: 0.9,
+    opacity: 0.46,
+    parallax: 0.008,
+    travel: 1.2,
+    seed: 1701,
+  },
+  {
+    name: "mid",
+    desktopCount: 4000,
+    mobileCount: 1300,
+    xySpread: 2600,
+    ySpread: 520,
+    depthNear: 120,
+    depthFar: 900,
+    size: 0.62,
+    opacity: 0.68,
+    parallax: 0.018,
+    travel: 2.4,
+    seed: 2903,
+  },
+  {
+    name: "near",
+    desktopCount: 1500,
+    mobileCount: 500,
+    xySpread: 1500,
+    ySpread: 360,
+    depthNear: 24,
+    depthFar: 430,
+    size: 0.38,
+    opacity: 0.82,
+    parallax: 0.035,
+    travel: 4.2,
+    seed: 4127,
+  },
+] as const;
+
+function createSeededRandom(seed: number): () => number {
+  let state = seed;
+  return () => {
+    state += 0x6d2b79f5;
+    let value = state;
+    value = Math.imul(value ^ (value >>> 15), value | 1);
+    value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
+    return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function buildStarPositions(
+  count: number,
+  config: StarLayerConfig,
+  seedOffset: number,
+): Float32Array {
+  const arr = new Float32Array(count * 3);
+  const random = createSeededRandom(config.seed + seedOffset);
+
+  for (let i = 0; i < count; i++) {
+    const x = (random() - 0.5) * config.xySpread;
+    const gaussianY = (random() + random() + random() + random() - 2) / 2;
+    const y = gaussianY * config.ySpread + x * 0.19;
+    const z = -lerp(config.depthNear, config.depthFar, random());
 
     arr[i * 3]     = x;
     arr[i * 3 + 1] = y;
@@ -56,13 +147,21 @@ function buildStarPositions(count: number): Float32Array {
   return arr;
 }
 
-const STAR_POSITIONS_DESKTOP = buildStarPositions(12000);
-const STAR_POSITIONS_MOBILE  = buildStarPositions(4000);
+const STAR_POSITIONS = Object.fromEntries(
+  STAR_LAYER_CONFIGS.map((config) => [
+    config.name,
+    {
+      desktop: buildStarPositions(config.desktopCount, config, 0),
+      mobile: buildStarPositions(config.mobileCount, config, 10000),
+    },
+  ]),
+) as Record<StarLayerName, { desktop: Float32Array; mobile: Float32Array }>;
 
 // ─── Token Palette Helper ──────────────────────────────────────────────────
 
 interface ThemePalette {
   bg:          THREE.Color;
+  surface:     THREE.Color;
   accent:      THREE.Color;
   accentLight: THREE.Color;
   accentDark:  THREE.Color;
@@ -82,6 +181,7 @@ function getCssColor(varName: string): THREE.Color {
 function readThemePalette(): ThemePalette {
   return {
     bg:          getCssColor("--color-bg"),
+    surface:     getCssColor("--color-surface"),
     accent:      getCssColor("--color-accent"),
     accentLight: getCssColor("--color-accent-light"),
     accentDark:  getCssColor("--color-accent-dark"),
@@ -89,43 +189,77 @@ function readThemePalette(): ThemePalette {
   };
 }
 
-// ─── Layer 1: Star Field ──────────────────────────────────────────────────────
+// ─── Universe: deterministic far / mid / near star layers ───────────────────
 
-interface StarFieldProps {
-  scrollRef:      ScrollRef;
-  aboutScrollRef: ScrollRef;
-  isMobile:       boolean;
-  color:          THREE.Color;
+interface StarLayerProps {
+  config: StarLayerConfig;
+  heroProgressRef: ScrollRef;
+  journeyProgressRef: ScrollRef;
+  intensityRef: ScrollRef;
+  mouseRef: MouseRef;
+  isMobile: boolean;
+  color: THREE.Color;
 }
 
-function StarField({ scrollRef, aboutScrollRef, isMobile, color }: StarFieldProps) {
+function StarLayer({
+  config,
+  heroProgressRef,
+  journeyProgressRef,
+  intensityRef,
+  mouseRef,
+  isMobile,
+  color,
+}: StarLayerProps) {
   const pointsRef = useRef<THREE.Points>(null!);
-  const positions = isMobile ? STAR_POSITIONS_MOBILE : STAR_POSITIONS_DESKTOP;
-  const timeAccRef = useRef(0);
+  const positions = isMobile
+    ? STAR_POSITIONS[config.name].mobile
+    : STAR_POSITIONS[config.name].desktop;
 
   useFrame((_state, delta) => {
     const pts = pointsRef.current;
     if (!pts) return;
 
-    timeAccRef.current += delta;
-
-    // Fade IN as aurora fades out (0 → 0.30 Hero progress), remains active across About, fades as About leaves
-    const heroP = scrollRef.current;
-    const aboutP = aboutScrollRef.current;
-    let starOpacity = Math.min(heroP / 0.3, 1.0);
-    if (aboutP > 0.77) {
-      starOpacity = Math.max(0, 1 - (aboutP - 0.77) / 0.23);
+    const intensity = intensityRef.current;
+    if (intensity <= 0.001) {
+      if (pts.visible) pts.visible = false;
+      return;
     }
+
+    if (!pts.visible) pts.visible = true;
+
+    const heroP = heroProgressRef.current;
+    const starIntro = 0.24 + Math.min(heroP / 0.3, 1) * 0.76;
+    const starOpacity = starIntro * intensity * config.opacity;
 
     (pts.material as THREE.PointsMaterial).opacity = starOpacity;
 
-    // Subtle field drift
-    pts.rotation.y += 0.00005 * delta * 60;
-    pts.rotation.x  = Math.sin(timeAccRef.current * 0.02) * 0.005;
+    const clampedDelta = Math.min(delta, 0.1);
+    const targetRotationY = (mouseRef.current.x - 0.5) * config.parallax;
+    const targetRotationX = (mouseRef.current.y - 0.5) * config.parallax * 0.55;
+    const targetY = -journeyProgressRef.current * config.travel;
+
+    pts.rotation.y = THREE.MathUtils.damp(
+      pts.rotation.y,
+      targetRotationY,
+      4,
+      clampedDelta,
+    );
+    pts.rotation.x = THREE.MathUtils.damp(
+      pts.rotation.x,
+      targetRotationX,
+      4,
+      clampedDelta,
+    );
+    pts.position.y = THREE.MathUtils.damp(
+      pts.position.y,
+      targetY,
+      5,
+      clampedDelta,
+    );
   });
 
   return (
-    <points ref={pointsRef}>
+    <points ref={pointsRef} name={`${config.name}-stars`}>
       <bufferGeometry>
         <bufferAttribute
           attach="attributes-position"
@@ -134,13 +268,32 @@ function StarField({ scrollRef, aboutScrollRef, isMobile, color }: StarFieldProp
       </bufferGeometry>
       <pointsMaterial
         color={color}
-        size={0.5}
+        size={config.size}
         sizeAttenuation
         transparent
         opacity={0}
         depthWrite={false}
       />
     </points>
+  );
+}
+
+interface UniverseProps {
+  heroProgressRef: ScrollRef;
+  journeyProgressRef: ScrollRef;
+  intensityRef: ScrollRef;
+  mouseRef: MouseRef;
+  isMobile: boolean;
+  color: THREE.Color;
+}
+
+function Universe(props: UniverseProps) {
+  return (
+    <group name="universe">
+      {STAR_LAYER_CONFIGS.map((config) => (
+        <StarLayer key={config.name} config={config} {...props} />
+      ))}
+    </group>
   );
 }
 
@@ -213,12 +366,19 @@ function buildAuroraFS(iterations: number): string {
 
 interface AuroraPlaneProps {
   scrollRef: ScrollRef;
+  contributionRef: ScrollRef;
   mouseRef:  MouseRef;
   isMobile:  boolean;
   palette:   ThemePalette;
 }
 
-function AuroraPlane({ scrollRef, mouseRef, isMobile, palette }: AuroraPlaneProps) {
+function AuroraPlane({
+  scrollRef,
+  contributionRef,
+  mouseRef,
+  isMobile,
+  palette,
+}: AuroraPlaneProps) {
   const { viewport, size } = useThree();
   const meshRef = useRef<THREE.Mesh>(null!);
   const matRef = useRef<THREE.ShaderMaterial>(null!);
@@ -252,7 +412,7 @@ function AuroraPlane({ scrollRef, mouseRef, isMobile, palette }: AuroraPlaneProp
     if (!mesh || !mat) return;
 
     // Fully faded out once Hero progress reaches 0.25 (uFade = 1.0 -> alpha = 0.0)
-    const isFaded = p >= 0.25;
+    const isFaded = p >= 0.25 || contributionRef.current <= 0.001;
 
     if (isFaded) {
       if (mesh.visible) {
@@ -295,10 +455,16 @@ function AuroraPlane({ scrollRef, mouseRef, isMobile, palette }: AuroraPlaneProp
 
 interface CameraControllerProps {
   scrollRef: ScrollRef;
+  contributionRef: ScrollRef;
 }
 
-function CameraController({ scrollRef }: CameraControllerProps) {
+function CameraController({ scrollRef, contributionRef }: CameraControllerProps) {
   useFrame(({ camera }, delta) => {
+    if (contributionRef.current <= 0.001) {
+      camera.position.x = 0;
+      return;
+    }
+
     const p = scrollRef.current;
     let targetX = 0;
 
@@ -327,10 +493,15 @@ function CameraController({ scrollRef }: CameraControllerProps) {
 
 interface SpaceshipModelProps {
   scrollRef:   ScrollRef;
+  contributionRef: ScrollRef;
   positionRef: MutableRefObject<THREE.Vector3>;
 }
 
-function SpaceshipModel({ scrollRef, positionRef }: SpaceshipModelProps) {
+function SpaceshipModel({
+  scrollRef,
+  contributionRef,
+  positionRef,
+}: SpaceshipModelProps) {
   const { scene } = useGLTF("/3D/lego_ship.glb");
   const groupRef  = useRef<THREE.Group>(null!);
 
@@ -343,6 +514,11 @@ function SpaceshipModel({ scrollRef, positionRef }: SpaceshipModelProps) {
     const p     = scrollRef.current;
     const group = groupRef.current;
     if (!group) return;
+
+    if (contributionRef.current <= 0.001) {
+      if (group.visible) group.visible = false;
+      return;
+    }
 
     // Visibility: visible from early hero approach onwards; physical frustum exit handles departure
     group.visible = p >= 0.07;
@@ -455,34 +631,102 @@ function SpaceshipModel({ scrollRef, positionRef }: SpaceshipModelProps) {
 
 interface SpaceshipGroupProps {
   scrollRef: ScrollRef;
+  contributionRef: ScrollRef;
 }
 
-function SpaceshipGroup({ scrollRef }: SpaceshipGroupProps) {
+function SpaceshipGroup({ scrollRef, contributionRef }: SpaceshipGroupProps) {
   const shipPosRef = useRef(new THREE.Vector3(2, -0.5, -120));
 
   return (
     <>
       <SpaceshipModel
         scrollRef={scrollRef}
+        contributionRef={contributionRef}
         positionRef={shipPosRef}
       />
     </>
   );
 }
 
-// ─── Scene Contents (everything inside Canvas) ───────────────────────────────
+// ─── Camera / environment responsibilities inside the single Canvas ─────────
+
+interface HeroEnvironmentProps {
+  heroProgressRef: ScrollRef;
+  contributionRef: ScrollRef;
+  mouseRef: MouseRef;
+  isMobile: boolean;
+  palette: ThemePalette;
+}
+
+function HeroEnvironment({
+  heroProgressRef,
+  contributionRef,
+  mouseRef,
+  isMobile,
+  palette,
+}: HeroEnvironmentProps) {
+  return (
+    <group name="hero-environment">
+      <EarthHorizon
+        progressRef={heroProgressRef}
+        contributionRef={contributionRef}
+        isMobile={isMobile}
+        palette={{
+          background: palette.bg,
+          surface: palette.surface,
+          accent: palette.accent,
+          accentDark: palette.accentDark,
+          starlight: palette.textPrimary,
+        }}
+      />
+
+      <AuroraPlane
+        scrollRef={heroProgressRef}
+        contributionRef={contributionRef}
+        mouseRef={mouseRef}
+        isMobile={isMobile}
+        palette={palette}
+      />
+
+      <DecorativeAssetBoundary>
+        <Suspense fallback={null}>
+          <SpaceshipGroup
+            scrollRef={heroProgressRef}
+            contributionRef={contributionRef}
+          />
+        </Suspense>
+      </DecorativeAssetBoundary>
+    </group>
+  );
+}
 
 interface SceneContentsProps {
-  scrollRef:      ScrollRef;
-  aboutScrollRef: ScrollRef;
-  mouseRef:       MouseRef;
-  isMobile:       boolean;
-  palette:        ThemePalette;
+  heroProgressRef: ScrollRef;
+  projectsProgressRef: ScrollRef;
+  skillsProgressRef: ScrollRef;
+  contactProgressRef: ScrollRef;
+  journeyProgressRef: ScrollRef;
+  heroContributionRef: ScrollRef;
+  projectsContributionRef: ScrollRef;
+  skillsContributionRef: ScrollRef;
+  contactContributionRef: ScrollRef;
+  universeIntensityRef: ScrollRef;
+  mouseRef: MouseRef;
+  isMobile: boolean;
+  palette: ThemePalette;
 }
 
 function SceneContents({
-  scrollRef,
-  aboutScrollRef,
+  heroProgressRef,
+  projectsProgressRef,
+  skillsProgressRef,
+  contactProgressRef,
+  journeyProgressRef,
+  heroContributionRef,
+  projectsContributionRef,
+  skillsContributionRef,
+  contactContributionRef,
+  universeIntensityRef,
   mouseRef,
   isMobile,
   palette,
@@ -497,33 +741,86 @@ function SceneContents({
       <directionalLight position={[3, 5, 2]}   intensity={1.6}  color={palette.accentLight} />
       <pointLight       position={[-4, -3, 3]}  intensity={0.25} color={palette.accentDark} />
 
-      <CameraController scrollRef={scrollRef} />
+      <CameraController
+        scrollRef={heroProgressRef}
+        contributionRef={heroContributionRef}
+      />
 
-      {/* Render Aurora first, then Stars, so stars appear on top across Hero and About */}
-      <AuroraPlane scrollRef={scrollRef} mouseRef={mouseRef} isMobile={isMobile} palette={palette} />
-      <StarField   scrollRef={scrollRef} aboutScrollRef={aboutScrollRef} isMobile={isMobile} color={palette.textPrimary} />
+      <HeroEnvironment
+        heroProgressRef={heroProgressRef}
+        contributionRef={heroContributionRef}
+        mouseRef={mouseRef}
+        isMobile={isMobile}
+        palette={palette}
+      />
 
-      {/* Spaceship loads async — Suspense prevents canvas stall */}
-      <Suspense fallback={null}>
-        <SpaceshipGroup scrollRef={scrollRef} />
-      </Suspense>
+      <Universe
+        heroProgressRef={heroProgressRef}
+        journeyProgressRef={journeyProgressRef}
+        intensityRef={universeIntensityRef}
+        mouseRef={mouseRef}
+        isMobile={isMobile}
+        color={palette.textPrimary}
+      />
+
+      <SolarPassage
+        progressRef={projectsProgressRef}
+        contributionRef={projectsContributionRef}
+        isMobile={isMobile}
+        palette={{
+          accent: palette.accent,
+          accentLight: palette.accentLight,
+          accentDark: palette.accentDark,
+          starlight: palette.textPrimary,
+        }}
+      />
+
+      <NebulaField
+        progressRef={skillsProgressRef}
+        contributionRef={skillsContributionRef}
+        isMobile={isMobile}
+        palette={{
+          accent: palette.accent,
+          accentDark: palette.accentDark,
+          starlight: palette.textPrimary,
+        }}
+      />
+
+      <EventHorizon
+        progressRef={contactProgressRef}
+        contributionRef={contactContributionRef}
+        isMobile={isMobile}
+        palette={{
+          background: palette.bg,
+          accent: palette.accent,
+          accentLight: palette.accentLight,
+          accentDark: palette.accentDark,
+          starlight: palette.textPrimary,
+        }}
+      />
     </>
   );
 }
 
-// ─── Reduced Motion Fallback ──────────────────────────────────────────────────
+// ─── Static fallback for reduced motion and unavailable WebGL ───────────────
 
-function ReducedMotionFallback() {
+interface StaticSpaceFallbackProps {
+  position?: "fixed" | "absolute";
+}
+
+function StaticSpaceFallback({
+  position = "fixed",
+}: StaticSpaceFallbackProps) {
   return (
     <div
       aria-hidden="true"
       style={{
-        position:      "fixed",
+        position,
         top:           0,
         left:          0,
-        width:         "100vw",
-        height:        "100vh",
-        zIndex:        -1,
+        width:         "100%",
+        height:        "100%",
+        zIndex:        position === "fixed" ? -1 : 0,
         pointerEvents: "none",
         background:    "var(--color-bg)",
         backgroundImage: [
@@ -538,141 +835,131 @@ function ReducedMotionFallback() {
 // ─── Main Export ──────────────────────────────────────────────────────────────
 
 export interface SpaceSceneProps {
-  preloaderDone: boolean;
+  journey: JourneyController;
 }
 
-export function SpaceScene({ preloaderDone }: SpaceSceneProps) {
-  const scrollRef      = useRef(0);
-  const aboutScrollRef = useRef(0);
-  const wrapperRef     = useRef<HTMLDivElement>(null);
+const UNIVERSE_INTENSITY: Record<JourneySection, number> = {
+  hero: 0.92,
+  about: 0.9,
+  projects: 0.3,
+  skills: 0.22,
+  contact: 0.12,
+};
 
-  // Richer mouse state: x, y (normalised), dx (raw delta pixels, decays per frame)
-  const mouseRef = useRef<MouseState>({ x: 0.5, y: 0.5, dx: 0 });
+function getUniverseIntensity(
+  environments: JourneyEnvironmentProgress,
+): number {
+  return Math.min(
+    1,
+    (Object.keys(UNIVERSE_INTENSITY) as JourneySection[]).reduce(
+      (intensity, section) =>
+        intensity + environments[section] * UNIVERSE_INTENSITY[section],
+      0,
+    ),
+  );
+}
 
-  const isMobile = useMemo(
-    () => window.matchMedia("(max-width: 767px)").matches,
-    [],
+export function SpaceScene({ journey }: SpaceSceneProps) {
+  const initialJourneyState = journey.stateRef.current;
+  const heroProgressRef = useRef(initialJourneyState.sectionProgress.hero);
+  const projectsProgressRef = useRef(initialJourneyState.sectionProgress.projects);
+  const skillsProgressRef = useRef(initialJourneyState.sectionProgress.skills);
+  const contactProgressRef = useRef(initialJourneyState.sectionProgress.contact);
+  const journeyProgressRef = useRef(initialJourneyState.progress);
+  const heroContributionRef = useRef(initialJourneyState.environments.hero);
+  const projectsContributionRef = useRef(
+    initialJourneyState.environments.projects,
+  );
+  const skillsContributionRef = useRef(initialJourneyState.environments.skills);
+  const contactContributionRef = useRef(initialJourneyState.environments.contact);
+  const universeIntensityRef = useRef(
+    getUniverseIntensity(initialJourneyState.environments),
+  );
+
+  const mouseRef = useRef<MouseState>({ x: 0.5, y: 0.5 });
+
+  const [isMobile, setIsMobile] = useState(() =>
+    window.matchMedia("(max-width: 767px)").matches,
   );
 
   const palette = useMemo(() => readThemePalette(), []);
+  const isReducedMotion = useMemo(() => prefersReducedMotion(), []);
+
+  useEffect(() => {
+    if (isReducedMotion) return;
+    const mobileMedia = window.matchMedia("(max-width: 767px)");
+    const updateMobile = () => setIsMobile(mobileMedia.matches);
+    mobileMedia.addEventListener("change", updateMobile);
+    return () => mobileMedia.removeEventListener("change", updateMobile);
+  }, [isReducedMotion]);
+
+  useEffect(
+    () => {
+      if (isReducedMotion) return;
+      return journey.subscribe((state) => {
+        heroProgressRef.current = state.sectionProgress.hero;
+        projectsProgressRef.current = state.sectionProgress.projects;
+        skillsProgressRef.current = state.sectionProgress.skills;
+        contactProgressRef.current = state.sectionProgress.contact;
+        journeyProgressRef.current = state.progress;
+        heroContributionRef.current = state.environments.hero;
+        projectsContributionRef.current = state.environments.projects;
+        skillsContributionRef.current = state.environments.skills;
+        contactContributionRef.current = state.environments.contact;
+        universeIntensityRef.current = getUniverseIntensity(state.environments);
+      });
+    },
+    [isReducedMotion, journey],
+  );
 
   // ── Mouse tracking ──────────────────────────────────────────────────────
   useEffect(() => {
-    let lastClientX = window.innerWidth * 0.5;
-
+    if (isReducedMotion) return;
     const onMove = (e: PointerEvent) => {
-      const rawDx = e.clientX - lastClientX;
-      lastClientX  = e.clientX;
       mouseRef.current = {
         x:  e.clientX / window.innerWidth,
         y:  1 - e.clientY / window.innerHeight, // flip Y for GLSL
-        dx: rawDx,                               // px per event (decayed in useFrame)
       };
     };
 
     window.addEventListener("pointermove", onMove, { passive: true });
     return () => window.removeEventListener("pointermove", onMove);
-  }, []);
+  }, [isReducedMotion]);
 
-  // ── Master ScrollTrigger ──────────────────────────────────────────────────
-  // Lives OUTSIDE the Canvas — GSAP + R3F co-exist via refs, no dual RAF.
-  // Single master range derived from responsive Hero/About pin distances and viewport geometry.
-  // Rule: never initialise before preloaderDone.
-  useEffect(() => {
-    if (!preloaderDone) return;
-
-    const ctx = gsap.context(() => {
-      ScrollTrigger.create({
-        id:      "space-scene-master",
-        trigger: "#hero",
-        start:   "top top",
-        end: () => {
-          const isMobileViewport = window.matchMedia("(max-width: 767px)").matches;
-          const isTabletViewport = window.matchMedia(
-            "(min-width: 768px) and (max-width: 1024px)",
-          ).matches;
-          const heroPin = isMobileViewport ? 0 : isTabletViewport ? 1700 * 0.6 : 1700;
-          const aboutPin = isMobileViewport ? 0 : isTabletViewport ? 900 * 0.6 : 900;
-          return `+=${heroPin + window.innerHeight + aboutPin + window.innerHeight}`;
-        },
-        invalidateOnRefresh: true,
-        scrub:   0.8,
-        fastScrollEnd: true,
-        onUpdate: (self) => {
-          const scrollY = self.scroll();
-          const H = window.innerHeight;
-          const isMobileViewport = window.matchMedia("(max-width: 767px)").matches;
-          const isTabletViewport = window.matchMedia(
-            "(min-width: 768px) and (max-width: 1024px)",
-          ).matches;
-          const heroPin = isMobileViewport ? 0 : isTabletViewport ? 1700 * 0.6 : 1700;
-          const aboutPin = isMobileViewport ? 0 : isTabletViewport ? 900 * 0.6 : 900;
-
-          // 1. Hero progress (0 → 1.0 over scrollY: 0 → heroPin + H)
-          const heroRange = heroPin + H;
-          const heroProgress = Math.min(1, Math.max(0, scrollY / heroRange));
-          scrollRef.current = heroProgress;
-
-          // 2. About progress (0 → 1.0 over scrollY: heroPin → heroPin + H + aboutPin + 0.6 * H)
-          // 0.0: About begins rising into viewport as Hero unpins
-          // ~0.38: About reaches viewport top and pins
-          // ~0.77: About finishes pin
-          // 1.0: About released and faded before Projects
-          const aboutStart = heroPin;
-          const aboutTotal = H + aboutPin + 0.6 * H;
-          const aboutProgress = Math.min(1, Math.max(0, (scrollY - aboutStart) / aboutTotal));
-          aboutScrollRef.current = aboutProgress;
-
-          // 3. SpaceScene Wrapper Opacity:
-          // Remains 1.0 throughout Hero entrance and About pinned beat.
-          // Fades only as About unpins and releases toward Projects (scrollY > heroPin + H + aboutPin).
-          const aboutUnpinY = heroPin + H + aboutPin;
-          const fadeReleaseDist = 0.6 * H;
-
-          if (wrapperRef.current) {
-            if (scrollY <= aboutUnpinY) {
-              wrapperRef.current.style.opacity = "1";
-            } else {
-              const fade = Math.max(0, 1 - (scrollY - aboutUnpinY) / fadeReleaseDist);
-              wrapperRef.current.style.opacity = String(fade);
-            }
-          }
-
-          // Decay mouse dx so it doesn't accumulate between scroll ticks
-          mouseRef.current.dx *= 0.85;
-        },
-      });
-    });
-
-    return () => ctx.revert();
-  }, [preloaderDone]);
-
-  if (prefersReducedMotion()) return <ReducedMotionFallback />;
+  if (isReducedMotion) return <StaticSpaceFallback />;
 
   return (
     <div
-      ref={wrapperRef}
       aria-hidden="true"
       style={{
         position:      "fixed",
         top:           0,
         left:          0,
-        width:         "100vw",
-        height:        "100vh",
+        width:         "100%",
+        height:        "100%",
         zIndex:        -1,
         pointerEvents: "none",
-        willChange:    "opacity",
+        background:    "var(--color-bg)",
       }}
     >
       <Canvas
         gl={{ antialias: !isMobile, alpha: true }}
-        dpr={Math.min(devicePixelRatio, 1.5)}
+        dpr={Math.min(devicePixelRatio, isMobile ? 1.15 : 1.5)}
         camera={{ position: [0, 0, 5], fov: 60, near: 0.1, far: 2000 }}
+        fallback={<StaticSpaceFallback position="absolute" />}
         style={{ display: "block" }}
       >
         <SceneContents
-          scrollRef={scrollRef}
-          aboutScrollRef={aboutScrollRef}
+          heroProgressRef={heroProgressRef}
+          projectsProgressRef={projectsProgressRef}
+          skillsProgressRef={skillsProgressRef}
+          contactProgressRef={contactProgressRef}
+          journeyProgressRef={journeyProgressRef}
+          heroContributionRef={heroContributionRef}
+          projectsContributionRef={projectsContributionRef}
+          skillsContributionRef={skillsContributionRef}
+          contactContributionRef={contactContributionRef}
+          universeIntensityRef={universeIntensityRef}
           mouseRef={mouseRef}
           isMobile={isMobile}
           palette={palette}
@@ -681,5 +968,3 @@ export function SpaceScene({ preloaderDone }: SpaceSceneProps) {
     </div>
   );
 }
-
-useGLTF.preload("/3D/lego_ship.glb");

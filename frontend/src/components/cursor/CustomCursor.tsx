@@ -11,17 +11,27 @@ export default function CustomCursor() {
   const ringRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Bail out on touch / coarse-pointer, or when reduced motion is requested.
-    // CSS restores the native cursor in both cases; GSAP stays off.
-    if (
-      !window.matchMedia("(pointer: fine)").matches ||
-      prefersReducedMotion()
-    ) {
-      return;
-    }
-
     const dot = dotRef.current!;
     const ring = ringRef.current!;
+    const finePointerMedia = window.matchMedia("(pointer: fine)");
+    const mobileMedia = window.matchMedia("(max-width: 767px)");
+    const reducedMotionMedia = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let teardownCursor = () => {};
+
+    const setupCursor = () => {
+      teardownCursor();
+      gsap.killTweensOf([dot, ring]);
+      gsap.set([dot, ring], { opacity: 0 });
+
+      // CSS restores the native cursor whenever this custom treatment is disabled.
+      if (
+        !finePointerMedia.matches ||
+        mobileMedia.matches ||
+        prefersReducedMotion()
+      ) {
+        return;
+      }
+
     const mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
 
     // isHovering covers three states:
@@ -151,13 +161,31 @@ export default function CustomCursor() {
       el.addEventListener("mouseleave", onLeave);
     });
 
-    return () => {
+      teardownCursor = () => {
       gsap.ticker.remove(renderStretch);
       document.removeEventListener("mousemove", onMove);
       interactives.forEach((el) => {
         el.removeEventListener("mouseenter", onEnter as EventListener);
         el.removeEventListener("mouseleave", onLeave);
       });
+        gsap.killTweensOf([dot, ring]);
+        gsap.set([dot, ring], { opacity: 0 });
+      };
+    };
+
+    const handleCapabilityChange = () => setupCursor();
+    setupCursor();
+    finePointerMedia.addEventListener("change", handleCapabilityChange);
+    mobileMedia.addEventListener("change", handleCapabilityChange);
+    reducedMotionMedia.addEventListener("change", handleCapabilityChange);
+    window.addEventListener("resize", handleCapabilityChange, { passive: true });
+
+    return () => {
+      finePointerMedia.removeEventListener("change", handleCapabilityChange);
+      mobileMedia.removeEventListener("change", handleCapabilityChange);
+      reducedMotionMedia.removeEventListener("change", handleCapabilityChange);
+      window.removeEventListener("resize", handleCapabilityChange);
+      teardownCursor();
     };
   }, []);
 
@@ -166,14 +194,14 @@ export default function CustomCursor() {
       {/* Dot — opacity:0 initial; GSAP sets it to 1 on pointer:fine devices only */}
       <div
         ref={dotRef}
-        className="pointer-events-none fixed top-0 left-0 z-9999 -translate-x-1/2 -translate-y-1/2 size-1.5 rounded-full bg-white"
+        className="custom-cursor pointer-events-none fixed top-0 left-0 z-9999 -translate-x-1/2 -translate-y-1/2 size-1.5 rounded-full bg-white"
         style={{ mixBlendMode: "difference", opacity: 0 }}
       />
 
       {/* Ring — same opacity:0 guard. Collapses into buttons; springs back on leave. */}
       <div
         ref={ringRef}
-        className="pointer-events-none fixed top-0 left-0 z-9998 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
+        className="custom-cursor pointer-events-none fixed top-0 left-0 z-9998 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
         style={{
           width: `${RING_SIZE}px`,
           height: `${RING_SIZE}px`,

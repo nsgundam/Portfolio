@@ -90,7 +90,7 @@ export function useMagneticHover<T extends HTMLElement>(
 
     return () => {
       document.removeEventListener("mousemove", onMouseMove);
-      // Reset position on unmount
+      gsap.killTweensOf(el);
       gsap.set(el, { x: 0, y: 0 });
     };
   }, [strength, triggerPad]);

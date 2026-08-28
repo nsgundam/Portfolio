@@ -12,43 +12,51 @@ export default function Preloader({ onComplete }: PreloaderProps) {
   const countObj = useRef({ val: 0 });
 
   useEffect(() => {
-    const overlay = overlayRef.current!;
-    const counter = counterRef.current!;
+    const overlay = overlayRef.current;
+    const counter = counterRef.current;
+    if (!overlay || !counter) return;
 
     if (prefersReducedMotion()) {
-      gsap.set(overlay, { display: "none" });
+      overlay.style.display = "none";
       onComplete();
       return;
     }
 
-    const tl = gsap.timeline();
+    countObj.current.val = 0;
+    counter.textContent = "0";
 
-    // 1. นับ 0 → 100
-    tl.to(countObj.current, {
-      val: 100,
-      duration: 1,
-      ease: "power2.out",
-      snap: { val: 1 },
-      onUpdate: () => {
-        counter.textContent = String(Math.round(countObj.current.val));
-      },
-    });
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline();
 
-    // 2. Pause เล็กน้อยหลังถึง 100
-    tl.to({}, { duration: 0.3 });
+      // 1. นับ 0 → 100
+      tl.to(countObj.current, {
+        val: 100,
+        duration: 1,
+        ease: "power2.out",
+        snap: { val: 1 },
+        onUpdate: () => {
+          counter.textContent = String(Math.round(countObj.current.val));
+        },
+      });
 
-    // 3. Exit overlay — ปรับ style จาก Playground
-    tl.to(overlay, {
-      yPercent: -100, 
-      duration: 1,
-      ease: "power4.in",
-      onStart: () => {
-        onComplete(); // บอก App ว่า preloader กำลัง exit ให้ Hero เริ่มเล่นได้เลย
-      },
-      onComplete: () => {
-        overlay.style.display = "none";
-      },
-    });
+      // 2. Pause เล็กน้อยหลังถึง 100
+      tl.to({}, { duration: 0.3 });
+
+      // 3. Exit overlay — ปรับ style จาก Playground
+      tl.to(overlay, {
+        yPercent: -100,
+        duration: 1,
+        ease: "power4.in",
+        onStart: () => {
+          onComplete(); // บอก App ว่า preloader กำลัง exit ให้ Hero เริ่มเล่นได้เลย
+        },
+        onComplete: () => {
+          overlay.style.display = "none";
+        },
+      });
+    }, overlay);
+
+    return () => ctx.revert();
   }, [onComplete]);
 
   return (

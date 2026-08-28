@@ -5,7 +5,9 @@ import { prefersReducedMotion } from "../../lib/motion";
 import { usePinnedTimeline } from "../../hooks/usePinnedTimeline";
 import { ScrollIndicator } from "../ui/ScrollIndicator";
 import { MagneticButton } from "../ui/MagneticButton";
+import { SectionShell } from "../ui/SectionShell";
 import { scrollToSection } from "../../lib/navigation";
+import { JOURNEY_PIN_DISTANCE } from "../../lib/journey";
 
 interface HeroProps {
   preloaderDone: boolean;
@@ -18,7 +20,7 @@ export default function Hero({
 }: HeroProps) {
   // pinRef doubles as sectionRef — passed to both <section> and gsap.context()
   const { ref: pinRef, tl } = usePinnedTimeline<HTMLElement>(preloaderDone, {
-    pinDistance: 1700,
+    pinDistance: JOURNEY_PIN_DISTANCE.hero,
   });
 
   const nameRef    = useRef<HTMLHeadingElement>(null);
@@ -172,65 +174,72 @@ export default function Hero({
   }, [tl]);
 
   return (
-    <section
+    <SectionShell
       ref={pinRef}
       id="hero"
-      className="top-0 z-0 flex h-screen flex-col items-center justify-center overflow-hidden px-5 text-center sm:px-8"
+      sectionNumber="01"
+      sectionLabel="Home"
+      className="section-shell--hero top-0 z-0"
     >
       {/* Background: SpaceScene fixed canvas renders behind (z-index -1, App.tsx) */}
 
-      {/* aria-label gives screen readers the clean string; Splitting word-spans are decorative */}
-      <h1
-        ref={nameRef}
-        aria-label="Narunat Sutthibut"
-        className={
-          isCentered
-            ? "fixed z-30 font-display text-text-primary leading-none tracking-tight select-none pointer-events-none text-center px-5 sm:px-8 w-full"
-            : "relative font-display text-text-primary mb-4 leading-none tracking-tight text-center"
-        }
-        style={{ fontSize: "clamp(36px, 8.5vw, 140px)", fontWeight: 300 }}
-      >
-        Narunat Sutthibut
-      </h1>
+      <div className="section-shell__content hero-layout">
+        <div className="hero-copy">
+          {/* aria-label gives screen readers the clean string; Split words are decorative */}
+          <h1
+            ref={nameRef}
+            aria-label="Narunat Sutthibut"
+            className={
+              isCentered
+                ? "hero-title hero-title--centered fixed z-30 select-none pointer-events-none text-center"
+                : "hero-title relative"
+            }
+          >
+            Narunat
+            <br />
+            Sutthibut
+          </h1>
 
-      <p
-        ref={taglineRef}
-        aria-label="Aiming high, building what matters."
-        className="font-body text-text-primary max-w-md text-xs sm:text-sm leading-relaxed mb-6 sm:mb-8"
-      >
-        Aiming high, building what{" "}
-        <em style={{ fontStyle: "italic", color: "var(--color-accent)" }}>
-          matters.
-        </em>
-      </p>
+          <p
+            ref={taglineRef}
+            aria-label="Software Engineer and Full-stack Developer"
+            className="hero-role"
+          >
+            Software Engineer / Full-stack Developer
+          </p>
 
-      {/* CTA buttons */}
-      <div
-        ref={buttonsRef}
-        className="flex gap-4 flex-wrap justify-center mb-6 sm:mb-12"
-      >
-        <MagneticButton
-          onClick={() => scrollToSection("contact")}
-          className="px-6 py-2 font-label bg-accent text-bg border border-accent rounded-full text-xs tracking-small uppercase hover:bg-transparent hover:text-text-primary transition-colors duration-300"
-          aria-label="Navigate to Contact section"
-        >
-          Contact
-        </MagneticButton>
-        <button
-          onClick={() => scrollToSection("projects")}
-          className="px-6 py-2 font-label text-text-primary border border-accent rounded-full text-xs uppercase hover:bg-accent hover:text-bg transition-colors duration-300"
-          aria-label="Navigate to Explore Work section"
-        >
-          Explore Work
-        </button>
+          {/* CTA buttons */}
+          <div ref={buttonsRef} className="hero-actions">
+            <p className="hero-description">
+              Full-stack engineering with a focus on backend and real-time
+              systems.
+            </p>
+            <div className="hero-button-row">
+              <MagneticButton
+                onClick={() => scrollToSection("contact")}
+                className="hero-button hero-button--primary"
+                aria-label="Navigate to Contact section"
+              >
+                Contact
+              </MagneticButton>
+              <button
+                type="button"
+                onClick={() => scrollToSection("projects")}
+                className="hero-button hero-button--secondary"
+                aria-label="Navigate to Explore Work section"
+              >
+                Explore Work
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div aria-hidden="true" />
       </div>
 
-      <div
-        ref={scrollRef}
-        className="absolute bottom-4 sm:bottom-10 left-1/2 -translate-x-1/2"
-      >
+      <div ref={scrollRef} className="hero-scroll-anchor">
         <ScrollIndicator />
       </div>
-    </section>
+    </SectionShell>
   );
 }

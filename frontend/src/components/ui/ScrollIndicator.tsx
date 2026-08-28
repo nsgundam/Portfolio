@@ -19,30 +19,31 @@ export function ScrollIndicator({ className }: ScrollIndicatorProps) {
     const dot = dotRef.current;
     if (!wheel || !dot) return;
 
-    if (prefersReducedMotion()) {
-      gsap.set([wheel, dot], { opacity: 1 });
-      return;
-    }
+    if (prefersReducedMotion()) return;
 
     // Scroll indicator dot moves inside wheel
-    gsap.fromTo(
-      dot,
-      { opacity: 0, y: -8 },
-      {
-        opacity: 1,
-        y: 4,
-        duration: 0.8,
-        ease: "sine.inOut",
-        repeat: -1,
-        yoyo: true,
-        delay: 0.2,
-      },
-    );
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        dot,
+        { opacity: 0, y: -8 },
+        {
+          opacity: 1,
+          y: 4,
+          duration: 0.8,
+          ease: "sine.inOut",
+          repeat: -1,
+          yoyo: true,
+          delay: 0.2,
+        },
+      );
+    }, wheel);
+
+    return () => ctx.revert();
   }, []);
 
   return (
     <div className={className}>
-      <span className="font-body text-text-disabled text-xs tracking-widest uppercase block mb-3">
+      <span className="font-body text-text-secondary text-xs tracking-widest uppercase block mb-3">
         Scroll
       </span>
       <div

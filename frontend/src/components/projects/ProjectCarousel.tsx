@@ -264,7 +264,7 @@ export function ProjectCarousel({ projects, initialIndex = 0 }: ProjectCarouselP
 
         {/* Counter Info & Arrow Controls */}
         <div className="flex items-center gap-4">
-          <span className="font-label text-xs text-text-disabled tracking-widest uppercase">
+          <span className="font-label text-xs text-text-secondary tracking-widest uppercase">
             <span className="text-text-primary">{String(activeIndex + 1).padStart(2, "0")}</span> /{" "}
             {String(total).padStart(2, "0")}
           </span>

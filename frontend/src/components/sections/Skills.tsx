@@ -1,158 +1,87 @@
-import { useEffect, useRef } from "react";
-import { gsap } from "../../lib/gsap";
-import { prefersReducedMotion } from "../../lib/motion";
 import { BlurReveal } from "../ui/BlurReveal";
+import { SectionShell } from "../ui/SectionShell";
 
 interface SkillsProps {
   preloaderDone: boolean;
 }
 
-const SKILL_GROUPS = [
+const CAPABILITY_GROUPS = [
   {
-    category: "Frontend",
-    icon: "◈",
-    skills: [
-      "React",
-      "Next.js",
-      "TypeScript",
-      "Tailwind CSS",
-      "GSAP",
-      "Lenis",
-    ],
+    name: "Real-time systems",
+    evidence: "Published work · Boardgame Online",
+    description: "Real-time multiplayer delivery backed by typed application data.",
+    technologies: ["Socket.IO", "PostgreSQL", "TypeScript"],
   },
   {
-    category: "Backend",
-    icon: "◉",
-    skills: ["Node.js", "Express", "Socket.io", "RESTful API", "IoT"],
+    name: "Geospatial systems",
+    evidence: "Published work · TramTracking",
+    description: "Live shuttle tracking with WebSocket and PostGIS.",
+    technologies: ["WebSocket", "PostGIS", "PostgreSQL", "OpenStreetMap"],
   },
   {
-    category: "Database",
-    icon: "◎",
-    skills: ["PostgreSQL", "MySQL", "MongoDB", "PostGIS"],
+    name: "Typed product interfaces",
+    evidence: "Published work · Projects 01–02",
+    description: "Web interfaces connected to real-time and location-aware systems.",
+    technologies: ["Next.js", "TypeScript"],
   },
   {
-    category: "Infrastructure",
-    icon: "◇",
-    skills: ["Vercel", "Docker", "GitHub Actions", "Neon", "Render"],
+    name: "Experience engineering",
+    evidence: "Repository evidence · This portfolio",
+    description: "A single-canvas editorial experience with bounded scroll motion.",
+    technologies: ["React", "Vite", "GSAP", "Lenis", "Three.js"],
   },
-  {
-    category: "Process",
-    icon: "◈",
-    skills: ["Agile / Scrum", "Sprint Planning", "Git", "Postman"],
-  },
-];
-
-const FLOAT_CONFIG = [
-  { y: -12, duration: 3.2, delay: 0 },
-  { y: -8, duration: 2.8, delay: 0.6 },
-  { y: -14, duration: 3.8, delay: 1.1 },
-  { y: -10, duration: 3.0, delay: 0.3 },
-  { y: -8, duration: 2.5, delay: 0.9 },
-];
+] as const;
 
 export default function Skills({ preloaderDone }: SkillsProps) {
-  const cardRefs = useRef<Array<HTMLDivElement | null>>([]);
-
-  useEffect(() => {
-    if (!preloaderDone) return;
-    const cards = cardRefs.current.filter(Boolean) as HTMLDivElement[];
-    if (cards.length === 0) return;
-
-    const isReducedMotion = prefersReducedMotion();
-    const isMobile = window.matchMedia("(max-width: 767px)").matches;
-    const isTablet = window.matchMedia("(min-width: 768px) and (max-width: 1024px)").matches;
-
-    if (isReducedMotion) {
-      gsap.set(cards, { opacity: 1, y: 0, filter: "blur(0px)" });
-      return;
-    }
-
-    const ctx = gsap.context(() => {
-      cards.forEach((card, index) => {
-        const config = FLOAT_CONFIG[index] ?? FLOAT_CONFIG[FLOAT_CONFIG.length - 1];
-        gsap.fromTo(
-          card,
-          { opacity: 0, filter: "blur(12px)", y: 30 },
-          {
-            opacity: 1,
-            filter: "blur(0px)",
-            y: 0,
-            duration: 0.8,
-            delay: index * 0.1,
-            ease: "power4.out",
-            scrollTrigger: {
-              trigger: card,
-              start: "top 85%",
-              once: true,
-              onEnter: () => {
-                if (isMobile) return;
-                const floatY = isTablet ? config.y / 2 : config.y;
-                gsap.to(card, {
-                  y: floatY,
-                  duration: config.duration,
-                  delay: config.delay,
-                  ease: "sine.inOut",
-                  repeat: -1,
-                  yoyo: true,
-                });
-              },
-            },
-          },
-        );
-      });
-    });
-
-    return () => ctx.revert();
-  }, [preloaderDone]);
-
   return (
-    <section
+    <SectionShell
       id="skills"
-      className="px-5 sm:px-8 py-20 md:py-32 max-w-5xl mx-auto"
+      sectionNumber="04"
+      sectionLabel="Skills"
+      className="relative z-10"
     >
-      <p className="font-body text-accent text-xs tracking-[0.3em] uppercase mb-4">
-        03 / Skills
-      </p>
+      <div className="section-shell__content skills-layout">
+        <div className="skills-intro">
+          <BlurReveal enabled={preloaderDone}>
+            <h2 className="section-heading">
+              Systems
+              <br />
+              <span className="text-text-secondary">I work in</span>
+            </h2>
+          </BlurReveal>
+          <p className="section-prose">
+            Capabilities grounded in published projects and the code behind this
+            portfolio.
+          </p>
+        </div>
 
-      <BlurReveal enabled={preloaderDone} className="mb-16">
-        <h2
-          className="font-display text-text-primary leading-tight"
-          style={{ fontSize: "clamp(32px, 4vw, 64px)" }}
-        >
-          Tech
-          <br />
-          <span className="text-text-secondary">Stack</span>
-        </h2>
-      </BlurReveal>
-
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-[repeat(auto-fill,minmax(280px,1fr))] lg:gap-6">
-        {SKILL_GROUPS.map((group, index) => (
-          <div
-            key={group.category}
-            ref={(el) => {
-              cardRefs.current[index] = el;
-            }}
-            className="relative overflow-hidden rounded-2xl border border-border bg-[rgba(22,26,29,0.6)] p-6 transition-all duration-300 hover:border-[rgba(164,22,26,0.3)] hover:shadow-[0_8px_32px_rgba(164,22,26,0.08)]"
-          >
-            <div className="mb-4 flex items-center justify-between">
-              <span className="font-label text-lg text-accent">{group.icon}</span>
-              <span className="font-body text-xs tracking-widest text-text-disabled uppercase">
-                {group.category}
+        <ol className="skills-ledger" aria-label="Evidence-led capability groups">
+          {CAPABILITY_GROUPS.map((group, index) => (
+            <li key={group.name} className="skills-capability">
+              <span className="skills-capability__index" aria-hidden="true">
+                {String(index + 1).padStart(2, "0")}
               </span>
-            </div>
-            <ul className="flex flex-wrap gap-2">
-              {group.skills.map((skill) => (
-                <li
-                  key={skill}
-                  className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 font-body text-xs text-text-secondary transition-all duration-300 hover:border-[rgba(164,22,26,0.4)] hover:bg-[rgba(164,22,26,0.12)] hover:text-text-primary"
-                >
-                  {skill}
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
+
+              <div className="skills-capability__summary">
+                <h3 className="skills-capability__name">{group.name}</h3>
+                <p className="skills-capability__description">
+                  {group.description}
+                </p>
+                <p className="skills-capability__evidence">{group.evidence}</p>
+              </div>
+
+              <ul
+                className="skills-capability__technologies"
+                aria-label={`${group.name} technologies`}
+              >
+                {group.technologies.map((technology) => (
+                  <li key={technology}>{technology}</li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ol>
       </div>
-    </section>
+    </SectionShell>
   );
 }

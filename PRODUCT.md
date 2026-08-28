@@ -20,6 +20,14 @@ backend, and real-time systems strengths understandable and memorable. Success m
 a visitor can identify his positioning, compare credible project evidence, and reach
 him directly.
 
+## Content authority
+
+`PRODUCT.md` is the factual authority for public-facing identity, project claims,
+links, and contact paths. The selected visual reference can guide composition, scale,
+and atmosphere, but text visible in that image is not approved content by itself.
+Future implementation must distinguish owner-confirmed facts, repository evidence, and
+open content questions rather than filling gaps from visual inspiration.
+
 ## Positioning
 
 Narunat is positioned as a **Full-stack Engineer with backend and real-time systems
@@ -64,12 +72,16 @@ Use this as a decision filter, not as a repeated marketing slogan on the page.
 
 - Configured live link: <https://exploding-kittens-beta.vercel.app/>
 - Repository copy describes a real-time multiplayer card game.
+- Current portfolio case-study data records Next.js, Socket.IO, PostgreSQL,
+  TypeScript, Prisma ORM, and GitHub Actions as repository evidence.
 - Any concurrency or latency number must be re-confirmed before final publication.
 
 ### Project 02 — TramTracking System
 
 - Configured repository link: <https://github.com/nsgundam/TramTrackingSystem>
 - Repository copy describes real-time shuttle tracking with WebSocket and PostGIS.
+- Current portfolio case-study data records Next.js, Socket.IO, PostGIS,
+  OpenStreetMap, PostgreSQL, and TypeScript as repository evidence.
 - Any latency or accuracy number must be re-confirmed before final publication.
 
 ### Project 03 — Mini Appointment App
@@ -84,6 +96,13 @@ Use this as a decision filter, not as a repeated marketing slogan on the page.
 
 No testimonials, employer endorsements, production usage counts, or independent
 benchmarks are currently available. Future work must not fabricate them.
+
+### This portfolio repository
+
+- The current implementation directly evidences React, Vite, TypeScript, GSAP,
+  Lenis, React Three Fiber, and Three.js usage.
+- Capability presentation may cite this repository explicitly, but it must not turn
+  dependency presence into unsupported claims about production scale or mastery.
 
 ## Product Principles
 

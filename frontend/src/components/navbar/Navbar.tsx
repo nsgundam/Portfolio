@@ -1,23 +1,22 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap, ScrollTrigger } from "../../lib/gsap";
 import { handleSectionNav } from "../../lib/navigation";
+import { JOURNEY_SECTION_DEFINITIONS } from "../../lib/journey";
 
 interface NavbarProps {
   preloaderDone: boolean;
   heroTransitionComplete?: boolean;
 }
 
-const NAV_LINKS = [
-  { label: "About", href: "#about", number: "01" },
-  { label: "Projects", href: "#projects", number: "02" },
-  { label: "Skills", href: "#skills", number: "03" },
-  { label: "Contact", href: "#contact", number: "04" },
-];
+const NAV_LINKS = JOURNEY_SECTION_DEFINITIONS.map(({ id, label, number }) => ({
+  label,
+  number,
+  href: `#${id}`,
+}));
 
 // ── Design tokens ──────────────────────────────────
 const THRESHOLD = 30;
-const SCROLLED_BG = "rgba(22, 20, 17, 0.01)";
-const DEFAULT_BG = "rgba(22, 26, 29, 0)";
+const DEFAULT_BG = "transparent";
 const BLUR = "10px";
 const SATURATE = "200%";
 const LOGO_SCALE = 0.85;
@@ -70,14 +69,16 @@ export default function Navbar({ preloaderDone, heroTransitionComplete }: Navbar
     if (!container) return;
     const menuButtonEl = menuButtonRef.current;
 
-    const focusable = Array.from(
+    const dialogFocusable = Array.from(
       container.querySelectorAll<HTMLElement>(
         'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
       )
     );
+    const focusable = menuButtonEl
+      ? [menuButtonEl, ...dialogFocusable]
+      : dialogFocusable;
     const first = focusable[0];
     const last = focusable[focusable.length - 1];
-    first?.focus();
 
     const onTrap = (e: KeyboardEvent) => {
       if (e.key !== "Tab" || focusable.length === 0) return;
@@ -100,30 +101,39 @@ export default function Navbar({ preloaderDone, heroTransitionComplete }: Navbar
   }, [menuOpen]);
 
   const closeMenu = () => setMenuOpen(false);
-  const applyScrolledPill = scrolled && !isMobile;
+  // The reference uses a compact navigation shell from the first visible frame.
+  // Scroll still strengthens its surface after the visitor leaves the Hero.
+  const applyDesktopPill = !isMobile;
 
   return (
     <>
       {/* ── Nav bar (glass pill when scrolled) ───────────────────────── */}
       <header
         id="navbar"
-        className="fixed z-40 flex items-center justify-between px-6 sm:px-8 left-1/2 -translate-x-1/2"
+        className="fixed z-40 flex items-center justify-between px-6 sm:px-8"
         style={{
-          height: applyScrolledPill ? "60px" : "72px",
-          top: applyScrolledPill ? "1rem" : "0px",
-          width: applyScrolledPill ? "92%" : "100%",
-          maxWidth: applyScrolledPill ? "42rem" : "100%",
-          borderRadius: applyScrolledPill ? "1rem" : "0px",
-          backgroundColor: applyScrolledPill ? SCROLLED_BG : DEFAULT_BG,
-          backdropFilter: applyScrolledPill
+          height: applyDesktopPill ? "60px" : "72px",
+          top: applyDesktopPill ? "1rem" : "0px",
+          left: applyDesktopPill ? "auto" : "50%",
+          right: applyDesktopPill ? "clamp(1.25rem, 4vw, 4rem)" : "auto",
+          transform: applyDesktopPill ? "none" : "translateX(-50%)",
+          width: applyDesktopPill ? "92%" : "100%",
+          maxWidth: applyDesktopPill ? "42rem" : "100%",
+          borderRadius: applyDesktopPill ? "1rem" : "0px",
+          backgroundColor: applyDesktopPill
+            ? scrolled
+              ? "color-mix(in srgb, var(--color-surface) 88%, transparent)"
+              : "color-mix(in srgb, var(--color-surface) 64%, transparent)"
+            : DEFAULT_BG,
+          backdropFilter: applyDesktopPill
             ? `blur(${BLUR}) saturate(${SATURATE})`
             : "blur(0px) saturate(100%)",
-          boxShadow: applyScrolledPill
-            ? "inset 0 1px 1px rgba(255,255,255,0.12), inset 0 -1px 4px rgba(0,0,0,0.40), 0 8px 32px rgba(0,0,0,0.25)"
-            : "inset 0 0 0 rgba(255,255,255,0), inset 0 0 0 rgba(0,0,0,0), 0 0 0 rgba(0,0,0,0)",
-          border: applyScrolledPill
-            ? "1px solid rgba(255, 255, 255, 0.08)"
-            : "1px solid rgba(255, 255, 255, 0)",
+          boxShadow: applyDesktopPill
+            ? "0 0.75rem 2rem color-mix(in srgb, var(--color-bg) 45%, transparent)"
+            : "none",
+          border: applyDesktopPill
+            ? "1px solid color-mix(in srgb, var(--color-border-light) 70%, transparent)"
+            : "none",
           opacity: heroTransitionComplete ? 1 : 0,
           pointerEvents: heroTransitionComplete ? "auto" : "none",
           transition: `all ${DURATION} ${EASE}`,
@@ -136,7 +146,7 @@ export default function Navbar({ preloaderDone, heroTransitionComplete }: Navbar
           onClick={(e) => handleSectionNav(e, "#hero")}
           className="font-label text-text-primary text-lg tracking-wider origin-left"
           style={{
-            transform: applyScrolledPill ? `scale(${LOGO_SCALE})` : "scale(1)",
+            transform: applyDesktopPill ? `scale(${LOGO_SCALE})` : "scale(1)",
             transition: `transform ${DURATION} ${EASE}`,
           }}
         >
@@ -144,7 +154,7 @@ export default function Navbar({ preloaderDone, heroTransitionComplete }: Navbar
         </a>
 
         {/* Desktop nav links — hidden on mobile */}
-        <nav className="hidden md:flex items-center gap-8">
+        <nav className="hidden md:flex items-center gap-5 lg:gap-6">
           {NAV_LINKS.map((link) => (
             <NavLink
               key={link.href}
@@ -238,7 +248,7 @@ export default function Navbar({ preloaderDone, heroTransitionComplete }: Navbar
 
         {/* Tagline footer */}
         <p
-          className="font-body text-text-disabled text-xs tracking-[0.2em] absolute bottom-10"
+          className="font-body text-text-secondary text-xs tracking-[0.2em] absolute bottom-10"
           style={{
             opacity: menuOpen ? 1 : 0,
             transition: menuOpen
@@ -267,12 +277,14 @@ function NavLink({
     <a
       href={href}
       onClick={onClick}
-      className="group font-body text-text-secondary text-sm tracking-widest uppercase relative overflow-hidden block"
+      className="group font-body text-text-secondary text-xs tracking-widest uppercase relative overflow-hidden block"
       style={{ height: "1.2em" }}
     >
       <div className="nav-rolling-inner flex flex-col transition-transform duration-300 ease-in-out group-hover:-translate-y-1/2">
         <span className="h-[1.2em] flex items-center">{label}</span>
-        <span className="h-[1.2em] flex items-center text-accent">{label}</span>
+        <span aria-hidden="true" className="h-[1.2em] flex items-center text-accent">
+          {label}
+        </span>
       </div>
     </a>
   );

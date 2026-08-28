@@ -51,7 +51,7 @@ export const ProjectPanel = forwardRef<HTMLDivElement, ProjectPanelProps>(
                 <span className="font-label text-xs tracking-[0.2em] text-accent uppercase">
                   {project.category}
                 </span>
-                <span className="font-label text-xs tracking-widest text-text-disabled uppercase">
+                <span className="font-label text-xs tracking-widest text-text-secondary uppercase">
                   {project.number}
                 </span>
               </div>
@@ -74,7 +74,7 @@ export const ProjectPanel = forwardRef<HTMLDivElement, ProjectPanelProps>(
               {/* Tech Stack or Pending State */}
               {project.stack.length > 0 && (
                 <div className="mb-6">
-                  <p className="font-label text-[11px] tracking-wider text-text-disabled uppercase mb-2.5">
+                  <p className="font-label text-[11px] tracking-wider text-text-secondary uppercase mb-2.5">
                     Technologies
                   </p>
                   <div className="flex flex-wrap gap-1.5 sm:gap-2">
@@ -121,13 +121,13 @@ export const ProjectPanel = forwardRef<HTMLDivElement, ProjectPanelProps>(
                     </svg>
                   </a>
                 ) : (
-                  <span className="font-label text-xs tracking-widest text-text-disabled uppercase">
+                  <span className="font-label text-xs tracking-widest text-text-secondary uppercase">
                     Case study in preparation
                   </span>
                 )}
 
                 {project.status === "published" && (
-                  <span className="font-label text-[11px] text-text-disabled tracking-wider uppercase">
+                  <span className="font-label text-[11px] text-text-secondary tracking-wider uppercase">
                     Published
                   </span>
                 )}
@@ -137,7 +137,7 @@ export const ProjectPanel = forwardRef<HTMLDivElement, ProjectPanelProps>(
 
           {/* Typographic Column (Desktop) */}
           <div className="hidden md:flex md:col-span-4 border-l border-border/40 pl-6 flex-col justify-between">
-            <span className="font-label text-xs text-text-disabled tracking-widest uppercase">
+            <span className="font-label text-xs text-text-secondary tracking-widest uppercase">
               Project
             </span>
 
@@ -147,7 +147,7 @@ export const ProjectPanel = forwardRef<HTMLDivElement, ProjectPanelProps>(
               </span>
             </div>
 
-            <div className="flex items-center gap-2 font-label text-xs text-text-disabled tracking-wider uppercase">
+            <div className="flex items-center gap-2 font-label text-xs text-text-secondary tracking-wider uppercase">
               <span
                 className={`inline-block w-1.5 h-1.5 rounded-full ${
                   project.status === "published" ? "bg-accent" : "bg-text-disabled/40"

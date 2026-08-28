@@ -1,5 +1,5 @@
-import { useScrollReveal } from "../../hooks/useScrollReveal";
 import { ProjectCarousel } from "../projects/ProjectCarousel";
+import { SectionShell } from "../ui/SectionShell";
 import type { Project } from "../../types";
 
 interface ProjectsProps {
@@ -64,36 +64,33 @@ const PROJECTS: Project[] = [
 ];
 
 export default function Projects({ preloaderDone }: ProjectsProps) {
-  const sectionRef = useScrollReveal<HTMLElement>(preloaderDone);
-
   return (
-    <section
+    <SectionShell
       id="projects"
-      ref={sectionRef}
-      className="relative px-5 sm:px-8 py-20 md:py-32 max-w-6xl mx-auto"
+      aria-busy={!preloaderDone}
+      sectionNumber="03"
+      sectionLabel="Projects"
+      className="relative z-10"
     >
-      {/* Section Header */}
-      <div className="mb-12 md:mb-16">
-        <p className="font-label text-accent text-xs tracking-[0.3em] uppercase mb-4">
-          02 / Projects
-        </p>
+      <div className="section-shell__content projects-layout">
+        {/* Editorial introduction */}
+        <div className="projects-intro">
+          <h2 className="section-heading">
+            Things I&apos;ve built
+            <br />
+            <em className="text-accent">Systems &amp; interfaces.</em>
+          </h2>
+          <p className="section-prose mt-8">
+            A focused selection of work across real-time systems and thoughtful
+            interfaces.
+          </p>
+        </div>
 
-        <h2
-          className="font-display text-text-primary leading-tight"
-          style={{ fontSize: "clamp(32px, 4vw, 64px)" }}
-        >
-          Selected work
-          <br />
-          <em style={{ fontStyle: "italic", color: "var(--color-accent)" }}>
-            Systems & interfaces.
-          </em>
-        </h2>
+        {/* Coverflow Carousel */}
+        <div className="projects-stage">
+          <ProjectCarousel projects={PROJECTS} />
+        </div>
       </div>
-
-      {/* Coverflow Carousel */}
-      <div>
-        <ProjectCarousel projects={PROJECTS} />
-      </div>
-    </section>
+    </SectionShell>
   );
 }
