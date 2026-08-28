@@ -349,6 +349,12 @@ linkage or CLI is present, so account/project verification, preview deployment,
 production promotion, canonical URL metadata, and live header/smoke checks remain
 external release actions.
 
+The first `iad1` build of commit `88f2897` exposed that Vercel's install environment
+did not resolve the tracked `frontend/package-lock.json` through
+`npm --prefix frontend ci`. The handoff now changes directory explicitly with
+`cd frontend && npm ci` and uses the same working-directory strategy for the build;
+the corrected install path passes an npm dry run locally.
+
 **Release acceptance:** no critical information depends on animation/WebGL, all
 published project claims are evidenced, all navigation paths work, and performance is
 acceptable on both desktop and mobile.
