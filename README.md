@@ -25,10 +25,10 @@ work; interactive agents are instructed not to run it.
 
 ## Deploy to Vercel
 
-The root `vercel.json` makes the nested `frontend/` application deployable from the
-repository root. It installs from `frontend/package-lock.json`, runs the existing
-release build, publishes `frontend/dist`, and applies the repository's baseline
-security headers. No environment variables are currently required.
+The Vercel project uses `frontend` as its **Root Directory**. The root `vercel.json`
+therefore runs `npm ci` and `npm run build` from that selected project directory,
+publishes `dist`, and applies the repository's baseline security headers. No
+environment variables are currently required.
 
 After production QA is complete, link this repository to the intended Vercel project,
 inspect the resolved account/project, then create a preview deployment before

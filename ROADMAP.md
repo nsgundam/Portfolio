@@ -342,18 +342,17 @@ Safari (local accessibility control timed out), and Firefox (not installed) chec
 the production build outside this interactive session; deployment and production smoke
 testing.
 
-The repository-side Vercel handoff is now explicit: root `vercel.json` installs and
-builds the nested `frontend/` package, publishes `frontend/dist`, and applies baseline
-content-type, referrer, camera, microphone, and geolocation headers. No local Vercel
-linkage or CLI is present, so account/project verification, preview deployment,
-production promotion, canonical URL metadata, and live header/smoke checks remain
-external release actions.
+The repository-side Vercel handoff is now explicit: the Vercel project selects
+`frontend` as its Root Directory, then root `vercel.json` runs `npm ci` and
+`npm run build`, publishes `dist`, and applies baseline content-type, referrer,
+camera, microphone, and geolocation headers. No local Vercel linkage or CLI is
+present, so account/project verification, preview deployment, production promotion,
+canonical URL metadata, and live header/smoke checks remain external release actions.
 
-The first `iad1` build of commit `88f2897` exposed that Vercel's install environment
-did not resolve the tracked `frontend/package-lock.json` through
-`npm --prefix frontend ci`. The handoff now changes directory explicitly with
-`cd frontend && npm ci` and uses the same working-directory strategy for the build;
-the corrected install path passes an npm dry run locally.
+The `iad1` builds of commits `88f2897` and `1aafd25` confirmed that Vercel already
+executes commands from the configured `frontend` Root Directory. Prefixing or changing
+into `frontend` therefore targeted a nonexistent nested directory. The handoff now
+uses project-root commands directly; `npm ci` passes a dry run from `frontend`.
 
 **Release acceptance:** no critical information depends on animation/WebGL, all
 published project claims are evidenced, all navigation paths work, and performance is
