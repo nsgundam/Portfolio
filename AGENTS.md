@@ -4,7 +4,7 @@ This repository contains a React + Vite single-page portfolio in `frontend/`.
 The site is an experience-first portfolio for startup recruiters, with clarity and
 accessibility taking priority over spectacle.
 
-> Updated: 24 August 2026
+> Updated: 30 August 2026
 
 ## Source of truth
 
@@ -35,6 +35,89 @@ Priority when information conflicts:
 - Prefer precise restraint over extra effects.
 - Never invent project outcomes, metrics, roles, stacks, or links. Project 03 and
   04 have confirmed names only; see `PRODUCT.md`.
+
+## `agy` frontend implementation worker
+
+Codex is the lead agent, design authority, and final reviewer for this repository.
+Codex may invoke the installed `agy` CLI as a bounded implementation worker for
+frontend tasks, but must not hand over product ownership, design approval, factual
+claims, scope control, or final acceptance to `agy`.
+
+Appropriate delegated work includes component implementation, editorial layout,
+responsive behavior, GSAP/Three.js work, accessibility fixes, interaction polish,
+and other clearly scoped changes under `frontend/`. Documentation-only changes,
+product decisions, ambiguous redesign choices, release actions, and trivial edits do
+not require delegation. Codex decides when delegation is useful.
+
+### Required delegation workflow
+
+Before invoking `agy`, Codex must:
+
+1. Read `AGENTS.md`, `PRODUCT.md`, `DESIGN.md`, and `ROADMAP.md` itself and identify
+   the exact approved roadmap stage and acceptance criteria being implemented.
+2. Read every applicable Codex skill itself. For frontend design or refinement this
+   normally includes `impeccable` and/or `frontend-design`; their instructions remain
+   subordinate to the user request and this file.
+3. Inspect the current implementation and working-tree status. Existing changes are
+   user-owned and must be preserved.
+4. Define one bounded worker task with named target files, allowed scope, prohibited
+   changes, design constraints, expected checks, and a clear stopping condition.
+
+Invoke `agy` non-interactively from the repository root. Prefer a sandboxed command
+equivalent to:
+
+```bash
+agy --print --mode accept-edits --sandbox \
+  --add-dir /Users/ns/.codex/skills \
+  --output-format text \
+  "<bounded frontend implementation prompt>"
+```
+
+Do not use `--dangerously-skip-permissions`. If `agy` needs filesystem, process, or
+network authority outside the active sandbox, Codex must surface and handle that
+permission through the host approval mechanism. Use a fresh bounded prompt by
+default; resume an `agy` conversation only when continuity is materially necessary
+and Codex has verified that its scope is still valid.
+
+### Skill use inside `agy`
+
+The worker prompt must name each applicable skill and its exact `SKILL.md` path, then
+require `agy` to read the complete file before editing. Current frontend skill paths
+include:
+
+- `/Users/ns/.codex/skills/impeccable/SKILL.md`
+- `/Users/ns/.codex/skills/frontend-design/SKILL.md`
+
+Passing `--add-dir /Users/ns/.codex/skills` makes those local instructions available
+to the worker; it does not transfer design authority. If a named skill is missing or
+cannot be read, `agy` must report that limitation and continue only when the bounded
+task remains safe without it. `agy` must not install plugins, alter skills, create
+another agent hierarchy, or broaden its own scope unless Codex explicitly authorizes
+that action in the worker prompt.
+
+### Worker handoff contract
+
+Every `agy` prompt must require a concise handoff containing:
+
+- files changed;
+- behavior implemented;
+- checks run and their results;
+- assumptions, unresolved issues, and any skipped validation;
+- confirmation that no commit, deployment, fabricated content, or out-of-scope edit
+  was made.
+
+The worker's report is not acceptance evidence by itself. After `agy` returns, Codex
+must independently:
+
+1. inspect the complete diff and verify that unrelated/user changes were preserved;
+2. compare the result against `DESIGN.md`, `PRODUCT.md`, the active roadmap acceptance
+   criteria, and applicable skill requirements;
+3. run proportionate lint, tests, detector checks, and desktop/mobile visual QA;
+4. correct, narrow, or revert only the worker-owned changes when necessary; and
+5. report the verified outcome to the user in Codex's own final response.
+
+Only Codex may declare the task complete. A successful `agy` command, a clean worker
+summary, or visually plausible output does not replace Codex review.
 
 ## Code architecture
 

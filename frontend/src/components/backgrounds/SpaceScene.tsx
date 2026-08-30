@@ -1,15 +1,24 @@
-import { Suspense, useEffect, useMemo, useRef } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import type { MutableRefObject } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import { gsap, ScrollTrigger } from "../../lib/gsap";
 import { prefersReducedMotion } from "../../lib/motion";
+import {
+  EarthHorizon,
+  EventHorizon,
+} from "./CelestialBodies";
 
 // ─── Utility ──────────────────────────────────────────────────────────────────
 
 function lerp(a: number, b: number, t: number): number {
   return a + (b - a) * t;
+}
+
+function smoothstep(min: number, max: number, value: number): number {
+  const t = THREE.MathUtils.clamp((value - min) / (max - min), 0, 1);
+  return t * t * (3 - 2 * t);
 }
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -109,15 +118,18 @@ function StarField({ scrollRef, aboutScrollRef, isMobile, color }: StarFieldProp
 
     timeAccRef.current += delta;
 
-    // Fade IN as aurora fades out (0 → 0.30 Hero progress), remains active across About, fades as About leaves
+    // Stars arrive from deep space as Earth departs, then recede beyond the
+    // camera's far field before Projects. No opacity cross-fade is used.
     const heroP = scrollRef.current;
     const aboutP = aboutScrollRef.current;
-    let starOpacity = Math.min(heroP / 0.3, 1.0);
-    if (aboutP > 0.77) {
-      starOpacity = Math.max(0, 1 - (aboutP - 0.77) / 0.23);
-    }
+    const arrival = smoothstep(0.04, 0.3, heroP);
+    const departure = smoothstep(0.72, 1, aboutP);
+    pts.visible = arrival > 0.002 && departure < 0.998;
+    if (!pts.visible) return;
 
-    (pts.material as THREE.PointsMaterial).opacity = starOpacity;
+    pts.position.z = -2600 * (1 - arrival) - 2600 * departure;
+    const depthScale = 0.72 + arrival * 0.28 - departure * 0.18;
+    pts.scale.setScalar(depthScale);
 
     // Subtle field drift
     pts.rotation.y += 0.00005 * delta * 60;
@@ -137,7 +149,7 @@ function StarField({ scrollRef, aboutScrollRef, isMobile, color }: StarFieldProp
         size={0.5}
         sizeAttenuation
         transparent
-        opacity={0}
+        opacity={0.82}
         depthWrite={false}
       />
     </points>
@@ -475,17 +487,21 @@ function SpaceshipGroup({ scrollRef }: SpaceshipGroupProps) {
 interface SceneContentsProps {
   scrollRef:      ScrollRef;
   aboutScrollRef: ScrollRef;
+  contactScrollRef: ScrollRef;
   mouseRef:       MouseRef;
   isMobile:       boolean;
   palette:        ThemePalette;
+  eventAssetsReady: boolean;
 }
 
 function SceneContents({
   scrollRef,
   aboutScrollRef,
+  contactScrollRef,
   mouseRef,
   isMobile,
   palette,
+  eventAssetsReady,
 }: SceneContentsProps) {
   return (
     <>
@@ -499,9 +515,27 @@ function SceneContents({
 
       <CameraController scrollRef={scrollRef} />
 
-      {/* Render Aurora first, then Stars, so stars appear on top across Hero and About */}
+      {/* Earth establishes the Hero horizon behind the existing aurora and ship journey. */}
+      <Suspense fallback={null}>
+        <EarthHorizon
+          heroProgressRef={scrollRef}
+          isMobile={isMobile}
+        />
+      </Suspense>
+
+      {/* Render Aurora first, then Stars, so stars appear on top across Hero and About. */}
       <AuroraPlane scrollRef={scrollRef} mouseRef={mouseRef} isMobile={isMobile} palette={palette} />
       <StarField   scrollRef={scrollRef} aboutScrollRef={aboutScrollRef} isMobile={isMobile} color={palette.textPrimary} />
+
+      {/* Event assets are deferred until the visitor approaches the lower page. */}
+      {eventAssetsReady && (
+        <Suspense fallback={null}>
+          <EventHorizon
+            contactProgressRef={contactScrollRef}
+            isMobile={isMobile}
+          />
+        </Suspense>
+      )}
 
       {/* Spaceship loads async — Suspense prevents canvas stall */}
       <Suspense fallback={null}>
@@ -514,6 +548,36 @@ function SceneContents({
 // ─── Reduced Motion Fallback ──────────────────────────────────────────────────
 
 function ReducedMotionFallback() {
+  const [activeStage, setActiveStage] = useState<"earth" | "event" | "quiet">("earth");
+
+  useEffect(() => {
+    const hero = document.getElementById("hero");
+    const contact = document.getElementById("contact");
+    if (!hero || !contact) return;
+
+    const updateStage = () => {
+      const viewportMiddle = window.innerHeight * 0.5;
+      const heroRect = hero.getBoundingClientRect();
+      const contactRect = contact.getBoundingClientRect();
+
+      if (contactRect.top <= viewportMiddle && contactRect.bottom >= 0) {
+        setActiveStage("event");
+      } else if (heroRect.top <= viewportMiddle && heroRect.bottom >= 0) {
+        setActiveStage("earth");
+      } else {
+        setActiveStage("quiet");
+      }
+    };
+
+    updateStage();
+    window.addEventListener("scroll", updateStage, { passive: true });
+    window.addEventListener("resize", updateStage);
+    return () => {
+      window.removeEventListener("scroll", updateStage);
+      window.removeEventListener("resize", updateStage);
+    };
+  }, []);
+
   return (
     <div
       aria-hidden="true"
@@ -525,11 +589,17 @@ function ReducedMotionFallback() {
         height:        "100vh",
         zIndex:        -1,
         pointerEvents: "none",
-        background:    "var(--color-bg)",
+        backgroundColor: "var(--color-bg)",
         backgroundImage: [
-          "radial-gradient(ellipse 60% 40% at 25% 60%, color-mix(in srgb, var(--color-accent) 6%, transparent) 0%, transparent 70%)",
-          "radial-gradient(ellipse 40% 30% at 78% 28%, color-mix(in srgb, var(--color-accent) 3%, transparent) 0%, transparent 60%)",
+          activeStage === "earth"
+            ? "linear-gradient(90deg, var(--color-bg) 0%, transparent 58%), url('/images/celestial/earth-horizon-fallback.png')"
+            : activeStage === "event"
+              ? "linear-gradient(90deg, var(--color-bg) 0%, transparent 52%), url('/images/celestial/event-horizon-plate.png')"
+              : "radial-gradient(ellipse 60% 40% at 25% 60%, color-mix(in srgb, var(--color-accent) 6%, transparent) 0%, transparent 70%)",
         ].join(", "),
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
       }}
     />
   );
@@ -544,7 +614,9 @@ export interface SpaceSceneProps {
 export function SpaceScene({ preloaderDone }: SpaceSceneProps) {
   const scrollRef      = useRef(0);
   const aboutScrollRef = useRef(0);
+  const contactScrollRef = useRef(0);
   const wrapperRef     = useRef<HTMLDivElement>(null);
+  const [eventAssetsReady, setEventAssetsReady] = useState(false);
 
   // Richer mouse state: x, y (normalised), dx (raw delta pixels, decays per frame)
   const mouseRef = useRef<MouseState>({ x: 0.5, y: 0.5, dx: 0 });
@@ -555,6 +627,28 @@ export function SpaceScene({ preloaderDone }: SpaceSceneProps) {
   );
 
   const palette = useMemo(() => readThemePalette(), []);
+
+  // Defer the 1.5 MB Event Horizon plate until Projects approaches the viewport.
+  useEffect(() => {
+    if (!preloaderDone || eventAssetsReady) return;
+    const projects = document.getElementById("projects");
+    const contact = document.getElementById("contact");
+    if (!projects || !contact) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setEventAssetsReady(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "150% 0px" },
+    );
+
+    observer.observe(projects);
+    observer.observe(contact);
+    return () => observer.disconnect();
+  }, [eventAssetsReady, preloaderDone]);
 
   // ── Mouse tracking ──────────────────────────────────────────────────────
   useEffect(() => {
@@ -623,24 +717,28 @@ export function SpaceScene({ preloaderDone }: SpaceSceneProps) {
           const aboutProgress = Math.min(1, Math.max(0, (scrollY - aboutStart) / aboutTotal));
           aboutScrollRef.current = aboutProgress;
 
-          // 3. SpaceScene Wrapper Opacity:
-          // Remains 1.0 throughout Hero entrance and About pinned beat.
-          // Fades only as About unpins and releases toward Projects (scrollY > heroPin + H + aboutPin).
-          const aboutUnpinY = heroPin + H + aboutPin;
-          const fadeReleaseDist = 0.6 * H;
-
-          if (wrapperRef.current) {
-            if (scrollY <= aboutUnpinY) {
-              wrapperRef.current.style.opacity = "1";
-            } else {
-              const fade = Math.max(0, 1 - (scrollY - aboutUnpinY) / fadeReleaseDist);
-              wrapperRef.current.style.opacity = String(fade);
-            }
-          }
-
-          // Decay mouse dx so it doesn't accumulate between scroll ticks
+          // Decay mouse dx so it doesn't accumulate between scroll ticks.
           mouseRef.current.dx *= 0.85;
         },
+      });
+
+      ScrollTrigger.create({
+        id: "space-scene-contact",
+        trigger: "#contact",
+        start: "top bottom",
+        end: "top 20%",
+        invalidateOnRefresh: true,
+        refreshPriority: -100,
+        onUpdate: (self) => {
+          contactScrollRef.current = self.progress;
+        },
+        onRefresh: (self) => {
+          contactScrollRef.current = self.progress;
+        },
+        onLeaveBack: () => {
+          contactScrollRef.current = 0;
+        },
+        onLeave: () => { contactScrollRef.current = 1; },
       });
     });
 
@@ -661,21 +759,22 @@ export function SpaceScene({ preloaderDone }: SpaceSceneProps) {
         height:        "100vh",
         zIndex:        -1,
         pointerEvents: "none",
-        willChange:    "opacity",
       }}
     >
       <Canvas
         gl={{ antialias: !isMobile, alpha: true }}
-        dpr={Math.min(devicePixelRatio, 1.5)}
+        dpr={isMobile ? 1 : Math.min(devicePixelRatio, 1.5)}
         camera={{ position: [0, 0, 5], fov: 60, near: 0.1, far: 2000 }}
         style={{ display: "block" }}
       >
         <SceneContents
           scrollRef={scrollRef}
           aboutScrollRef={aboutScrollRef}
+          contactScrollRef={contactScrollRef}
           mouseRef={mouseRef}
           isMobile={isMobile}
           palette={palette}
+          eventAssetsReady={eventAssetsReady}
         />
       </Canvas>
     </div>
